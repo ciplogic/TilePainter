@@ -41,15 +41,24 @@ public class Gameplay {
 
     }
 
+    int angle;
     void onFrameUpdate(){
+        angle = 0;
         var painter = canvasWrap.getPainter();
         painter.clear(Color.ROYALBLUE);
         painter.drawImage(image, 100, 100);
         var ground = mapView.getGround();
-        ground.visitRange(0,0,20, 20, ((x, y, value) -> {
-            painter.drawImage(sandImage, 64*x, 64*y);
-            if (value>0)
-            painter.drawImage(image, 64*x, 64*y);
+        ground.visitRange(0, 0, 13, 10, ((x, y, value) -> {
+            painter.drawImage(sandImage, 64 * x, 64 * y);
+            angle += 17;
+            angle %= 360;
+            //painter.drawRotatedImage(sandImage, angle, 64*x, 64*y);
+
+        }));
+
+        ground.visitRange(0, 0, 13, 10, ((x, y, value) -> {
+            if (value > 0)
+                painter.drawImage(image, 64 * x, 64 * y);
         }));
     }
 }
