@@ -1,0 +1,105 @@
+package hellofx.framework;
+
+import hellofx.Gameplay;
+
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
+/**
+ *
+ * @author ciprian
+ */
+public class MainContext {
+
+    Router router = new Router();
+    Map<String, Object> objRepo = new HashMap<>();
+    private Map<String, Object> typeRepo = new HashMap<>();
+
+    public MainContext() {
+        setObj("context", this);
+    }
+
+
+    public void notify(String eventName, Object obj) {
+        router.call(eventName, obj);
+    }
+
+    public void listen(String eventName, Runnable action) {
+        router.register(eventName, (i) -> {
+            action.run();
+        });
+    }
+
+    public <T> void listen(String eventName, Consumer<T> actionT) {
+        router.register(eventName, (i) -> {
+            T tValue = (T)i;
+            actionT.accept(tValue);
+        });
+    }
+
+    public void setObj(String objName, Object obj){
+        objRepo.put(objName, obj);
+        setObjectType(obj);
+    }
+
+    private void setObjectType(Object obj) {
+        String canonicalName = obj.getClass().getCanonicalName();
+        if (typeRepo.containsKey(canonicalName))
+            return;
+        typeRepo.put(canonicalName, obj);
+    }
+
+    public <T> T getObj(String objName) {
+        return (T) objRepo.get(objName);
+    }
+
+    public <T>T inject(Class<T> objType) {
+        T obj = null;
+        try {
+            obj = objType.newInstance();
+        } catch (IllegalAccessException | InstantiationException e) {
+            throw new RuntimeException(e.toString());
+        }
+        return injectInstance(obj);
+    }
+
+    boolean hasMethod(Object obj, String methodName){
+        var methods = obj.getClass().getMethods();
+        for(var m:methods){
+            if (m.getName().equals(methodName))
+                return true;
+        }
+        return false;
+    }
+
+    public <T> T injectInstance(T obj) {
+        var clazz = obj.getClass();
+        var fields = clazz.getFields();
+        for(var field : fields){
+            var fieldType = field.getType().getCanonicalName();
+            if (this.typeRepo.containsKey(fieldType)) {
+                try {
+                    field.set(obj, this.typeRepo.get(fieldType));
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e.toString());
+                }
+
+            }
+        }
+        setObjectType(obj);
+        if (hasMethod(obj, "setup")){
+            try {
+                var method = clazz.getMethod("setup");
+                method.invoke(obj);
+            } catch ( IllegalAccessException | InvocationTargetException e) {
+                throw new RuntimeException(e.toString());
+            } catch (NoSuchMethodException e) {
+                //DO nothing,
+            }
+        }
+        return obj;
+    }
+}
+

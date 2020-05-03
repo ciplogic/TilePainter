@@ -1,0 +1,33 @@
+package hellofx.framework;
+
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+
+public class CanvasWrap {
+    public MainContext ctxt;
+    public Canvas canvas;
+    public GamePreferences prefs;
+    Painter painter = new Painter();
+
+    public CanvasWrap() {
+    }
+    public void setup(){
+        canvas = new Canvas(prefs.w, prefs.h);
+        painter.setSize(prefs.w, prefs.h);
+
+        canvas.setOnMouseClicked(mouseEvent -> {
+            ctxt.notify(EventNames.onMouse, mouseEvent);
+        });
+
+    }
+
+    public void drawShapes(GraphicsContext gc) {
+        painter.updateGc(gc);
+        ctxt.notify(EventNames.onPaint, painter);
+    }
+
+    public Painter getPainter() {
+        painter.updateGc(canvas.getGraphicsContext2D());
+        return painter;
+    }
+}
