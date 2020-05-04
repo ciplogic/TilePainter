@@ -1,10 +1,7 @@
 
 package hellofx;
 
-import hellofx.framework.CanvasWrap;
-import hellofx.framework.GamePreferences;
-import hellofx.framework.MainContext;
-import hellofx.framework.ObjectNames;
+import hellofx.framework.*;
 import hellofx.game.MapView;
 import javafx.application.Application;
 import javafx.scene.Scene;

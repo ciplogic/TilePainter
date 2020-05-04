@@ -1,7 +1,5 @@
-package hellofx;
+package hellofx.framework;
 
-import hellofx.framework.EventNames;
-import hellofx.framework.MainContext;
 import javafx.animation.AnimationTimer;
 
 public class PerFrameTimer extends AnimationTimer {
