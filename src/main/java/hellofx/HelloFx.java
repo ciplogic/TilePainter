@@ -1,14 +1,23 @@
 
 package hellofx;
 
+import hellofx.common.Tuple;
+import hellofx.dialogs.controllers.ResourcesController;
 import hellofx.framework.*;
 import hellofx.game.MapView;
 import hellofx.graphics.ImageRepo;
 import javafx.application.Application;
+import javafx.geometry.Pos;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 /**
  *
@@ -19,6 +28,7 @@ public class HelloFx extends Application {
         Application.launch(HelloFx.class);
     }
 
+
     @Override
     public void start(Stage stage) {
         var context = new MainContext();
@@ -28,13 +38,14 @@ public class HelloFx extends Application {
 
         context.injectInstance(new MapView(128, 128));
 
-        CanvasWrap canvas = context.inject(CanvasWrap.class);
-        var mainStackPane =new StackPane(canvas.canvas);
-        context.setObj(ObjectNames.mainStack, mainStackPane);
+        CanvasWrap canvasWrap = context.inject(CanvasWrap.class);
+        MainStackPane mainStackPane = context.inject(MainStackPane.class);
+        mainStackPane.push(canvasWrap.canvas);
 
         context.inject(Gameplay.class);
 
-        stage.setScene(new Scene(mainStackPane));
+
+        stage.setScene(new Scene(mainStackPane.stackPane));
         stage.show();
         timer.start();
     }

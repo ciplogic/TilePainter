@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.text.Font?>
+<?import javafx.geometry.Insets?>
+<GridPane xmlns="http://javafx.com/javafx"
+          xmlns:fx="http://javafx.com/fxml"
+          fx:controller="hellofx.dialogs.controllers.ResourcesController"
+          maxHeight="40" maxWidth="400">
+    <columnConstraints>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20"/>
+    </columnConstraints>
+    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
+    <VBox GridPane.columnIndex="0">
+        <ImageView />
+        <Label fx:id="goldLbl">
+            <font>
+                <Font name="Verdana" size="14.0" />
+            </font>
+        </Label>
+
+    </VBox>
+
+    <VBox GridPane.columnIndex="1">
+        <ImageView />
+        <Label fx:id="woodLbl">
+            <font>
+                <Font name="Verdana" size="14.0" />
+            </font>
+        </Label>
+    </VBox>
+    <VBox  GridPane.columnIndex="2">
+        <ImageView />
+        <Label fx:id="oreLbl">
+            <font>
+                <Font name="Verdana" size="14.0" />
+            </font>
+        </Label>
+
+    </VBox>
+    <VBox  GridPane.columnIndex="3">
+        <ImageView />
+        <Label fx:id="crystalLbl">
+            <font>
+                <Font name="Verdana" size="14.0" />
+            </font>
+        </Label>
+
+    </VBox>
+</GridPane>
