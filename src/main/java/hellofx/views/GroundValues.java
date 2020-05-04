@@ -1,4 +1,4 @@
-package hellofx.game;
+package hellofx.views;
 
 public class GroundValues {
     private int _h;
@@ -13,6 +13,9 @@ public class GroundValues {
     int getValue(int x, int y){
         if (x<0 || y<0)
             return -1;
+        if (x>=_w || y>=_h)
+            return -1;
+
         return _values[x+y*_w];
     }
 

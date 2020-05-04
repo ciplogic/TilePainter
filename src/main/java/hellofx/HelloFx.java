@@ -3,6 +3,7 @@ package hellofx;
 
 import hellofx.framework.*;
 import hellofx.game.MapView;
+import hellofx.graphics.ImageRepo;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -15,15 +16,15 @@ import javafx.stage.Stage;
  */
 public class HelloFx extends Application {
     public static void main(String[] args) {
-        
         Application.launch(HelloFx.class);
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) {
         var context = new MainContext();
         var timer = context.inject(PerFrameTimer.class);
         context.inject(GamePreferences.class);
+        context.inject(ImageRepo.class);
 
         context.injectInstance(new MapView(128, 128));
 
@@ -31,9 +32,7 @@ public class HelloFx extends Application {
         var mainStackPane =new StackPane(canvas.canvas);
         context.setObj(ObjectNames.mainStack, mainStackPane);
 
-
-        var image = new Image(Utilities.getResource("data/tree.png"));
-        var gameplay = context.inject(Gameplay.class);
+        context.inject(Gameplay.class);
 
         stage.setScene(new Scene(mainStackPane));
         stage.show();

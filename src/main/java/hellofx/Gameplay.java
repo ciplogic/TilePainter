@@ -4,6 +4,9 @@ import hellofx.framework.CanvasWrap;
 import hellofx.framework.EventNames;
 import hellofx.framework.MainContext;
 import hellofx.game.MapView;
+import hellofx.graphics.ImageRepo;
+import hellofx.player.PlayerList;
+import hellofx.views.ResourceViewer;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -14,7 +17,9 @@ public class Gameplay {
     public MainContext ctx;
     public CanvasWrap canvasWrap;
     public MapView mapView;
+    public ImageRepo imageRepo;
 
+    PlayerList playerList;
 
     Image image;
     Image sandImage;
@@ -22,6 +27,7 @@ public class Gameplay {
         image = new Image(Utilities.getResource("data/tree_tiled.png"));
         sandImage = new Image(Utilities.getResource("data/sand_small.png"));
         setupRandomLevel();
+        playerList = new PlayerList(2);
         ctx.listen(EventNames.onFrame, (Long l) -> {
             onFrameUpdate();
         });
@@ -41,24 +47,15 @@ public class Gameplay {
 
     }
 
-    int angle;
+    double idx = 0;
+
     void onFrameUpdate(){
-        angle = 0;
+        idx += 0.3;
         var painter = canvasWrap.getPainter();
         painter.clear(Color.ROYALBLUE);
         painter.drawImage(image, 100, 100);
-        var ground = mapView.getGround();
-        ground.visitRange(0, 0, 13, 10, ((x, y, value) -> {
-            painter.drawImage(sandImage, 64 * x, 64 * y);
-            angle += 17;
-            angle %= 360;
-            //painter.drawRotatedImage(sandImage, angle, 64*x, 64*y);
+        mapView.paintGround(imageRepo, painter, (int)idx, 1);
 
-        }));
-
-        ground.visitRange(0, 0, 13, 10, ((x, y, value) -> {
-            if (value > 0)
-                painter.drawImage(image, 64 * x, 64 * y);
-        }));
+        ResourceViewer.paint(painter, playerList.get(0).resources);
     }
 }

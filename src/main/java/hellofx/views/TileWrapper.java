@@ -1,4 +1,4 @@
-package hellofx.game;
+package hellofx.views;
 
 
 public class TileWrapper {
