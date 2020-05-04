@@ -21,7 +21,7 @@
     </columnConstraints>
     <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
     <VBox GridPane.columnIndex="0">
-        <ImageView />
+        <ImageView fx:id="goldImg"/>
         <Label fx:id="goldLbl">
             <font>
                 <Font name="Verdana" size="14.0" />
@@ -31,7 +31,7 @@
     </VBox>
 
     <VBox GridPane.columnIndex="1">
-        <ImageView />
+        <ImageView fx:id="woodImg"/>
         <Label fx:id="woodLbl">
             <font>
                 <Font name="Verdana" size="14.0" />
@@ -39,7 +39,7 @@
         </Label>
     </VBox>
     <VBox  GridPane.columnIndex="2">
-        <ImageView />
+        <ImageView fx:id="oreImg"/>
         <Label fx:id="oreLbl">
             <font>
                 <Font name="Verdana" size="14.0" />
@@ -48,7 +48,7 @@
 
     </VBox>
     <VBox  GridPane.columnIndex="3">
-        <ImageView />
+        <ImageView fx:id="crystalImg"/>
         <Label fx:id="crystalLbl">
             <font>
                 <Font name="Verdana" size="14.0" />

@@ -2,7 +2,6 @@ package hellofx.framework;
 
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.canvas.Canvas;
 import javafx.scene.layout.StackPane;
 
 public class MainStackPane {
