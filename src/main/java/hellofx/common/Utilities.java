@@ -2,6 +2,10 @@ package hellofx.common;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.Region;
+import javafx.scene.paint.Color;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,6 +45,10 @@ public class Utilities {
             return null;
         }
 
+    }
+
+    public static void setBackground(Region root, Color color) {
+        root.setBackground(new Background(new BackgroundFill(color, null, null)));
     }
 
     public static String getResource(String path) {

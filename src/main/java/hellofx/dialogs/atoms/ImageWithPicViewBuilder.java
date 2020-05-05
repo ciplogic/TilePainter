@@ -9,6 +9,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.paint.Color;
+
+import static hellofx.common.Utilities.setBackground;
 
 public class ImageWithPicViewBuilder
         extends ViewBuilderBase<ImageWithPicViewModel, Parent> {
@@ -27,7 +30,8 @@ public class ImageWithPicViewBuilder
         Label label = new Label();
         GridPane.setRowIndex(label, 1);
         ViewModel.Label = label;
-        root.setMinHeight(50);
+        root.setMinHeight(30);
+        setBackground(root, Color.PINK);
         View = root;
     }
 
