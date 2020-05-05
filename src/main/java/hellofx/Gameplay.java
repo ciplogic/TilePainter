@@ -1,12 +1,18 @@
 package hellofx;
 
 import hellofx.common.Tuple;
+import hellofx.dialogs.atoms.ImageWithPicViewBuilder;
+import hellofx.dialogs.atoms.ImageWithPicViewModel;
 import hellofx.dialogs.controllers.ResourcesController;
-import hellofx.framework.*;
+import hellofx.framework.EventNames;
+import hellofx.framework.MainContext;
+import hellofx.framework.ObjectNames;
+import hellofx.framework.controls.CanvasWrap;
+import hellofx.framework.controls.MainBorderPane;
+import hellofx.framework.controls.MainStackPane;
 import hellofx.game.MapView;
 import hellofx.graphics.ImageRepo;
 import hellofx.player.PlayerList;
-import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
@@ -19,7 +25,8 @@ public class Gameplay {
     public MapView mapView;
     public ImageRepo imageRepo;
 
-    MainStackPane stackPane;
+    public MainStackPane stackPane;
+    public MainBorderPane borderPane;
 
     PlayerList playerList;
     Tuple<Parent, ResourcesController> fxmlRes;
@@ -35,9 +42,15 @@ public class Gameplay {
         });
         stackPane = ctx.getObj(ObjectNames.mainStack);
 
-        fxmlRes = Utilities.loadFxml("data/dialogs/res.fxml");
-        stackPane.push(fxmlRes.getV1(), Pos.TOP_CENTER);
-        fxmlRes.getV2().setup(imageRepo);
+        var topDialog = new ImageWithPicViewBuilder();
+        topDialog.setup(ImageWithPicViewModel.class);
+        topDialog.ViewModel.text = "Gold";
+        topDialog.ViewModel.setImage("data/dlg_img/cash.png");
+        borderPane.borderPane.setTop(topDialog.View);
+
+        //fxmlRes = Utilities.loadFxml("data/dialogs/res.fxml");
+        //stackPane.push(fxmlRes.getV1(), Pos.TOP_CENTER);
+        //fxmlRes.getV2().setup(imageRepo);
     }
 
     private void setupRandomLevel() {
@@ -58,6 +71,6 @@ public class Gameplay {
         var painter = canvasWrap.getPainter();
         painter.clear(Color.ROYALBLUE);
         mapView.paintGround(imageRepo, painter, (int) idx, 1);
-        fxmlRes.getV2().setValues(200, 50, 12, 15);
+        //fxmlRes.getV2().setValues(200, 50, 12, 15);
     }
 }

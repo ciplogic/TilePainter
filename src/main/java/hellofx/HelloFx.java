@@ -1,23 +1,17 @@
 
 package hellofx;
 
-import hellofx.common.Tuple;
-import hellofx.dialogs.controllers.ResourcesController;
-import hellofx.framework.*;
+import hellofx.framework.GamePreferences;
+import hellofx.framework.MainContext;
+import hellofx.framework.controls.CanvasWrap;
+import hellofx.framework.controls.MainBorderPane;
+import hellofx.framework.controls.MainStackPane;
+import hellofx.framework.controls.PerFrameTimer;
 import hellofx.game.MapView;
 import hellofx.graphics.ImageRepo;
 import javafx.application.Application;
-import javafx.geometry.Pos;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 /**
  *
@@ -38,14 +32,17 @@ public class HelloFx extends Application {
 
         context.injectInstance(new MapView(128, 128));
 
+        var mainBorderPane = context.inject(MainBorderPane.class);
+
         CanvasWrap canvasWrap = context.inject(CanvasWrap.class);
         MainStackPane mainStackPane = context.inject(MainStackPane.class);
         mainStackPane.push(canvasWrap.canvas);
 
         context.inject(Gameplay.class);
 
+        mainBorderPane.borderPane.setCenter(mainStackPane.stackPane);
 
-        stage.setScene(new Scene(mainStackPane.stackPane));
+        stage.setScene(new Scene(mainBorderPane.borderPane));
         stage.show();
         timer.start();
     }

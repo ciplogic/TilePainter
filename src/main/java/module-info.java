@@ -7,6 +7,7 @@ module FxStart {
     requires it.unimi.dsi.fastutil;
 
     exports hellofx;
+    exports hellofx.common;
     exports hellofx.dialogs.controllers;
     
     opens hellofx;

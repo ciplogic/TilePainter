@@ -1,6 +1,6 @@
 package hellofx.game;
 
-import hellofx.framework.Painter;
+import hellofx.framework.controls.Painter;
 import hellofx.graphics.ImageRepo;
 import hellofx.views.GroundValues;
 

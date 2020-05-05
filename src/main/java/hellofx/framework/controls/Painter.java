@@ -1,4 +1,4 @@
-package hellofx.framework;
+package hellofx.framework.controls;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;

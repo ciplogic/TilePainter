@@ -1,6 +1,5 @@
-package hellofx;
+package hellofx.common;
 
-import hellofx.common.Tuple;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 
@@ -34,7 +33,17 @@ public class Utilities {
         return result;
     }
 
-    public static String getResource(String path){
+    public static <T> T newInstanceOf(Class<?> clazz) {
+        try {
+            return (T) clazz.getConstructor().newInstance();
+
+        } catch (Exception ex) {
+            return null;
+        }
+
+    }
+
+    public static String getResource(String path) {
         var file = new File(path);
         var result = file.toURI().toString();
         return result;

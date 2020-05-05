@@ -14,27 +14,39 @@
           fx:controller="hellofx.dialogs.controllers.ResourcesController"
           maxHeight="40" maxWidth="400">
     <columnConstraints>
-        <ColumnConstraints percentWidth="20"/>
-        <ColumnConstraints percentWidth="20"/>
-        <ColumnConstraints percentWidth="20"/>
-        <ColumnConstraints percentWidth="20"/>
+        <ColumnConstraints percentWidth="20" halignment="CENTER"/>
+        <ColumnConstraints percentWidth="20" halignment="CENTER"/>
+        <ColumnConstraints percentWidth="20" halignment="CENTER"/>
+        <ColumnConstraints percentWidth="20" halignment="CENTER"/>
     </columnConstraints>
-    <padding><Insets top="10" right="10" bottom="10" left="10"/></padding>
-    <VBox GridPane.columnIndex="0">
-        <ImageView fx:id="goldImg"/>
-        <Label fx:id="goldLbl">
+    <padding>
+        <Insets top="10" right="10" bottom="10" left="10"/>
+    </padding>
+    <GridPane GridPane.columnIndex="0">
+        <rowConstraints>
+            <RowConstraints valignment="CENTER"/>
+            <RowConstraints valignment="CENTER"/>
+
+        </rowConstraints>
+        <columnConstraints>
+            <ColumnConstraints halignment="CENTER"/>
+        </columnConstraints>
+
+        <ImageView GridPane.rowIndex="0" fx:id="goldImg"/>
+
+        <Label GridPane.rowIndex="1" fx:id="goldLbl">
             <font>
-                <Font name="Verdana" size="14.0" />
+                <Font name="Verdana" size="14.0"/>
             </font>
         </Label>
 
-    </VBox>
+    </GridPane>
 
     <VBox GridPane.columnIndex="1">
         <ImageView fx:id="woodImg"/>
         <Label fx:id="woodLbl">
             <font>
-                <Font name="Verdana" size="14.0" />
+                <Font name="Verdana" size="14.0"/>
             </font>
         </Label>
     </VBox>

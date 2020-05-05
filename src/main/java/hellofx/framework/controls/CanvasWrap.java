@@ -1,5 +1,8 @@
-package hellofx.framework;
+package hellofx.framework.controls;
 
+import hellofx.framework.EventNames;
+import hellofx.framework.GamePreferences;
+import hellofx.framework.MainContext;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 

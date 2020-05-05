@@ -1,5 +1,7 @@
-package hellofx.framework;
+package hellofx.framework.controls;
 
+import hellofx.framework.MainContext;
+import hellofx.framework.ObjectNames;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
