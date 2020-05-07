@@ -1,9 +1,20 @@
 package hellofx.dialogs.atoms;
 
+import hellofx.dialogs.atoms.common.ViewModelBase;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
-public class ImageWithPicViewBuilder {
+public class ViewAtoms {
+    public static class ImageWithPicViewModel extends ViewModelBase {
+
+        public Label Label;
+
+        public void setText(String value) {
+            this.Label.setText(value);
+            notify("image");
+        }
+    }
+
     public static ImageWithPicViewModel buildViewModel(String resource, String imageResource) {
         ImageWithPicViewModel ViewModel = new ImageWithPicViewModel();
         var root = ViewUtils.gridPaneConstrained(1, 2, 10);
@@ -14,7 +25,6 @@ public class ImageWithPicViewBuilder {
         root.getChildren().addAll(imageView, label);
         root.setMinHeight(30);
         root.setMaxWidth(230);
-        ViewModel.ImageView = imageView;
         ViewModel.Label = label;
         ViewModel.View = root;
         return ViewModel;

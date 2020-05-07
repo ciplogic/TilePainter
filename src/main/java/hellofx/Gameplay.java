@@ -1,8 +1,7 @@
 package hellofx;
 
 import hellofx.common.Tuple;
-import hellofx.dialogs.atoms.ImageWithPicViewBuilder;
-import hellofx.dialogs.atoms.ImageWithPicViewModel;
+import hellofx.dialogs.atoms.ViewAtoms;
 import hellofx.dialogs.controllers.ResourcesController;
 import hellofx.framework.EventNames;
 import hellofx.framework.MainContext;
@@ -43,7 +42,7 @@ public class Gameplay {
         });
         stackPane = ctx.getObj(ObjectNames.mainStack);
 
-        ImageWithPicViewModel topDialog = ImageWithPicViewBuilder.buildViewModel("Gold", "data/dlg_img/cash.png");
+        var topDialog = ViewAtoms.buildViewModel("Gold", "data/dlg_img/cash.png");
         borderPane.borderPane.setRight(topDialog.View);
     }
 
