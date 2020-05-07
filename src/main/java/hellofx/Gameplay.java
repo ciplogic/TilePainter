@@ -30,6 +30,7 @@ public class Gameplay {
 
     PlayerList playerList;
     Tuple<Parent, ResourcesController> fxmlRes;
+    double idx = 0;
 
     public void setup() {
         setupRandomLevel();
@@ -42,21 +43,14 @@ public class Gameplay {
         });
         stackPane = ctx.getObj(ObjectNames.mainStack);
 
-        var topDialog = new ImageWithPicViewBuilder();
-        topDialog.setup(ImageWithPicViewModel.class);
-        topDialog.ViewModel.text = "Gold";
-        topDialog.ViewModel.setImage("data/dlg_img/cash.png");
-        borderPane.borderPane.setTop(topDialog.View);
-
-        //fxmlRes = Utilities.loadFxml("data/dialogs/res.fxml");
-        //stackPane.push(fxmlRes.getV1(), Pos.TOP_CENTER);
-        //fxmlRes.getV2().setup(imageRepo);
+        ImageWithPicViewModel topDialog = ImageWithPicViewBuilder.buildViewModel("Gold", "data/dlg_img/cash.png");
+        borderPane.borderPane.setRight(topDialog.View);
     }
 
     private void setupRandomLevel() {
         var ground = mapView.getGround();
         var random = new Random();
-        for(var i = 0; i<1000; i++){
+        for (var i = 0; i < 1000; i++) {
             var x = random.nextInt(mapView.width);
             var y = random.nextInt(mapView.height);
             ground.setValue(x, y, 7);
@@ -64,13 +58,12 @@ public class Gameplay {
 
     }
 
-    double idx = 0;
-
-    void onFrameUpdate(){
-        idx += 0.3;
+    void onFrameUpdate() {
+        idx += 0.0002;
         var painter = canvasWrap.getPainter();
         painter.clear(Color.ROYALBLUE);
-        mapView.paintGround(imageRepo, painter, (int) idx, 1);
+        var tileX = (int) (idx * 1000.0);
+        mapView.paintGround(imageRepo, painter, tileX, 1, tileX % 1000);
         //fxmlRes.getV2().setValues(200, 50, 12, 15);
     }
 }

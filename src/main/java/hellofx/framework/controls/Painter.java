@@ -10,10 +10,11 @@ public class Painter {
     private int w;
     private int h;
 
-    void setSize(int w, int h){
+    void setSize(int w, int h) {
         this.w = w;
         this.h = h;
     }
+
     public void updateGc(GraphicsContext gc) {
         this.gc = gc;
     }
@@ -27,11 +28,11 @@ public class Painter {
         gc.fillRect(0, 0, w, h);
     }
 
-    public GraphicsContext getGc(){
+    public GraphicsContext getGc() {
         return gc;
     }
 
-    void textAlign(TextAlignment alignment){
+    void textAlign(TextAlignment alignment) {
         gc.setTextAlign(alignment);
     }
 

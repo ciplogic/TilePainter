@@ -1,43 +1,22 @@
 package hellofx.dialogs.atoms;
 
-import hellofx.common.Utilities;
-import hellofx.dialogs.atoms.common.ViewBuilderBase;
-import javafx.geometry.VPos;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.paint.Color;
 
-import static hellofx.common.Utilities.setBackground;
-
-public class ImageWithPicViewBuilder
-        extends ViewBuilderBase<ImageWithPicViewModel, Parent> {
-    @Override
-    public void build() {
-        var root = new GridPane();
-        var constraint = new RowConstraints();
-        constraint.setValignment(VPos.CENTER);
-        root.getRowConstraints().add(constraint);
-        var constraint2 = new RowConstraints();
-        constraint2.setValignment(VPos.CENTER);
-        root.getRowConstraints().add(constraint2);
-        var imageView = new ImageView();
-        GridPane.setRowIndex(imageView, 0);
-        ViewModel.ImageView = imageView;
-        Label label = new Label();
-        GridPane.setRowIndex(label, 1);
-        ViewModel.Label = label;
+public class ImageWithPicViewBuilder {
+    public static ImageWithPicViewModel buildViewModel(String resource, String imageResource) {
+        ImageWithPicViewModel ViewModel = new ImageWithPicViewModel();
+        var root = ViewUtils.gridPaneConstrained(1, 2, 10);
+        var imageView = ViewUtils.imageViewFromPath(imageResource);
+        GridPane.setColumnIndex(imageView, 0);
+        var label = new Label(resource);
+        GridPane.setColumnIndex(label, 1);
+        root.getChildren().addAll(imageView, label);
         root.setMinHeight(30);
-        setBackground(root, Color.PINK);
-        View = root;
-    }
-
-    @Override
-    public void onVmChanges(String propertyName) {
-        ViewModel.ImageView.setImage(new Image(Utilities.getResource(ViewModel.imageFile)));
-        ViewModel.Label.setText(ViewModel.text);
+        root.setMaxWidth(230);
+        ViewModel.ImageView = imageView;
+        ViewModel.Label = label;
+        ViewModel.View = root;
+        return ViewModel;
     }
 }

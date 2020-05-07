@@ -14,16 +14,16 @@ import java.net.URL;
 public class Utilities {
 
     public static <TView extends Parent, TCtrl>
-        Tuple<TView, TCtrl> loadFxml(String fxmlFileName) {
+    Tuple<TView, TCtrl> loadFxml(String fxmlFileName) {
         Tuple<TView, TCtrl> result = new Tuple<>();
         FXMLLoader loader = null;
         var file = new File(fxmlFileName);
-        if (!file.exists()){
-            throw new RuntimeException("FXML file does not exist on disk: "+fxmlFileName);
+        if (!file.exists()) {
+            throw new RuntimeException("FXML file does not exist on disk: " + fxmlFileName);
         }
         var resourceUrl = file.getAbsolutePath();
         try {
-            loader = new FXMLLoader(new URL("file:"+resourceUrl));
+            loader = new FXMLLoader(new URL("file:" + resourceUrl));
         } catch (Exception e) {
             throw new RuntimeException(e.toString());
         }

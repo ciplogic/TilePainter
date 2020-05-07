@@ -14,7 +14,8 @@ public class CanvasWrap {
 
     public CanvasWrap() {
     }
-    public void setup(){
+
+    public void setup() {
         canvas = new Canvas(prefs.w, prefs.h);
         painter.setSize(prefs.w, prefs.h);
 

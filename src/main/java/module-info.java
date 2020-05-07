@@ -1,4 +1,3 @@
-
 module FxStart {
     requires javafx.base;
     requires javafx.controls;
@@ -9,8 +8,8 @@ module FxStart {
     exports hellofx;
     exports hellofx.common;
     exports hellofx.dialogs.controllers;
-    
+
     opens hellofx;
     opens hellofx.dialogs.controllers;
-    
+
 }

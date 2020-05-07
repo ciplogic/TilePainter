@@ -1,21 +1,18 @@
 package hellofx.framework;
 
-import hellofx.Gameplay;
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 
 /**
- *
  * @author ciprian
  */
 public class MainContext {
 
     Router router = new Router();
     Map<String, Object> objRepo = new HashMap<>();
-    private Map<String, Object> typeRepo = new HashMap<>();
+    private final Map<String, Object> typeRepo = new HashMap<>();
 
     public MainContext() {
         setObj("context", this);
@@ -34,12 +31,12 @@ public class MainContext {
 
     public <T> void listen(String eventName, Consumer<T> actionT) {
         router.register(eventName, (i) -> {
-            T tValue = (T)i;
+            T tValue = (T) i;
             actionT.accept(tValue);
         });
     }
 
-    public void setObj(String objName, Object obj){
+    public void setObj(String objName, Object obj) {
         objRepo.put(objName, obj);
         setObjectType(obj);
     }
@@ -55,7 +52,7 @@ public class MainContext {
         return (T) objRepo.get(objName);
     }
 
-    public <T>T inject(Class<T> objType) {
+    public <T> T inject(Class<T> objType) {
         T obj = null;
         try {
             obj = objType.newInstance();
@@ -65,9 +62,9 @@ public class MainContext {
         return injectInstance(obj);
     }
 
-    boolean hasMethod(Object obj, String methodName){
+    boolean hasMethod(Object obj, String methodName) {
         var methods = obj.getClass().getMethods();
-        for(var m:methods){
+        for (var m : methods) {
             if (m.getName().equals(methodName))
                 return true;
         }
@@ -77,7 +74,7 @@ public class MainContext {
     public <T> T injectInstance(T obj) {
         var clazz = obj.getClass();
         var fields = clazz.getFields();
-        for(var field : fields){
+        for (var field : fields) {
             var fieldType = field.getType().getCanonicalName();
             if (this.typeRepo.containsKey(fieldType)) {
                 try {
@@ -89,11 +86,11 @@ public class MainContext {
             }
         }
         setObjectType(obj);
-        if (hasMethod(obj, "setup")){
+        if (hasMethod(obj, "setup")) {
             try {
                 var method = clazz.getMethod("setup");
                 method.invoke(obj);
-            } catch ( IllegalAccessException | InvocationTargetException e) {
+            } catch (IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e.toString());
             } catch (NoSuchMethodException e) {
                 //DO nothing,

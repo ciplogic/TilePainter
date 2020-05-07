@@ -1,4 +1,3 @@
-
 package hellofx;
 
 import hellofx.framework.GamePreferences;
@@ -14,14 +13,12 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 /**
- *
  * @author ciprian
  */
 public class HelloFx extends Application {
     public static void main(String[] args) {
         Application.launch(HelloFx.class);
     }
-
 
     @Override
     public void start(Stage stage) {

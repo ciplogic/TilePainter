@@ -15,13 +15,14 @@ public class MapView {
     public int cameraHeight;
 
     GroundValues _ground;
-    public MapView(int width, int height){
+
+    public MapView(int width, int height) {
         int count = width * height;
         tiles = new Tile[count];
         this.width = width;
         this.height = height;
         _ground = new GroundValues(width, height);
-        IntStream.range(0, count).forEach(i->{
+        IntStream.range(0, count).forEach(i -> {
             tiles[i] = new Tile();
         });
     }
@@ -34,24 +35,27 @@ public class MapView {
         cameraHeight = height;
     }
 
-    public void paintGround(ImageRepo imageRepo, Painter painter, int left, int top) {
+    public void paintGround(ImageRepo imageRepo, Painter painter, int left, int top, int shiftWidth) {
         var sandImage = imageRepo.get("data/sand_small.png");
         var image = imageRepo.get("data/tree_tiled.png");
 
         var ground = getGround();
-        ground.visitRange(left, top, 13, 10, ((x, y, value) -> {
-            painter.drawImage(sandImage, 64 * x, 64 * y);
+        var tileWidth = 32;
+        var tileHeight = 18;
+        var shiftX = shiftWidth - 64;
+        ground.visitRange(left, top, tileWidth, tileHeight, ((x, y, value) -> {
+            painter.drawImage(sandImage, 64 * x + shiftX, 64 * y);
 
         }));
 
-        ground.visitRange(left, top, 13, 10, ((x, y, value) -> {
+        ground.visitRange(left, top, tileWidth, tileHeight, ((x, y, value) -> {
             if (value > 0)
-                painter.drawImage(image, 64 * x, 64 * y);
+                painter.drawImage(image, 64 * x + shiftX, 64 * y);
         }));
 
     }
 
-    public GroundValues getGround(){
+    public GroundValues getGround() {
         return _ground;
     }
 }

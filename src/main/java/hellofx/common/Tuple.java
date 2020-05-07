@@ -3,8 +3,10 @@ package hellofx.common;
 public class Tuple<K, V> {
     private V v2;
     private K v1;
-    public Tuple(){
+
+    public Tuple() {
     }
+
     public Tuple(K v1, V v2) {
         this.v1 = v1;
         this.v2 = v2;
