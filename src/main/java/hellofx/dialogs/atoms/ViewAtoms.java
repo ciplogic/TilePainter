@@ -6,13 +6,7 @@ import javafx.scene.layout.GridPane;
 
 public class ViewAtoms {
     public static class ImageWithPicViewModel extends ViewModelBase {
-
         public Label Label;
-
-        public void setText(String value) {
-            this.Label.setText(value);
-            notify("image");
-        }
     }
 
     public static ImageWithPicViewModel buildViewModel(String resource, String imageResource) {
