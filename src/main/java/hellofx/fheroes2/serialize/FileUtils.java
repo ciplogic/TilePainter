@@ -1,11 +1,15 @@
 package hellofx.fheroes2.serialize;
 
+import hellofx.fheroes2.agg.IcnKind;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.HashMap;
+import java.util.Map;
 
 public class FileUtils {
     public static boolean Exists(String fname) {
@@ -33,4 +37,30 @@ public class FileUtils {
         }
 
     }
+
+    public static Map<String, Integer> EnumFieldsOfClass(Class<?> clazz) {
+
+        var fields = IcnKind.class.getFields();
+        Map<String, Integer> _names = new HashMap<>();
+        for (var f : fields) {
+            var name = f.getName();
+            if (name.charAt(0) == '_')
+                continue;
+            Class<?> t = f.getType();
+            if (t != int.class)
+                continue;
+            if (java.lang.reflect.Modifier.isStatic(f.getModifiers())) {
+                try {
+                    var enumValue = f.getInt(null);
+                    _names.put(name, enumValue);
+                } catch (IllegalAccessException e) {
+                    throw new RuntimeException(e.toString());
+                }
+
+            }
+        }
+        return _names;
+
+    }
+
 }

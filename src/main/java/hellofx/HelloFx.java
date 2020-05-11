@@ -1,6 +1,7 @@
 package hellofx;
 
 import hellofx.fheroes2.agg.AggFile;
+import hellofx.fheroes2.agg.IcnKind;
 import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
@@ -31,6 +32,7 @@ public class HelloFx extends Application {
         }
         var aggFile = new AggFile();
         aggFile.Open("DATA/HEROES2.AGG");
+        var welcomeIcn = aggFile.RenderICNSprite(IcnKind.HEROES, 0);
 
         var context = new MainContext();
         var timer = context.inject(PerFrameTimer.class);

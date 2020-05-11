@@ -14,10 +14,14 @@ public class ByteVectorReader {
         return lo + (hi << 8);
     }
 
+    public static int toByte(byte x) {
+        return x & 0xFF;
+    }
+
     public int Get8() {
         var result = _fileContent[_pos];
         _pos++;
-        return result;
+        return toByte(result);
     }
 
     public void seek(int pos) {
