@@ -10,9 +10,9 @@ import java.util.function.Consumer;
  */
 public class MainContext {
 
+    private final Map<String, Object> typeRepo = new HashMap<>();
     Router router = new Router();
     Map<String, Object> objRepo = new HashMap<>();
-    private final Map<String, Object> typeRepo = new HashMap<>();
 
     public MainContext() {
         setObj("context", this);

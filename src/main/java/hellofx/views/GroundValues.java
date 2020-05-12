@@ -1,9 +1,9 @@
 package hellofx.views;
 
 public class GroundValues {
-    int[] _values;
     private final int _h;
     private final int _w;
+    int[] _values;
 
     public GroundValues(int w, int h) {
         _values = new int[w * h];

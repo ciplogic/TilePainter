@@ -19,5 +19,7 @@
     <orderEntry type="library" name="Maven: org.openjfx:javafx-base:win:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:14" level="project" />
     <orderEntry type="library" name="Maven: org.openjfx:javafx-fxml:win:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:14" level="project" />
+    <orderEntry type="library" name="Maven: org.openjfx:javafx-swing:win:14" level="project" />
   </component>
 </module>

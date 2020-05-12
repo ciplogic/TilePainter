@@ -8,14 +8,14 @@ public class ByteVectorReader {
         _fileContent = fileContent;
     }
 
+    public static int toByte(byte x) {
+        return x & 0xFF;
+    }
+
     public int getLE16() {
         var lo = Get8();
         var hi = Get8();
         return lo + (hi << 8);
-    }
-
-    public static int toByte(byte x) {
-        return x & 0xFF;
     }
 
     public int Get8() {

@@ -5,10 +5,6 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 
 public class ViewAtoms {
-    public static class ImageWithPicViewModel extends ViewModelBase {
-        public Label Label;
-    }
-
     public static ImageWithPicViewModel buildViewModel(String resource, String imageResource) {
         ImageWithPicViewModel ViewModel = new ImageWithPicViewModel();
         var root = ViewUtils.gridPaneConstrained(1, 2, 10);
@@ -22,5 +18,9 @@ public class ViewAtoms {
         ViewModel.Label = label;
         ViewModel.View = root;
         return ViewModel;
+    }
+
+    public static class ImageWithPicViewModel extends ViewModelBase {
+        public Label Label;
     }
 }

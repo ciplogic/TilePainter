@@ -134,9 +134,10 @@ public class AggFile {
 
         if (x >= srf.Width || y >= srf.Height)
             return;
-        var r = kb_pal[palette * 3] * 4;
-        var g = kb_pal[palette * 3 + 1] * 4;
-        var b = kb_pal[palette * 3 + 2] * 4;
+        int iPalette = toByte(palette);
+        var r = kb_pal[iPalette * 3] * 4;
+        var g = kb_pal[iPalette * 3 + 1] * 4;
+        var b = kb_pal[iPalette * 3 + 2] * 4;
         var palColor = H2Color.FromArgb(r, g, b);
         srf.SetPixel(x, y, palColor);
     }
@@ -224,17 +225,17 @@ public class AggFile {
                     } else
                         // 0xBF - skip data
                         if (0xC0 > toByte(buf[bufPos])) {
-                            pt.x += buf[bufPos] - 0x80;
+                            pt.x += toByte(buf[bufPos]) - 0x80;
                             ++bufPos;
                         } else
                             // 0xC0 - shadow
                             if (0xC0 == toByte(buf[bufPos])) {
                                 ++bufPos;
-                                if (buf[bufPos] % 4 != 0) {
-                                    c = (buf[bufPos] % 4);
+                                if (toByte(buf[bufPos]) % 4 != 0) {
+                                    c = toByte(buf[bufPos]) % 4;
                                 } else {
                                     ++bufPos;
-                                    c = buf[bufPos];
+                                    c = toByte(buf[bufPos]);
                                 }
 
                                 if (res.second == null) res.SetSize(false, sz.Width, sz.Height, true);
@@ -249,7 +250,7 @@ public class AggFile {
                                 // 0xC1
                                 if (0xC1 == toByte(buf[bufPos])) {
                                     ++bufPos;
-                                    c = buf[bufPos];
+                                    c = toByte(buf[bufPos]);
                                     ++bufPos;
                                     while (c-- != 0) {
                                         DrawPointFast(res.first, pt.x, pt.y, buf[bufPos]);
@@ -258,7 +259,7 @@ public class AggFile {
 
                                     ++bufPos;
                                 } else {
-                                    c = (buf[bufPos] - 0xC0);
+                                    c = (toByte(buf[bufPos]) - 0xC0);
                                     ++bufPos;
                                     while (c-- != 0) {
                                         DrawPointFast(res.first, pt.x, pt.y, buf[bufPos]);

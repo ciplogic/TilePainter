@@ -51,6 +51,13 @@ public class Utilities {
         root.setBackground(new Background(new BackgroundFill(color, null, null)));
     }
 
+    public static void timeIt(String message, Runnable action) {
+        var start = System.currentTimeMillis();
+        action.run();
+        var end = System.currentTimeMillis();
+        System.out.println("Time to do " + message + " is in ms: " + (end - start));
+    }
+
     public static String getResource(String path) {
         var file = new File(path);
         var result = file.toURI().toString();

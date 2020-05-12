@@ -3,6 +3,7 @@ module FxStart {
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.fxml;
+    requires javafx.swing;
     requires it.unimi.dsi.fastutil;
 
     exports hellofx;
