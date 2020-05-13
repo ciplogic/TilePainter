@@ -70,11 +70,7 @@ public class AggFile {
 
     private final Map<String, AggFat> fat = new TreeMap<>();
 
-    private int count_items;
-    private byte[] fileContent;
-
     private String filename;
-    private int size;
     private ByteVectorReader stream;
 
 
@@ -83,11 +79,11 @@ public class AggFile {
         if (!FileUtils.Exists(aggFileName))
             return false;
 
-        fileContent = FileUtils.ReadAllBytes(filename);
-        size = fileContent.length;
+        var fileContent = FileUtils.ReadAllBytes(filename);
+        var size = fileContent.length;
         stream = new ByteVectorReader(fileContent);
 
-        count_items = stream.getLE16();
+        var count_items = stream.getLE16();
 
         stream.seek(size - FATSIZENAME * count_items);
         var vectorNames = new ArrayList<String>(count_items);
@@ -140,7 +136,6 @@ public class AggFile {
         var palColor = H2Color.FromArgb(r, g, b);
         srf.SetPixel(x, y, palColor);
     }
-
 
     public int IcnSpriteCount(int icn) {
         var body = ReadICNChunk(icn);

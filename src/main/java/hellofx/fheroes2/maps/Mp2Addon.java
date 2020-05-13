@@ -2,8 +2,7 @@ package hellofx.fheroes2.maps;
 
 import hellofx.fheroes2.serialize.ByteVectorReader;
 
-import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
-import static hellofx.fheroes2.serialize.ByteVectorReader.toShort;
+import static hellofx.fheroes2.serialize.ByteVectorReader.*;
 
 public class Mp2Addon {
     public short indexAddon; // zero or next addons_t
@@ -35,8 +34,8 @@ public class Mp2Addon {
                 ", quantityN=" + toByte(quantityN) +
                 ", objectNameN2=" + toByte(objectNameN2) +
                 ", indexNameN2=" + toByte(indexNameN2) +
-                ", uniqNumberN1=" + uniqNumberN1 +
-                ", uniqNumberN2=" + uniqNumberN2 +
+                ", uniqNumberN1=" + toUnsignedInt(uniqNumberN1) +
+                ", uniqNumberN2=" + toUnsignedInt(uniqNumberN2) +
                 '}';
     }
 }
