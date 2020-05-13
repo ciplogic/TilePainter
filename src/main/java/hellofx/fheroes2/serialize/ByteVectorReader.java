@@ -12,6 +12,14 @@ public class ByteVectorReader {
         return x & 0xFF;
     }
 
+    public static int toShort(short x) {
+        return x & 0xFFFF;
+    }
+
+    public static long toUnsignedInt(int x) {
+        return x & 0x00000000ffffffffL;
+    }
+
     public int getLE16() {
         var lo = Get8();
         var hi = Get8();

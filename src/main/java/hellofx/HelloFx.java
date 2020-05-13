@@ -1,7 +1,7 @@
 package hellofx;
 
 import hellofx.fheroes2.agg.AggFile;
-import hellofx.fheroes2.agg.IcnKind;
+import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
@@ -21,9 +21,6 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.stream.IntStream;
-
-import static hellofx.common.Utilities.timeIt;
 
 /**
  * @author ciprian
@@ -51,13 +48,10 @@ public class HelloFx extends Application {
         }
         var aggFile = new AggFile();
         aggFile.Open("DATA/HEROES2.AGG");
-        timeIt("load imgs", () -> {
-            IntStream.range(1, IcnKind.LASTICN).forEach(icn -> {
-                //System.out.println("Pic: "+IcnKind.GetString(icn));
-                var welcomeIcn = aggFile.RenderICNSprite(icn, 0);
-                //var img = welcomeIcn.first.toImage();
-            });
-        });
+        aggFile.RenderICNSprite(6, 1);
+
+        var world = new World();
+        world.loadMapMp2("maps\\BROKENA.MP2");
 
         //saveToFile(img, new File("cursor.png"));
         var context = new MainContext();

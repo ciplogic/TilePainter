@@ -17,7 +17,7 @@ public class IcnHeader {
         result.width = (short) st.getLE16();
         result.height = (short) st.getLE16();
         result.type = (byte) st.get();
-        result.offsetData = (short) st.getLE32();
+        result.offsetData = st.getLE32();
 
         return result;
     }

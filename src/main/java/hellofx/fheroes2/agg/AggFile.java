@@ -70,19 +70,17 @@ public class AggFile {
 
     private final Map<String, AggFat> fat = new TreeMap<>();
 
-    private byte[] body;
     private int count_items;
     private byte[] fileContent;
 
     private String filename;
-    private String key;
     private int size;
     private ByteVectorReader stream;
 
 
-    public boolean Open(String fname) {
-        filename = fname;
-        if (!FileUtils.Exists(fname))
+    public boolean Open(String aggFileName) {
+        filename = aggFileName;
+        if (!FileUtils.Exists(aggFileName))
             return false;
 
         fileContent = FileUtils.ReadAllBytes(filename);
@@ -97,6 +95,7 @@ public class AggFile {
         for (var ii = 0; ii < count_items; ++ii) vectorNames.add(stream.toString(FATSIZENAME));
 
         stream.seek(2);
+        fat.clear();
         for (var ii = 0; ii < count_items; ++ii) {
             var itemName = vectorNames.get(ii);
             var f = new AggFat();
@@ -178,7 +177,6 @@ public class AggFile {
             sizeData = blockSize - header1.offsetData;
         }
 
-
         Render(res, header1, body, sizeData);
 
         return res;
@@ -188,7 +186,6 @@ public class AggFile {
         // start render
         var sz = new H2Size(header1.width, header1.height);
 
-        var buf = body;
         int bufPos = 6 + header1.offsetData;
         var max = bufPos + sizeData;
 
@@ -200,7 +197,7 @@ public class AggFile {
         var pt = new MutPoint();
 
         while (true) {
-            var cur = toByte(buf[bufPos]);
+            var cur = toByte(body[bufPos]);
             // 0x00 - end line
             if (0 == cur) {
                 ++pt.y;
@@ -210,32 +207,32 @@ public class AggFile {
             // 0x7F - count data
             {
                 int c;
-                if (0x80 > toByte(buf[bufPos])) {
-                    c = buf[bufPos];
+                if (0x80 > cur) {
+                    c = body[bufPos];
                     ++bufPos;
                     while (c-- != 0 && bufPos < max) {
-                        DrawPointFast(res.first, pt.x, pt.y, buf[bufPos]);
+                        DrawPointFast(res.first, pt.x, pt.y, body[bufPos]);
                         ++pt.x;
                         ++bufPos;
                     }
                 } else
                     // 0x80 - end data
-                    if (0x80 == toByte(buf[bufPos])) {
+                    if (0x80 == cur) {
                         break;
                     } else
                         // 0xBF - skip data
-                        if (0xC0 > toByte(buf[bufPos])) {
-                            pt.x += toByte(buf[bufPos]) - 0x80;
+                        if (0xC0 > cur) {
+                            pt.x += cur - 0x80;
                             ++bufPos;
                         } else
                             // 0xC0 - shadow
-                            if (0xC0 == toByte(buf[bufPos])) {
+                            if (0xC0 == cur) {
                                 ++bufPos;
-                                if (toByte(buf[bufPos]) % 4 != 0) {
-                                    c = toByte(buf[bufPos]) % 4;
+                                if (toByte(body[bufPos]) % 4 != 0) {
+                                    c = toByte(body[bufPos]) % 4;
                                 } else {
                                     ++bufPos;
-                                    c = toByte(buf[bufPos]);
+                                    c = toByte(body[bufPos]);
                                 }
 
                                 if (res.second == null) res.SetSize(false, sz.Width, sz.Height, true);
@@ -248,21 +245,21 @@ public class AggFile {
                                 ++bufPos;
                             } else
                                 // 0xC1
-                                if (0xC1 == toByte(buf[bufPos])) {
+                                if (0xC1 == cur) {
                                     ++bufPos;
-                                    c = toByte(buf[bufPos]);
+                                    c = toByte(body[bufPos]);
                                     ++bufPos;
                                     while (c-- != 0) {
-                                        DrawPointFast(res.first, pt.x, pt.y, buf[bufPos]);
+                                        DrawPointFast(res.first, pt.x, pt.y, body[bufPos]);
                                         ++pt.x;
                                     }
 
                                     ++bufPos;
                                 } else {
-                                    c = (toByte(buf[bufPos]) - 0xC0);
+                                    c = cur - 0xC0;
                                     ++bufPos;
                                     while (c-- != 0) {
-                                        DrawPointFast(res.first, pt.x, pt.y, buf[bufPos]);
+                                        DrawPointFast(res.first, pt.x, pt.y, body[bufPos]);
                                         ++pt.x;
                                     }
 
