@@ -1,6 +1,6 @@
 package hellofx.fheroes2.agg;
 
-public class H2Color {
+public class H2RgbaColor {
     public static int FromArgb(int r, int g, int b) {
         return FromArgb(r, g, b, 255);
     }

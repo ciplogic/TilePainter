@@ -133,7 +133,7 @@ public class AggFile {
         var r = kb_pal[iPalette * 3] * 4;
         var g = kb_pal[iPalette * 3 + 1] * 4;
         var b = kb_pal[iPalette * 3 + 2] * 4;
-        var palColor = H2Color.FromArgb(r, g, b);
+        var palColor = H2RgbaColor.FromArgb(r, g, b);
         srf.SetPixel(x, y, palColor);
     }
 
@@ -187,7 +187,7 @@ public class AggFile {
         res.offset = new MutPoint(header1.offsetX, header1.offsetY);
         res.SetSize(true, sz.Width, sz.Height, false);
 
-        var shadowCol = H2Color.FromArgb(0, 0, 0, 0x40);
+        var shadowCol = H2RgbaColor.FromArgb(0, 0, 0, 0x40);
 
         var pt = new MutPoint();
 
