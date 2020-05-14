@@ -3,6 +3,7 @@ package hellofx.fheroes2.castle;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
+import hellofx.fheroes2.engine.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.kingdom.MapColor;
 import hellofx.fheroes2.kingdom.RaceKind;
@@ -122,7 +123,7 @@ public class Castle {
                 default:
                     break;
             }
-            if (dwelling2 && dwelling2 >= Rand::Get (1, 100))building |= DWELLING_MONSTER2;
+            if (dwelling2 != 0 && dwelling2 >= Rand.Get(1, 100)) building |= DWELLING_MONSTER2;
         }
 
         // custom troops
@@ -148,7 +149,7 @@ public class Castle {
 
         // custom name
         st.skip(1);
-        name = Game::GetEncodeString (st.toString(13));
+        name = st.toString(13);
 
         // race
         var kingdom_race = Players::GetPlayerRace (GetColor());
