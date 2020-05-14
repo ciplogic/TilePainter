@@ -2,9 +2,15 @@ package hellofx.fheroes2.kingdom;
 
 import hellofx.fheroes2.castle.AllCastles;
 import hellofx.fheroes2.castle.Castle;
+import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.game.GameStatic;
+import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.maps.*;
+import hellofx.fheroes2.maps.objects.MapEvent;
+import hellofx.fheroes2.maps.objects.MapSign;
+import hellofx.fheroes2.maps.objects.MapSphinx;
+import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -18,9 +24,9 @@ import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class World {
     IntArrayList vec_object = new IntArrayList();
-    private short w;
+    public static World Instance;
     private short h;
-    private static World Instance;
+    public short w;
     AllCastles vec_castles = new AllCastles();
     List<Tiles> vec_tiles = new ArrayList<>();
     CapturedObjects map_captureobj = new CapturedObjects();
@@ -286,11 +292,11 @@ public class World {
                         // add castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
                         } else {
-                            var castle = GetCastle(Maps::GetPoint (findobject))
+                            var castle = GetCastle(Maps.GetPoint(findobject))
                             if (castle != null) {
                                 var bvr = new ByteVectorReader(pblock);
                                 castle.LoadFromMP2(bvr);
-                                Maps::MinimizeAreaForCastle (castle.GetCenter());
+                                Maps.MinimizeAreaForCastle(castle.GetCenter());
                                 map_captureobj.SetColor(tile.GetIndex(), castle.GetColor());
                             }
                         }
@@ -300,12 +306,12 @@ public class World {
                         // add rnd castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
                         } else {
-                            var castle = GetCastle(Maps::GetPoint (findobject))
-                            if (castle) {
+                            var castle = GetCastle(Maps.GetPoint(findobject))
+                            if (castle != null) {
                                 var bvr = new ByteVectorReader(pblock);
                                 castle.LoadFromMP2(bvr);
-                                Maps::UpdateRNDSpriteForCastle (castle.GetCenter(), castle.GetRace(), castle.isCastle())
-                                Maps::MinimizeAreaForCastle (castle.GetCenter());
+                                Maps.UpdateRNDSpriteForCastle(castle.GetCenter(), castle.GetRace(), castle.isCastle());
+                                Maps.MinimizeAreaForCastle(castle.GetCenter());
                                 map_captureobj.SetColor(tile.GetIndex(), castle.GetColor());
                             } else {
                             }
@@ -349,7 +355,7 @@ public class World {
                         // add heroes
                         if (SIZEOFMP2HEROES != pblock.length) {
                         } else if (null != (addon = tile.FindObjectConst(IcnObjConsts.OBJ_HEROES))) {
-                            pair<int, int> colorRace = Maps::TilesAddon::ColorRaceFromHeroSprite( * addon)
+                            pair<int, int> colorRace = Maps::TilesAddon::ColorRaceFromHeroSprite(addon);
                             Kingdom kingdom = GetKingdom(colorRace.first);
 
                             if (colorRace.second == RaceKind.RAND &&
@@ -358,7 +364,7 @@ public class World {
 
                             // check heroes max count
                             if (kingdom.AllowRecruitHero(false, 0)) {
-                                Heroes hero = nullptr;
+                                Heroes hero = null;
 
                                 if (pblock[17] &&
                                         pblock[18] < Heroes::BAX)
@@ -416,7 +422,7 @@ public class World {
                 }
                 // add rumors
                 else if (SIZEOFMP2RUMOR - 1 < pblock.length) {
-                    if (pblock[8]) {
+                    if (pblock[8] != 0) {
                         std::vector < u8 > subBlock(pblock.begin() + 8, pblock.end());
                         ByteVectorReader bvr (subBlock);
                         std::string valueRumor = bvr.toString(subBlock.size());
@@ -429,5 +435,9 @@ public class World {
             }
         }
         return true;
+    }
+
+    private Castle GetCastle(H2Point center) {
+        return vec_castles.Get(center);
     }
 }
