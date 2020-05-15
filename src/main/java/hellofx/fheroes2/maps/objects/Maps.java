@@ -9,4 +9,11 @@ public class Maps {
         var world = World.Instance;
         return new H2Point(index % world.w, index / world.w);
     }
+
+    public static void MinimizeAreaForCastle(H2Point getCenter) {
+    }
+
+    public static void UpdateRNDSpriteForCastle(H2Point center, int race, boolean isCastle) {
+        //TODO
+    }
 }

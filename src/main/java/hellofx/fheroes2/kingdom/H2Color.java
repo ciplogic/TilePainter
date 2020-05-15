@@ -1,6 +1,6 @@
 package hellofx.fheroes2.kingdom;
 
-public class MapColor {
+public class H2Color {
     public static final int NONE = 0x00;
     public static final int BLUE = 0x01;
     public static final int GREEN = 0x02;

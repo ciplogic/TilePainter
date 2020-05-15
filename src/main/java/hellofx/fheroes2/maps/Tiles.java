@@ -49,9 +49,9 @@ public class Tiles {
     }
 
     public int GetObject(boolean skip_hero) {
-        if (!skip_hero && IcnObjConsts.OBJ_HEROES == mp2_object) {
+        if (!skip_hero && H2Obj.OBJ_HEROES == mp2_object) {
             var hero = GetHeroes();
-            return hero != null ? hero.GetMapsObject() : IcnObjConsts.OBJ_ZERO;
+            return hero != null ? hero.GetMapsObject() : H2Obj.OBJ_ZERO;
         }
 
         return mp2_object;
@@ -60,5 +60,9 @@ public class Tiles {
     private Heroes GetHeroes() {
         //TODO
         return null;
+    }
+
+    public int GetIndex() {
+        return maps_index;
     }
 }

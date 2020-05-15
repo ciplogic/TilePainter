@@ -7,4 +7,13 @@ public class CapturedObjects {
 
     public void Set(int getIndexFromAbsPoint, int objCastle, int color) {
     }
+
+    public void SetColor(int index, int col) {
+        Get(index).SetColor(col);
+    }
+
+    private CapturedObject Get(int index) {
+        return _items.get(index);
+    }
+
 }

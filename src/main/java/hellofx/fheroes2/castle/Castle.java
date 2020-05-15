@@ -5,13 +5,18 @@ import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.engine.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
-import hellofx.fheroes2.kingdom.MapColor;
+import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.maps.objects.MapPosition;
+import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.serialize.ByteVectorReader;
+import hellofx.fheroes2.system.BitModes;
+import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
 
 import static hellofx.fheroes2.castle.BuildingKind.*;
+import static hellofx.fheroes2.castle.CastleFlags.ALLOWCASTLE;
+import static hellofx.fheroes2.castle.CastleFlags.CUSTOMARMY;
 import static hellofx.fheroes2.game.GameConsts.CASTLEMAXMONSTER;
 
 public class Castle {
@@ -19,14 +24,13 @@ public class Castle {
     public int race;
     public int building;
     public Captain captain;
-    String name;
-    MageGuild mageguild;
-    int[] dwelling = new int[CASTLEMAXMONSTER]
-    Army army = new Army();    //from MapColor enum
-    private int color;
+    public String name = "";
+    public MageGuild mageguild = new MageGuild();
+    public int[] dwelling = new int[CASTLEMAXMONSTER];
+    public Army army = new Army();    //from MapColor enum
+    public int color;
+    public BitModes bitModes = new BitModes();
 
-    {
-    }
 
     public Castle() {
     }
@@ -42,25 +46,25 @@ public class Castle {
     public void LoadFromMP2(ByteVectorReader st) {
         switch (st.get()) {
             case 0:
-                SetColor(MapColor.BLUE);
+                SetColor(H2Color.BLUE);
                 break;
             case 1:
-                SetColor(MapColor.GREEN);
+                SetColor(H2Color.GREEN);
                 break;
             case 2:
-                SetColor(MapColor.RED);
+                SetColor(H2Color.RED);
                 break;
             case 3:
-                SetColor(MapColor.YELLOW);
+                SetColor(H2Color.YELLOW);
                 break;
             case 4:
-                SetColor(MapColor.ORANGE);
+                SetColor(H2Color.ORANGE);
                 break;
             case 5:
-                SetColor(MapColor.PURPLE);
+                SetColor(H2Color.PURPLE);
                 break;
             default:
-                SetColor(MapColor.NONE);
+                SetColor(H2Color.NONE);
                 break;
         }
 
@@ -133,14 +137,14 @@ public class Castle {
 
             // set monster id
             for (var troop : troops)
-                troop.SetMonster(st.get() + 1);
+                troop.SetMonster(new Monster(st.get() + 1));
 
             // set count
             for (var troop : troops)
-                troop.SetCount(st.getLE16());
+                troop.count = (st.getLE16());
 
-            army.m_troops.Assign(troops, ARRAY_COUNT_END(troops));
-            SetModes(CUSTOMARMY);
+            army.m_troops = troops;
+            bitModes.SetModes(CUSTOMARMY);
         } else
             st.skip(15);
 
@@ -152,7 +156,7 @@ public class Castle {
         name = st.toString(13);
 
         // race
-        var kingdom_race = Players::GetPlayerRace (GetColor());
+        var kingdom_race = Players.GetPlayerRace(GetColor());
         switch (st.get()) {
             case 0:
                 race = RaceKind.KNGT;
@@ -173,23 +177,27 @@ public class Castle {
                 race = RaceKind.NECR;
                 break;
             default:
-                race = Color::NONE != GetColor() && RaceKind.ALL & kingdom_race ? kingdom_race : Race::Rand ();
+                race = H2Color.NONE != GetColor() && ((RaceKind.ALL & kingdom_race) != 0) ? kingdom_race : RaceKind.Rand();
                 break;
         }
 
         // castle
-        building |= st.get() ? BUILD_CASTLE : BUILD_TENT;
+        building |= st.get() != 0 ? BUILD_CASTLE : BUILD_TENT;
 
         // allow upgrade to castle (0 - true, 1 - false)
         if (st.get() != 0)
-            ResetModes(ALLOWCASTLE);
+            bitModes.ResetModes(ALLOWCASTLE);
         else
-            SetModes(ALLOWCASTLE);
+            bitModes.SetModes(ALLOWCASTLE);
 
         // unknown 29 byte
         //
 
         PostLoad();
+    }
+
+    public int GetColor() {
+        return color;
     }
 
     private void PostLoad() {
@@ -202,5 +210,13 @@ public class Castle {
 
     public H2Point GetCenter() {
         return mapPosition.center;
+    }
+
+    public int GetRace() {
+        return race;
+    }
+
+    public boolean isCastle() {
+        return (building & BUILD_CASTLE) != 0;
     }
 }

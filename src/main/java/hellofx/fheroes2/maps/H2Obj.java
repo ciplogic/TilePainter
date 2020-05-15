@@ -1,6 +1,6 @@
 package hellofx.fheroes2.maps;
 
-public class IcnObjConsts {
+public class H2Obj {
     public static final int OBJ_ZERO = 0x00;
     public static final int OBJ_UNKNW_02 = 0x02;
     public static final int OBJN_ALCHEMYLAB = 0x01;
