@@ -9,4 +9,8 @@ public class Kingdom {
         //TODO
         return false;
     }
+
+    public int GetRace() {
+        return 0;
+    }
 }

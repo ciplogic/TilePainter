@@ -2,11 +2,14 @@ package hellofx.fheroes2.kingdom;
 
 import hellofx.fheroes2.castle.AllCastles;
 import hellofx.fheroes2.castle.Castle;
+import hellofx.fheroes2.common.H2IntPair;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.heroes.AllHeroes;
+import hellofx.fheroes2.heroes.HeroFlags;
 import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.heroes.HeroesKinds;
 import hellofx.fheroes2.maps.*;
 import hellofx.fheroes2.maps.objects.MapEvent;
 import hellofx.fheroes2.maps.objects.MapSign;
@@ -17,6 +20,7 @@ import hellofx.fheroes2.serialize.FileUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -33,7 +37,9 @@ public class World {
     public CapturedObjects map_captureobj = new CapturedObjects();
     public MapObjects map_objects = new MapObjects();
     public AllHeroes vec_heroes = new AllHeroes();
+    public Kingdoms vec_kingdoms = new Kingdoms();
     public List<String> vec_rumors = new ArrayList<>();
+    public List<EventsDate> vec_eventsday = new ArrayList<>();
 
     {
         Instance = new World();
@@ -351,7 +357,7 @@ public class World {
                             if (hero != null) {
                                 var bvr = new ByteVectorReader(pblock);
                                 hero.LoadFromMP2(findobject, H2Color.NONE, hero.GetRace(), bvr);
-                                hero.bitModes.SetModes(Heroes::JAIL);
+                                hero.bitModes.SetModes(HeroFlags.JAIL);
                             }
                         }
                         break;
@@ -359,7 +365,7 @@ public class World {
                         // add heroes
                         if (SIZEOFMP2HEROES != pblock.length) {
                         } else if (null != (addon = tile.FindObjectConst(H2Obj.OBJ_HEROES))) {
-                            pair<int, int> colorRace = TilesAddon.ColorRaceFromHeroSprite(addon);
+                            H2IntPair colorRace = TilesAddon.ColorRaceFromHeroSprite(addon);
                             Kingdom kingdom = GetKingdom(colorRace.first);
 
                             if (colorRace.second == RaceKind.RAND &&
@@ -370,8 +376,7 @@ public class World {
                             if (kingdom.AllowRecruitHero(false, 0)) {
                                 Heroes hero = null;
 
-                                if (pblock[17] &&
-                                        pblock[18] < Heroes::BAX)
+                                if (pblock[17] != 0 && pblock[18] < HeroesKinds.BAX)
                                     hero = vec_heroes.Get(pblock[18]);
 
                                 if (hero != null || !hero.isFreeman())
@@ -386,7 +391,7 @@ public class World {
                         break;
                     case H2Obj.OBJ_SIGN:
                     case H2Obj.OBJ_BOTTLE:
-                        // add sign or buttle
+                        // add sign or bottle
                         if (SIZEOFMP2SIGN - 1 < pblock.length && 0x01 == pblock[0]) {
                             var obj = new MapSign();
                             var bvr = new ByteVectorReader(pblock);
@@ -420,17 +425,19 @@ public class World {
             else if (0x00 == pblock[0]) {
                 // add event day
                 if (SIZEOFMP2EVENT - 1 < pblock.length && 1 == pblock[42]) {
-                    vec_eventsday.emplace_back();
+                    var dayEvent = new EventsDate();
+
                     var bvr = new ByteVectorReader(pblock);
-                    vec_eventsday.back().LoadFromMP2(bvr);
+                    dayEvent.LoadFromMP2(bvr);
+                    vec_eventsday.add(dayEvent);
                 }
                 // add rumors
                 else if (SIZEOFMP2RUMOR - 1 < pblock.length) {
                     if (pblock[8] != 0) {
-                        std::vector < u8 > subBlock(pblock.begin() + 8, pblock.end());
+                        byte[] subBlock = Arrays.copyOfRange(pblock, 8, pblock.length);
                         ByteVectorReader bvr = new ByteVectorReader(subBlock);
-                        String valueRumor = bvr.toString(subBlock.size());
-                        vec_rumors.add(valueRumor)
+                        String valueRumor = bvr.toString(subBlock.length);
+                        vec_rumors.add(valueRumor);
                     }
                 }
             }
@@ -439,6 +446,11 @@ public class World {
             }
         }
         return true;
+    }
+
+    private Kingdom GetKingdom(int color) {
+
+        return vec_kingdoms.GetKingdom(color);
     }
 
 

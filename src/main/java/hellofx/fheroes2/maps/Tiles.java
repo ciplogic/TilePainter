@@ -65,4 +65,9 @@ public class Tiles {
     public int GetIndex() {
         return maps_index;
     }
+
+    public TilesAddon FindObjectConst(int objs) {
+        //TODO
+        return null;
+    }
 }

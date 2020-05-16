@@ -1,4 +1,4 @@
-package hellofx.fheroes2.engine;
+package hellofx.fheroes2.common;
 
 import java.util.concurrent.ThreadLocalRandom;
 

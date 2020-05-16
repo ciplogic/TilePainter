@@ -3,7 +3,7 @@ package hellofx.fheroes2.castle;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
-import hellofx.fheroes2.engine.Rand;
+import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;

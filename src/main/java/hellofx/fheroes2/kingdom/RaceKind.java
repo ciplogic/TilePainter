@@ -1,6 +1,6 @@
 package hellofx.fheroes2.kingdom;
 
-import hellofx.fheroes2.engine.Rand;
+import hellofx.fheroes2.common.Rand;
 
 public class RaceKind {
     public static final int NONE = 0x00;

@@ -4,6 +4,7 @@ import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.maps.IndexObject;
+import hellofx.fheroes2.serialize.ByteVectorReader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,5 +41,13 @@ public class Heroes extends HeroBase {
 
     public int GetRace() {
         return race;
+    }
+
+    public void LoadFromMP2(int map_index, int cl, int race, ByteVectorReader st) {
+    }
+
+    public boolean isFreeman() {
+        //TODO
+        return false;
     }
 }
