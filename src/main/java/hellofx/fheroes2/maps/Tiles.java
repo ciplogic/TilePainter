@@ -5,6 +5,17 @@ import hellofx.fheroes2.heroes.Heroes;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class Tiles {
+    public Addons addons_level1;
+    public Addons addons_level2; // 16
+    public int maps_index = 0;
+    public short pack_sprite_index = 0;
+    public short tile_passable = 0;
+    public byte mp2_object = 0;
+    public byte fog_colors = 0;
+    public byte quantity1 = 0;
+    public byte quantity2 = 0;
+    public byte quantity3 = 0;
+
     public void Init(int index, Mp2Tile mp2tile) {
     }
 
@@ -16,21 +27,6 @@ public class Tiles {
 
     public void AddonsSort() {
     }
-
-    public Addons addons_level1;
-    public Addons addons_level2; // 16
-
-    public int maps_index = 0;
-
-    public short pack_sprite_index = 0;
-    public short tile_passable = 0;
-
-    public byte mp2_object = 0;
-    public byte fog_colors = 0;
-
-    public byte quantity1 = 0;
-    public byte quantity2 = 0;
-    public byte quantity3 = 0;
 
     public int GetQuantity1() {
         return toByte(quantity1);

@@ -12,5 +12,7 @@ public class Settings {
     }
 
     public int GameDifficulty() {
+        //TODO
+        return 0;
     }
 }

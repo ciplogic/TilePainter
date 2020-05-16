@@ -10,6 +10,9 @@ import javafx.scene.paint.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
+import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class Utilities {
 
@@ -56,6 +59,14 @@ public class Utilities {
         action.run();
         var end = System.currentTimeMillis();
         System.out.println("Time to do " + message + " is in ms: " + (end - start));
+    }
+
+    public static <T> void resizeList(List<T> list, int newSize, Supplier<T> creator) {
+        list.clear();
+        IntStream.range(0, newSize).forEach(i -> {
+            var item = creator.get();
+            list.add(item);
+        });
     }
 
     public static String getResource(String path) {

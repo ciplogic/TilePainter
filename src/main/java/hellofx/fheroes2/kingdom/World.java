@@ -24,13 +24,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static hellofx.common.Utilities.resizeList;
 import static hellofx.fheroes2.game.GameConsts.*;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class World {
-    IntArrayList vec_object = new IntArrayList();
     public static World Instance;
-    private short h;
+
+    static {
+        Instance = new World();
+    }
+
     public short w;
     public AllCastles vec_castles = new AllCastles();
     public List<Tiles> vec_tiles = new ArrayList<>();
@@ -40,10 +44,8 @@ public class World {
     public Kingdoms vec_kingdoms = new Kingdoms();
     public List<String> vec_rumors = new ArrayList<>();
     public List<EventsDate> vec_eventsday = new ArrayList<>();
-
-    {
-        Instance = new World();
-    }
+    IntArrayList vec_object = new IntArrayList();
+    private short h;
 
     public int GetIndexFromAbsPoint(int px, int py) {
         var res = py * w + px;
@@ -108,6 +110,10 @@ public class World {
         );
         var endof_addons = fs.tell();
         fs.seek(MP2OFFSETDATA);
+        vec_tiles.clear();
+
+        resizeList(vec_tiles, w * h, Tiles::new);
+
         IntStream.range(0, w * h)
                 .forEach(index -> {
                     var mp2tile = new Mp2Tile();
