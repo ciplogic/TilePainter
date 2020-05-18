@@ -137,7 +137,7 @@ public class World {
                             break;
                     }
 
-                    var tile = new Tiles();
+                    var tile = vec_tiles.get(index);
 
                     tile.Init(index, mp2tile);
 

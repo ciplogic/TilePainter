@@ -15,4 +15,8 @@ public class Settings {
         //TODO
         return 0;
     }
+
+    public boolean PriceLoyaltyVersion() {
+        return false;
+    }
 }
