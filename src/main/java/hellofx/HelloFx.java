@@ -1,8 +1,10 @@
 package hellofx;
 
 import hellofx.fheroes2.agg.AggFile;
+import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.serialize.FileUtils;
+import hellofx.fheroes2.serialize.ResourceDownloader;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
 import hellofx.framework.controls.CanvasWrap;
@@ -42,13 +44,15 @@ public class HelloFx extends Application {
     @Override
     public void start(Stage stage) {
         if (!FileUtils.Exists("DATA/HEROES2.AGG")) {
-            var urlToDownload = "https://github.com/ciplogic/fheroes2enh/releases/download/0.9.1/h2demo.zip";
-            FileUtils.downloadFile(urlToDownload, "h2demo.zip");
+            ResourceDownloader.downloadAllPacks(".");
             return;
         }
         var aggFile = new AggFile();
         aggFile.Open("DATA/HEROES2.AGG");
         aggFile.RenderICNSprite(6, 1);
+
+        var engine = new Engine();
+        engine.loadTiles(aggFile);
 
         var world = new World();
         world.loadMapMp2("maps\\BROKENA.MP2");
