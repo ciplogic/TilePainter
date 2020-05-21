@@ -1,15 +1,15 @@
 package hellofx.fheroes2.common;
 
 import hellofx.fheroes2.agg.AggFile;
-import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.agg.TilKind;
 import hellofx.fheroes2.serialize.ByteVectorReader;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SurfaceList {
-    List<Bitmap> _surfaces = new ArrayList<>();
+    public List<Image> _surfaces = new ArrayList<>();
 
     public SurfaceList() {
 
@@ -34,7 +34,10 @@ public class SurfaceList {
         // check size
         if (body.length == body_size && count <= max) {
             for (var ii = 0; ii < count; ++ii) {
-                _surfaces.add(agg.RenderImageFromArray(body, 6 + ii * tile_size, width, height));
+                var bitmap = agg.RenderImageFromArray(body, 6 + ii * tile_size, width, height);
+                var image = bitmap.doublePictureAa().toImage();
+                //var image = bitmap.doublePicture().toImage();
+                _surfaces.add(image);
             }
 
             return true;

@@ -1,8 +1,11 @@
 package hellofx.game;
 
+import hellofx.fheroes2.agg.TilKind;
+import hellofx.fheroes2.common.Engine;
 import hellofx.framework.controls.Painter;
 import hellofx.graphics.ImageRepo;
 import hellofx.views.GroundValues;
+import javafx.scene.image.Image;
 
 import java.util.stream.IntStream;
 
@@ -35,8 +38,9 @@ public class MapView {
         cameraHeight = height;
     }
 
-    public void paintGround(ImageRepo imageRepo, Painter painter, int left, int top, int shiftWidth) {
-        var sandImage = imageRepo.get("data/sand_small.png");
+    public void paintGround(Engine engine, ImageRepo imageRepo, Painter painter, int left, int top, int shiftWidth) {
+        //var sandImage = imageRepo.get("data/sand_small.png");
+        Image sandImage = engine.surfaces[TilKind.GROUND32]._surfaces.get(32);
         var image = imageRepo.get("data/tree_tiled.png");
 
         var ground = getGround();

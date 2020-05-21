@@ -5,13 +5,13 @@ import hellofx.fheroes2.agg.TilKind;
 
 public class Engine {
 
-    SurfaceList[] surfaceLists = new SurfaceList[TilKind.LASTTIL];
+    public SurfaceList[] surfaces = new SurfaceList[TilKind.LASTTIL];
 
     public void loadTiles(AggFile agg) {
         for (var i = 0; i < TilKind.LASTTIL; i++) {
             SurfaceList surface = new SurfaceList();
             surface.loadFromTil(agg, i);
-            surfaceLists[i] = surface;
+            surfaces[i] = surface;
         }
     }
 }

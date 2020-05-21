@@ -43,22 +43,21 @@ public class HelloFx extends Application {
 
     @Override
     public void start(Stage stage) {
+        var context = new MainContext();
+
         if (!FileUtils.Exists("DATA/HEROES2.AGG")) {
             ResourceDownloader.downloadAllPacks(".");
             return;
         }
-        var aggFile = new AggFile();
+        var aggFile = context.inject(AggFile.class);
         aggFile.Open("DATA/HEROES2.AGG");
-        aggFile.RenderICNSprite(6, 1);
 
-        var engine = new Engine();
-        engine.loadTiles(aggFile);
+        var engine = context.inject(Engine.class);
 
         var world = new World();
         world.loadMapMp2("maps\\BROKENA.MP2");
 
         //saveToFile(img, new File("cursor.png"));
-        var context = new MainContext();
         var timer = context.inject(PerFrameTimer.class);
         context.inject(GamePreferences.class);
         context.inject(ImageRepo.class);

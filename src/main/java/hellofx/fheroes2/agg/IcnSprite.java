@@ -14,5 +14,19 @@ public class IcnSprite {
         else
             second = bmp;
     }
+
+    public void doubleImage(boolean useAntialiasing) {
+        if (useAntialiasing) {
+            if (first != null)
+                first = first.doublePictureAa();
+            if (second != null)
+                second = second.doublePictureAa();
+        } else {
+            if (first != null)
+                first = first.doublePicture();
+            if (second != null)
+                second = second.doublePicture();
+        }
+    }
 }
 
