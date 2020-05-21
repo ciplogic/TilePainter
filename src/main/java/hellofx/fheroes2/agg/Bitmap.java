@@ -20,6 +20,15 @@ public class Bitmap {
         pixels[Width * y + x] = palColor;
     }
 
+    public void SetPixelDirect(int index, int palColor) {
+        pixels[index] = palColor;
+    }
+
+    public int GetIndex(int x, int y) {
+        return Width * y + x;
+    }
+
+
     private static boolean areEqualFloats(double v1, double v2) {
         return Math.abs(v1 - v2) < 1e-5;
     }
@@ -37,6 +46,7 @@ public class Bitmap {
                 result.SetPixel(x * 2 + 1, y * 2, pixel);
                 result.SetPixel(x * 2, y * 2 + 1, pixel);
                 result.SetPixel(x * 2 + 1, y * 2 + 1, pixel);
+
             }
         }
         return result;

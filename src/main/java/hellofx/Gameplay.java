@@ -22,8 +22,6 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-import static hellofx.common.Utilities.timeIt;
-
 public class Gameplay {
     public MainContext ctx;
     public CanvasWrap canvasWrap;
@@ -41,6 +39,7 @@ public class Gameplay {
     Tuple<Parent, ResourcesController> fxmlRes;
     double idx = 0;
     private Image heroesImg;
+    private Image heroesImgSmooth;
 
     public void setup() {
         setupRandomLevel();
@@ -57,10 +56,9 @@ public class Gameplay {
         borderPane.borderPane.setRight(topDialog.View);
 
         engine.loadTiles(aggFile);
-        for (var i = 0; i < 100; i++)
-            timeIt("doubling image " + i, () -> {
-                this.heroesImg = aggFile.RenderICNSprite(IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
-            });
+
+        this.heroesImg = aggFile.RenderICNSprite(IcnKind.HEROES, 0).first.doublePicture().toImage();
+        this.heroesImgSmooth = aggFile.RenderICNSprite(IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
 
     }
 
@@ -81,7 +79,9 @@ public class Gameplay {
         painter.clear(Color.ROYALBLUE);
         var tileX = (int) (idx * 1000.0);
         //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
+        painter.drawImage(heroesImgSmooth, 0, 0);
         painter.drawImage(heroesImg, 0, 0);
+
 
         //fxmlRes.getV2().setValues(200, 50, 12, 15);
     }
