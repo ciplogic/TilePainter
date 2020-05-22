@@ -1,6 +1,6 @@
 package hellofx.fheroes2.maps.objects;
 
-import hellofx.fheroes2.maps.resource.Artifact;
+import hellofx.fheroes2.resource.Artifact;
 
 public class MapArtifact extends MapObjectSimple {
     Artifact artifact = new Artifact();

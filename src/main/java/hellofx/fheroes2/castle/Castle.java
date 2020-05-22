@@ -15,8 +15,7 @@ import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
 
 import static hellofx.fheroes2.castle.BuildingKind.*;
-import static hellofx.fheroes2.castle.CastleFlags.ALLOWCASTLE;
-import static hellofx.fheroes2.castle.CastleFlags.CUSTOMARMY;
+import static hellofx.fheroes2.castle.CastleFlags.*;
 import static hellofx.fheroes2.game.GameConsts.CASTLEMAXMONSTER;
 
 public class Castle {
@@ -36,6 +35,7 @@ public class Castle {
     }
 
     public Castle(int cx, int cy, int race) {
+        //TODO
     }
 
     public boolean isPosition(H2Point center) {
@@ -201,6 +201,85 @@ public class Castle {
     }
 
     private void PostLoad() {
+        //TODO
+        // dwelling pack
+        if ((building & DWELLING_MONSTER1) != 0) dwelling[0] = new Monster(race, DWELLING_MONSTER1).GetGrown();
+        if ((building & DWELLING_MONSTER2) != 0) dwelling[1] = new Monster(race, DWELLING_MONSTER2).GetGrown();
+        if ((building & DWELLING_UPGRADE2) != 0) dwelling[1] = new Monster(race, DWELLING_UPGRADE2).GetGrown();
+        if ((building & DWELLING_MONSTER3) != 0) dwelling[2] = new Monster(race, DWELLING_MONSTER3).GetGrown();
+        if ((building & DWELLING_UPGRADE3) != 0) dwelling[2] = new Monster(race, DWELLING_UPGRADE3).GetGrown();
+        if ((building & DWELLING_MONSTER4) != 0) dwelling[3] = new Monster(race, DWELLING_MONSTER4).GetGrown();
+        if ((building & DWELLING_UPGRADE4) != 0) dwelling[3] = new Monster(race, DWELLING_UPGRADE4).GetGrown();
+        if ((building & DWELLING_MONSTER5) != 0) dwelling[4] = new Monster(race, DWELLING_MONSTER5).GetGrown();
+        if ((building & DWELLING_UPGRADE5) != 0) dwelling[4] = new Monster(race, DWELLING_UPGRADE5).GetGrown();
+        if ((building & DWELLING_MONSTER6) != 0) dwelling[5] = new Monster(race, DWELLING_MONSTER6).GetGrown();
+        if ((building & DWELLING_UPGRADE6) != 0) dwelling[5] = new Monster(race, DWELLING_UPGRADE6).GetGrown();
+        if ((building & DWELLING_UPGRADE7) != 0) dwelling[5] = new Monster(race, DWELLING_UPGRADE7).GetGrown();
+
+        // fix upgrade dwelling dependend from race
+        switch (race) {
+            case RaceKind.BARB:
+                building &= ~(DWELLING_UPGRADE3 | DWELLING_UPGRADE6);
+                break;
+            case RaceKind.SORC:
+                building &= ~(DWELLING_UPGRADE5 | DWELLING_UPGRADE6);
+                break;
+            case RaceKind.WRLK:
+                building &= ~(DWELLING_UPGRADE2 | DWELLING_UPGRADE3 | DWELLING_UPGRADE5);
+                break;
+            case RaceKind.WZRD:
+                building &= ~(DWELLING_UPGRADE2 | DWELLING_UPGRADE4);
+                break;
+            case RaceKind.NECR:
+                building &= ~DWELLING_UPGRADE6;
+                break;
+            default:
+                break;
+        }
+
+        army.SetColor(GetColor());
+
+        // fix captain
+        if ((building & BUILD_CAPTAIN) != 0)
+            captain.LoadDefaults(HeroType.CAPTAIN, race);
+
+        // MageGuild
+        mageguild.Builds(race, HaveLibraryCapability());
+        // educate heroes and captain
+        EducateHeroes();
+
+        // AI troops auto pack for gray towns
+        if (H2Color.NONE == GetColor() &&
+                !bitModes.Modes(CUSTOMARMY))
+            JoinRNDArmy();
+
+        // fix shipyard
+        if (!HaveNearlySea()) building &= ~BUILD_SHIPYARD;
+
+        // remove tavern from necromancer castle
+        if (RaceKind.NECR == race && ((building & BUILD_TAVERN) != 0)) {
+            building &= ~BUILD_TAVERN;
+            if (Settings.Get().PriceLoyaltyVersion())
+                building |= BUILD_SHRINE;
+        }
+
+        bitModes.SetModes(ALLOWBUILD);
+    }
+
+    private boolean HaveNearlySea() {
+        //TODO
+        return false;
+    }
+
+    private void JoinRNDArmy() {
+        //TODO
+    }
+
+    private boolean HaveLibraryCapability() {
+        return race == RaceKind.WZRD;
+    }
+
+    private void EducateHeroes() {
         //TODO
     }
 

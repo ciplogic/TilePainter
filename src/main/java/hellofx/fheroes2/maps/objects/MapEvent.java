@@ -1,7 +1,7 @@
 package hellofx.fheroes2.maps.objects;
 
-import hellofx.fheroes2.maps.resource.Artifact;
-import hellofx.fheroes2.maps.resource.Funds;
+import hellofx.fheroes2.resource.Artifact;
+import hellofx.fheroes2.resource.Funds;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 
 public class MapEvent extends MapObjectSimple {

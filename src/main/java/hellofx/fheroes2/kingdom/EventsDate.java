@@ -1,6 +1,6 @@
 package hellofx.fheroes2.kingdom;
 
-import hellofx.fheroes2.maps.resource.Funds;
+import hellofx.fheroes2.resource.Funds;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 
 public class EventsDate {
