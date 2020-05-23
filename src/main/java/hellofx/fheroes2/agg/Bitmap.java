@@ -5,10 +5,17 @@ import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
+import static java.lang.Math.min;
+
 public class Bitmap {
     private final int[] pixels;
     public int Width;
     public int Height;
+
+    public static final Bitmap Empty = new Bitmap(0, 0);
 
     public Bitmap(int width, int height) {
         this.Width = width;
@@ -16,8 +23,14 @@ public class Bitmap {
         pixels = new int[width * height];
     }
 
-    public void SetPixel(int x, int y, int palColor) {
-        pixels[Width * y + x] = palColor;
+    public Bitmap(Bitmap other) {
+        this.Width = other.Width;
+        this.Height = other.Height;
+        this.pixels = Arrays.copyOf(other.pixels, other.pixels.length);
+    }
+
+    public void SetPixel(int x, int y, int argbColor) {
+        pixels[Width * y + x] = argbColor;
     }
 
     public void SetPixelDirect(int index, int palColor) {
@@ -112,4 +125,67 @@ public class Bitmap {
             return;
         srf.SetPixel(x, y, Pixel.paletteToArgb(palette));
     }
+
+    public boolean isValid() {
+        return Width != 0;
+    }
+
+    public Bitmap RenderReflect(int shape /* 0: none, 1 : vert, 2: horz, 3: both */) {
+        Bitmap res = new Bitmap(Width, Height);
+
+        switch (shape % 4) {
+            // normal
+            default:
+                IntStream.range(0, Width * Height).forEach(ix -> res.pixels[ix] = pixels[ix]);
+                break;
+
+            // vertical reflect
+            case 1:
+
+                for (int yy = 0; yy < Height; ++yy)
+                    for (int xx = 0; xx < Width; ++xx)
+                        res.SetPixel(xx, Height - yy - 1, GetPixel(xx, yy));
+                break;
+
+            // horizontal reflect
+            case 2:
+                for (int yy = 0; yy < Height; ++yy)
+                    for (int xx = 0; xx < Width; ++xx)
+                        res.SetPixel(Width - xx - 1, yy, GetPixel(xx, yy));
+                break;
+
+            // both variants
+            case 3:
+                for (int yy = 0; yy < Height; ++yy)
+                    for (int xx = 0; xx < Width; ++xx)
+                        res.SetPixel(Width - xx - 1, Height - yy - 1, GetPixel(xx, yy));
+                break;
+        }
+        return res;
+    }
+
+    public void BlitTo(Bitmap res) {
+        var minWidth = min(res.Width, Width);
+        var minHeight = min(res.Height, Height);
+        for (int y = 0; y < minHeight; ++y) {
+            for (int x = 0; x < minWidth; ++x) {
+                res.setPixelBlended(x, y, GetPixel(x, y));
+            }
+        }
+    }
+
+    private void setPixelBlended(int x, int y, int pixel) {
+        var a = Pixel.getA(pixel);
+        if (a == 255) {
+            SetPixel(x, y, pixel);
+            return;
+        }
+        if (a == 0) {
+            return;
+        }
+        var srcPixel = GetPixel(x, y);
+        int newPixel = Pixel.lerpPixelsI(srcPixel, pixel, a);
+        SetPixel(x, y, newPixel);
+    }
+
 }

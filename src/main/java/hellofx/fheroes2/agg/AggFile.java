@@ -69,6 +69,7 @@ public class AggFile {
         // hard fix artifact "ultimate stuff" sprite for loyalty version
         return Read(IcnKind.GetString(icn));
     }
+
     public int IcnSpriteCount(int icn) {
         var body = ReadICNChunk(icn);
         if (body.length == 0) return 0;
@@ -198,6 +199,35 @@ public class AggFile {
         }
     }
 
+    public Bitmap GetICN(int icn, int index, boolean reflect) {
+        return null;
+    }
+
+    void LoadICN(int icn, int index, boolean reflect) {
+
+    }
+
+    boolean LoadOrgICN(int icn, int index, boolean reflect) {
+        //TODO:
+        return false;
+    }
+
+    /**
+     * In FHeroes2 it was returning false, now it would return null if nothing is to render
+     *
+     * @param sp
+     * @param icn
+     * @param index
+     * @param reflect
+     * @return
+     */
+    Bitmap LoadOrgICN(Bitmap sp, int icn, int index, boolean reflect) {
+        IcnSprite icnSprite = RenderICNSprite(icn, index);
+
+        if (!icnSprite.isValid())
+            return null;
+        return icnSprite.CreateSprite(reflect, !IcnKind.SkipLocalAlpha(icn));
+    }
 
     public Bitmap RenderImageFromArray(byte[] body, int startIndex, int width, int height) {
         var imgNumbers = new Bitmap(width, height);

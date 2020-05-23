@@ -28,5 +28,20 @@ public class IcnSprite {
                 second = second.doublePicture();
         }
     }
+
+    public Bitmap CreateSprite(boolean reflect, boolean shadow) {
+        var res = new Bitmap(first.Width, first.Height);
+        first.BlitTo(res);
+
+        if (shadow && second.isValid())
+            second.BlitTo(res);
+
+        return new Sprite(reflect ? res.RenderReflect(2) : res, offset.x, offset.y);
+    }
+
+    public boolean isValid() {
+        return first.isValid();
+    }
+
 }
 

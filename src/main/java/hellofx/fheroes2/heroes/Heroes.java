@@ -1,5 +1,7 @@
 package hellofx.fheroes2.heroes;
 
+import hellofx.fheroes2.agg.Agg;
+import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.kingdom.ColorBase;
@@ -8,6 +10,12 @@ import hellofx.fheroes2.serialize.ByteVectorReader;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static hellofx.fheroes2.agg.IcnKind.MINIPORT;
+import static hellofx.fheroes2.agg.IcnKind.PORTMEDI;
+import static hellofx.fheroes2.heroes.HeroPortraitSize.*;
+import static hellofx.fheroes2.heroes.HeroesKinds.BAX;
+import static hellofx.fheroes2.heroes.HeroesKinds.SANDYSANDY;
 
 public class Heroes extends HeroBase {
     public String name;
@@ -53,5 +61,25 @@ public class Heroes extends HeroBase {
     public boolean isFreeman() {
         //TODO
         return false;
+    }
+
+    public Bitmap GetPortrait(int id, int type) {
+        if (HeroesKinds.UNKNOWN == id) {
+            return Bitmap.Empty;
+        }
+        switch (type) {
+            case PORT_BIG:
+                return Agg.GetICN(PORTxxxx(id), 0);
+            case PORT_MEDIUM:
+                return SANDYSANDY > id
+                        ? Agg.GetICN(PORTMEDI, id + 1)
+                        : Agg.GetICN(PORTMEDI, BAX + 1);
+            case PORT_SMALL:
+                return SANDYSANDY > id ? Agg.GetICN(MINIPORT, id) : Agg.GetICN(MINIPORT, BAX);
+            default:
+                break;
+        }
+
+        return Bitmap.Empty;
     }
 }

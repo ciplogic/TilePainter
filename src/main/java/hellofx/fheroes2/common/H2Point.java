@@ -13,6 +13,11 @@ public class H2Point {
     public H2Point() {
     }
 
+    public H2Point(H2Point pt) {
+        x = pt.x;
+        y = pt.y;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
