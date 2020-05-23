@@ -5,4 +5,8 @@ public class Kingdoms {
         //TODO
         return null;
     }
+
+    public void Init() {
+        //TODO
+    }
 }

@@ -34,6 +34,10 @@ public class Heroes extends HeroBase {
 
     public List<IndexObject> visit_object = new ArrayList<>();
 
+    public Heroes(int heroid, int rc) {
+        super();
+    }
+
     public int GetMapsObject() {
         //TODO
         return 0;

@@ -19,4 +19,8 @@ public class Settings {
     public boolean PriceLoyaltyVersion() {
         return false;
     }
+
+    public boolean IS_DEVEL() {
+        return false;
+    }
 }

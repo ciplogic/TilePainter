@@ -55,7 +55,7 @@ public class HelloFx extends Application {
         var engine = context.inject(Engine.class);
 
         var world = new World();
-        world.loadMapMp2("maps\\BROKENA.MP2");
+        world.loadMapMp2("maps/BROKENA.MP2");
 
         //saveToFile(img, new File("cursor.png"));
         var timer = context.inject(PerFrameTimer.class);

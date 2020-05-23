@@ -10,4 +10,7 @@ public class AllCastles extends VecCastles {
                 .findFirst().orElse(null);
 
     }
+
+    public void Init() {
+    }
 }

@@ -56,6 +56,7 @@ public class World {
     public boolean loadMapMp2(String fileName) {
         if (!FileUtils.Exists(fileName))
             return false;
+        Defaults();
         var vectorBytes = FileUtils.ReadAllBytes(fileName);
         var fs = new ByteVectorReader(vectorBytes);
 
@@ -452,6 +453,16 @@ public class World {
             }
         }
         return true;
+    }
+
+    private void Defaults() {
+        // playing kingdom
+        vec_kingdoms.Init();
+
+        // initialize all heroes
+        vec_heroes.Init();
+
+        vec_castles.Init();
     }
 
     private Kingdom GetKingdom(int color) {

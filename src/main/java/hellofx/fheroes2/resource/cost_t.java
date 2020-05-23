@@ -19,6 +19,8 @@ public class cost_t {
         this.gems = (short) gems;
     }
 
+    public static cost_t NONE = new cost_t(0, 0, 0, 0, 0, 0, 0);
+
     public cost_t() {
     }
 }
