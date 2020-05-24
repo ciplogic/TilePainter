@@ -1,10 +1,10 @@
 package hellofx;
 
-import hellofx.fheroes2.agg.AggFile;
+import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
+import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
-import hellofx.fheroes2.serialize.FileUtils;
-import hellofx.fheroes2.serialize.ResourceDownloader;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
 import hellofx.framework.controls.CanvasWrap;
@@ -45,19 +45,16 @@ public class HelloFx extends Application {
     public void start(Stage stage) {
         var context = new MainContext();
 
-        if (!FileUtils.Exists("DATA/HEROES2.AGG")) {
-            ResourceDownloader.downloadAllPacks(".");
-            return;
-        }
-        var aggFile = context.inject(AggFile.class);
-        aggFile.Open("DATA/HEROES2.AGG");
-
+        Agg.Get().setup();
         var engine = context.inject(Engine.class);
 
         var world = new World();
         world.loadMapMp2("maps/BROKENA.MP2");
 
-        //saveToFile(img, new File("cursor.png"));
+        var hero = new Heroes(26, RaceKind.SORC);
+        var heroBmp = Heroes.GetPortrait(hero.portrait, 1);
+        var img = heroBmp.toImage();
+        saveToFile(img, new File("cursor.png"));
         var timer = context.inject(PerFrameTimer.class);
         context.inject(GamePreferences.class);
         context.inject(ImageRepo.class);

@@ -6,7 +6,6 @@ import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 import static java.lang.Math.min;
 
@@ -27,6 +26,10 @@ public class Bitmap {
         this.Width = other.Width;
         this.Height = other.Height;
         this.pixels = Arrays.copyOf(other.pixels, other.pixels.length);
+    }
+
+    public static boolean isValid(Bitmap bitmap) {
+        return bitmap != null && bitmap.isValid();
     }
 
     public void SetPixel(int x, int y, int argbColor) {
@@ -130,35 +133,34 @@ public class Bitmap {
         return Width != 0;
     }
 
-    public Bitmap RenderReflect(int shape /* 0: none, 1 : vert, 2: horz, 3: both */) {
-        Bitmap res = new Bitmap(Width, Height);
+    public static Bitmap RenderReflect(Bitmap _this, int shape /* 0: none, 1 : vert, 2: horz, 3: both */) {
+        Bitmap res = new Bitmap(_this.Width, _this.Height);
 
         switch (shape % 4) {
             // normal
             default:
-                IntStream.range(0, Width * Height).forEach(ix -> res.pixels[ix] = pixels[ix]);
-                break;
+                return new Bitmap(_this);
 
             // vertical reflect
             case 1:
 
-                for (int yy = 0; yy < Height; ++yy)
-                    for (int xx = 0; xx < Width; ++xx)
-                        res.SetPixel(xx, Height - yy - 1, GetPixel(xx, yy));
+                for (int yy = 0; yy < _this.Height; ++yy)
+                    for (int xx = 0; xx < _this.Width; ++xx)
+                        res.SetPixel(xx, _this.Height - yy - 1, _this.GetPixel(xx, yy));
                 break;
 
             // horizontal reflect
             case 2:
-                for (int yy = 0; yy < Height; ++yy)
-                    for (int xx = 0; xx < Width; ++xx)
-                        res.SetPixel(Width - xx - 1, yy, GetPixel(xx, yy));
+                for (int yy = 0; yy < _this.Height; ++yy)
+                    for (int xx = 0; xx < _this.Width; ++xx)
+                        res.SetPixel(_this.Width - xx - 1, yy, _this.GetPixel(xx, yy));
                 break;
 
             // both variants
             case 3:
-                for (int yy = 0; yy < Height; ++yy)
-                    for (int xx = 0; xx < Width; ++xx)
-                        res.SetPixel(Width - xx - 1, Height - yy - 1, GetPixel(xx, yy));
+                for (int yy = 0; yy < _this.Height; ++yy)
+                    for (int xx = 0; xx < _this.Width; ++xx)
+                        res.SetPixel(_this.Width - xx - 1, _this.Height - yy - 1, _this.GetPixel(xx, yy));
                 break;
         }
         return res;

@@ -1,6 +1,8 @@
 package hellofx.fheroes2.heroes;
 
 import hellofx.fheroes2.maps.objects.MapPosition;
+import hellofx.fheroes2.resource.BagArtifacts;
+import hellofx.fheroes2.spell.SpellBook;
 import hellofx.fheroes2.system.BitModes;
 
 import static hellofx.fheroes2.agg.IcnKind.*;
@@ -9,6 +11,20 @@ public class HeroBase {
     public BitModes bitModes = new BitModes();
     public MapPosition mapPosition = new MapPosition();
     public Primary primary = new Primary();
+
+
+    int magic_point;
+    int move_point;
+
+    SpellBook spell_book = new SpellBook();
+    BagArtifacts bag_artifacts = new BagArtifacts();
+
+    public HeroBase(int type, int race) {
+        LoadDefaults(type, race);
+    }
+
+    private void LoadDefaults(int type, int race) {
+    }
 
     public static int PORTxxxx(int heroId) {
         return switch (heroId) {

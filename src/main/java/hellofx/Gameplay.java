@@ -3,7 +3,8 @@ package hellofx;
 import hellofx.common.Tuple;
 import hellofx.dialogs.atoms.ViewAtoms;
 import hellofx.dialogs.controllers.ResourcesController;
-import hellofx.fheroes2.agg.AggFile;
+import hellofx.fheroes2.agg.Agg;
+import hellofx.fheroes2.agg.AggPaint;
 import hellofx.fheroes2.agg.IcnKind;
 import hellofx.fheroes2.common.Engine;
 import hellofx.framework.EventNames;
@@ -32,7 +33,7 @@ public class Gameplay {
     public MainBorderPane borderPane;
 
     public Engine engine;
-    public AggFile aggFile;
+    public Agg aggFile;
 
 
     PlayerList playerList;
@@ -57,8 +58,8 @@ public class Gameplay {
 
         engine.loadTiles(aggFile);
 
-        this.heroesImg = aggFile.RenderICNSprite(IcnKind.HEROES, 0).first.doublePicture().toImage();
-        this.heroesImgSmooth = aggFile.RenderICNSprite(IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
+        this.heroesImg = AggPaint.RenderICNSprite(IcnKind.HEROES, 0).first.doublePicture().toImage();
+        this.heroesImgSmooth = AggPaint.RenderICNSprite(IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
 
     }
 

@@ -43,7 +43,9 @@ public class Heroes extends HeroBase {
     public List<IndexObject> visit_object = new ArrayList<>();
 
     public Heroes(int heroid, int rc) {
-        super();
+        super(HeroType.HEROES, rc);
+        hid = heroid;
+        portrait = heroid;
     }
 
     public int GetMapsObject() {
@@ -63,7 +65,7 @@ public class Heroes extends HeroBase {
         return false;
     }
 
-    public Bitmap GetPortrait(int id, int type) {
+    public static Bitmap GetPortrait(int id, int type) {
         if (HeroesKinds.UNKNOWN == id) {
             return Bitmap.Empty;
         }

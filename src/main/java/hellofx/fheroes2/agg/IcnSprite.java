@@ -33,10 +33,10 @@ public class IcnSprite {
         var res = new Bitmap(first.Width, first.Height);
         first.BlitTo(res);
 
-        if (shadow && second.isValid())
+        if (shadow && Bitmap.isValid(second))
             second.BlitTo(res);
 
-        return new Sprite(reflect ? res.RenderReflect(2) : res, offset.x, offset.y);
+        return new Sprite(reflect ? Bitmap.RenderReflect(res, 2) : res, offset.x, offset.y);
     }
 
     public boolean isValid() {

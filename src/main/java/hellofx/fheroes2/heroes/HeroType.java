@@ -1,4 +1,4 @@
-package hellofx.fheroes2.castle;
+package hellofx.fheroes2.heroes;
 
 public class HeroType {
     public static final int UNDEFINED = 0;
