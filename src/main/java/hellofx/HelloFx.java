@@ -3,6 +3,7 @@ package hellofx;
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.framework.GamePreferences;
@@ -51,8 +52,8 @@ public class HelloFx extends Application {
         var world = new World();
         world.loadMapMp2("maps/BROKENA.MP2");
 
-        var hero = new Heroes(26, RaceKind.SORC);
-        var heroBmp = Heroes.GetPortrait(hero.portrait, 1);
+        var hero = new Heroes(HeroesKind.REBECCA, RaceKind.SORC);
+        var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();
         var img = heroBmp.toImage();
         saveToFile(img, new File("cursor.png"));
         var timer = context.inject(PerFrameTimer.class);

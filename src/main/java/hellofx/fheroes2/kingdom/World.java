@@ -9,7 +9,7 @@ import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.heroes.AllHeroes;
 import hellofx.fheroes2.heroes.HeroFlags;
 import hellofx.fheroes2.heroes.Heroes;
-import hellofx.fheroes2.heroes.HeroesKinds;
+import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.maps.*;
 import hellofx.fheroes2.maps.objects.MapEvent;
 import hellofx.fheroes2.maps.objects.MapSign;
@@ -383,7 +383,7 @@ public class World {
                             if (kingdom.AllowRecruitHero(false, 0)) {
                                 Heroes hero = null;
 
-                                if (pblock[17] != 0 && pblock[18] < HeroesKinds.BAX)
+                                if (pblock[17] != 0 && pblock[18] < HeroesKind.BAX)
                                     hero = vec_heroes.Get(pblock[18]);
 
                                 if (hero != null || !hero.isFreeman())

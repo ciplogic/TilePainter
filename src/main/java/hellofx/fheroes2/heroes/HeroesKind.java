@@ -1,6 +1,6 @@
 package hellofx.fheroes2.heroes;
 
-public class HeroesKinds {
+public class HeroesKind {
     // knight
     public static final int LORDKILBURN = 0;
     public static final int SIRGALLANTH = 1;

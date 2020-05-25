@@ -14,8 +14,8 @@ import java.util.List;
 import static hellofx.fheroes2.agg.IcnKind.MINIPORT;
 import static hellofx.fheroes2.agg.IcnKind.PORTMEDI;
 import static hellofx.fheroes2.heroes.HeroPortraitSize.*;
-import static hellofx.fheroes2.heroes.HeroesKinds.BAX;
-import static hellofx.fheroes2.heroes.HeroesKinds.SANDYSANDY;
+import static hellofx.fheroes2.heroes.HeroesKind.BAX;
+import static hellofx.fheroes2.heroes.HeroesKind.SANDYSANDY;
 
 public class Heroes extends HeroBase {
     public String name;
@@ -66,7 +66,7 @@ public class Heroes extends HeroBase {
     }
 
     public static Bitmap GetPortrait(int id, int type) {
-        if (HeroesKinds.UNKNOWN == id) {
+        if (HeroesKind.UNKNOWN == id) {
             return Bitmap.Empty;
         }
         switch (type) {
