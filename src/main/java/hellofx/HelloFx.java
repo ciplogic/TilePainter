@@ -52,7 +52,7 @@ public class HelloFx extends Application {
         var world = new World();
         world.loadMapMp2("maps/BROKENA.MP2");
 
-        var hero = new Heroes(HeroesKind.REBECCA, RaceKind.SORC);
+        var hero = new Heroes(HeroesKind.ARIEL, RaceKind.SORC);
         var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();
         var img = heroBmp.toImage();
         saveToFile(img, new File("cursor.png"));

@@ -2,17 +2,23 @@ package hellofx.fheroes2.heroes;
 
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.Bitmap;
+import hellofx.fheroes2.ai.AI;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.kingdom.ColorBase;
+import hellofx.fheroes2.kingdom.H2Color;
+import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.maps.H2Obj;
 import hellofx.fheroes2.maps.IndexObject;
 import hellofx.fheroes2.serialize.ByteVectorReader;
+import hellofx.fheroes2.spell.Spell;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static hellofx.fheroes2.agg.IcnKind.MINIPORT;
 import static hellofx.fheroes2.agg.IcnKind.PORTMEDI;
+import static hellofx.fheroes2.heroes.HeroFlags.*;
 import static hellofx.fheroes2.heroes.HeroPortraitSize.*;
 import static hellofx.fheroes2.heroes.HeroesKind.BAX;
 import static hellofx.fheroes2.heroes.HeroesKind.SANDYSANDY;
@@ -83,5 +89,88 @@ public class Heroes extends HeroBase {
         }
 
         return Bitmap.Empty;
+    }
+
+    public void PostLoad() {
+        killer_color.SetColor(H2Color.NONE);
+
+        // save general object
+        save_maps_object = H2Obj.OBJ_ZERO;
+
+        // fix zero army
+        if (!army.m_troops.IsValid())
+            army.Reset(true);
+        else
+            bitModes.SetModes(CUSTOMARMY);
+
+        // level up
+        int level = GetLevel();
+        while (1 < level--) {
+            bitModes.SetModes(NOTDEFAULTS);
+            LevelUp(bitModes.Modes(CUSTOMSKILLS), true);
+        }
+
+        if (((race & (RaceKind.SORC | RaceKind.WRLK | RaceKind.WZRD | RaceKind.NECR)) != 0) &&
+                !HaveSpellBook()) {
+            Spell spell = GetInitialSpell(race);
+            if (spell.isValid()) {
+                SpellBookActivate();
+                AppendSpellToBook(spell, true);
+            }
+        }
+
+        // other param
+        SetSpellPoints(GetMaxSpellPoints());
+        move_point = GetMaxMovePoints();
+
+        if (isControlAI()) {
+            AI.HeroesPostLoad(this);
+        }
+    }
+
+    private int GetLevel() {
+        //TODO
+        return 0;
+    }
+
+    private void AppendSpellToBook(Spell spell, boolean b) {
+        //TODO
+    }
+
+    private void SpellBookActivate() {
+        //TODO
+    }
+
+    private void LevelUp(boolean modes, boolean b) {
+        //TODO
+    }
+
+    private Spell GetInitialSpell(int race) {
+        //TODO
+        return null;
+    }
+
+    private int GetMaxMovePoints() {
+        //TODO
+        return 0;
+    }
+
+    private boolean isControlAI() {
+        //TODO
+        return false;
+    }
+
+    private void SetSpellPoints(int spellPoints) {
+        //TODO
+    }
+
+    private int GetMaxSpellPoints() {
+        //TODO
+        return 0;
+    }
+
+    private boolean HaveSpellBook() {
+        //TODO
+        return false;
     }
 }

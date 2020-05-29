@@ -9,4 +9,8 @@ public class Troop {
     public void SetMonster(Monster monster) {
         _monster.id = monster.id;
     }
+
+    public boolean IsValid() {
+        return (_monster.IsValid() && count > 0);
+    }
 }

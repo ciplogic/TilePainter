@@ -274,4 +274,8 @@ public class Monster {
     public int GetGrown() {
         return toByte(MonsterStats.get(id).grown);
     }
+
+    public boolean IsValid() {
+        return id != MonsterKind.UNKNOWN;
+    }
 }

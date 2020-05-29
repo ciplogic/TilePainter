@@ -10,4 +10,8 @@ public class Spell {
         id = s > STONE ? NONE : s;
     }
 
+    public boolean isValid() {
+        //TODO
+        return false;
+    }
 }

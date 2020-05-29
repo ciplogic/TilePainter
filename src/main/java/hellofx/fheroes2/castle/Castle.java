@@ -144,7 +144,7 @@ public class Castle {
             for (var troop : troops)
                 troop.count = (st.getLE16());
 
-            army.m_troops = troops;
+            army.m_troops.assign(troops);
             bitModes.SetModes(CUSTOMARMY);
         } else
             st.skip(15);
