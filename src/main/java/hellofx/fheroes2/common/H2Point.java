@@ -22,7 +22,7 @@ public class H2Point {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        H2Point h2Point = (H2Point) o;
+        var h2Point = (H2Point) o;
         return x == h2Point.x &&
                 y == h2Point.y;
     }

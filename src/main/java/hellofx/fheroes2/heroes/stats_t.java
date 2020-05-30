@@ -2,15 +2,15 @@ package hellofx.fheroes2.heroes;
 
 public class stats_t {
     public String id = "";
-    public primary_t captain_primary = new primary_t();
-    public primary_t initial_primary = new primary_t();
+    public primary_t captain_primary;
+    public primary_t initial_primary;
     public byte initial_book;
     public byte initial_spell;
-    public secondary_t initial_secondary = new secondary_t();
+    public secondary_t initial_secondary;
     public byte over_level;
-    public primary_t mature_primary_under = new primary_t();
-    public primary_t mature_primary_over = new primary_t();
-    public secondary_t mature_secondary = new secondary_t();
+    public primary_t mature_primary_under;
+    public primary_t mature_primary_over;
+    public secondary_t mature_secondary;
 
     public stats_t(String id, primary_t captain_primary,
                    primary_t initial_primary,

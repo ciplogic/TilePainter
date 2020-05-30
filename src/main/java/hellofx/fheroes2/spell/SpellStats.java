@@ -10,8 +10,16 @@ import static hellofx.fheroes2.system.Translate.tr;
 
 public class SpellStats {
     public static final List<spellstats_t> _items = new ArrayList<>();
+    public static spellstats_t[] spells;
 
     static {
+        setup();
+        spells = new spellstats_t[_items.size()];
+        _items.toArray(spells);
+        _items.clear();
+    }
+
+    public static void setup() {
         //  name                      sp   mp  spr value  bits cost     description
         add("Unknown", 0, 0, 0, 0, 0, NONE, "Unknown spell.");
         add(

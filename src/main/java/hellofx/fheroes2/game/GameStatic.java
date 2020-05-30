@@ -3,6 +3,7 @@ package hellofx.fheroes2.game;
 import hellofx.fheroes2.heroes.primary_t;
 import hellofx.fheroes2.heroes.secondary_t;
 import hellofx.fheroes2.heroes.stats_t;
+import hellofx.fheroes2.kingdom.RaceKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,5 +68,26 @@ public class GameStatic {
                 new primary_t(0, 0, 0, 0),
                 new primary_t(0, 0, 0, 0), new secondary_t(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
         );
+    }
+
+    public static stats_t GetSkillStats(int race) {
+        switch (race) {
+            case RaceKind.KNGT:
+                return _stats.get(0);
+            case RaceKind.BARB:
+                return _stats.get(1);
+            case RaceKind.SORC:
+                return _stats.get(2);
+            case RaceKind.WRLK:
+                return _stats.get(3);
+            case RaceKind.WZRD:
+                return _stats.get(4);
+            case RaceKind.NECR:
+                return _stats.get(5);
+            default:
+                break;
+        }
+
+        return null;
     }
 }
