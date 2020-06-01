@@ -50,7 +50,7 @@ public class HelloFx extends Application {
 
         var agg = Agg.Get();
         agg.setup();
-        var midSong = agg.LoadMUS(MusKind.NECROMANCER);
+        var midSong = agg.LoadMUS(MusKind.MAINMENU);
         FileUtils.writeFile("out.mid", midSong);
 
         var engine = context.inject(Engine.class);

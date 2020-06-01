@@ -10,17 +10,17 @@ public class MidEvent {
     public MidEvent() {
     }
 
-    public MidEvent(int delta, byte st, byte d1, byte d2) {
-        data[0] = st;
-        data[1] = d1;
-        data[2] = d2;
+    public MidEvent(int delta, int st, int d1, int d2) {
+        data[0] = (byte) st;
+        data[1] = (byte) d1;
+        data[2] = (byte) d2;
         data[3] = 2;
         pack = packValue(delta);
     }
 
-    public MidEvent(int delta, byte st, byte d1) {
-        data[0] = st;
-        data[1] = d1;
+    public MidEvent(int delta, int st, int d1) {
+        data[0] = (byte) st;
+        data[1] = (byte) d1;
         data[2] = 0;
         data[3] = 1;
         pack = packValue(delta);
