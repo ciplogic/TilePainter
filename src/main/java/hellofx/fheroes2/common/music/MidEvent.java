@@ -1,5 +1,6 @@
 package hellofx.fheroes2.common.music;
 
+import hellofx.fheroes2.serialize.ByteVectorWriter;
 import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 
 public class MidEvent {
@@ -52,6 +53,17 @@ public class MidEvent {
 
     public int size() {
         return pack.size() + data[3] + 1;
+    }
+
+    public void writeTo(ByteVectorWriter sb) {
+
+        for (var it : pack)
+            sb.put8(it);
+        sb.put8(data[0]);
+        if (2 == data[3])
+            sb.put8(data[1]).put8(data[2]);
+        else if (1 == data[3])
+            sb.put8(data[1]);
     }
 }
 

@@ -1,11 +1,13 @@
 package hellofx;
 
 import hellofx.fheroes2.agg.Agg;
+import hellofx.fheroes2.agg.XmiKind;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
 import hellofx.framework.controls.CanvasWrap;
@@ -46,7 +48,11 @@ public class HelloFx extends Application {
     public void start(Stage stage) {
         var context = new MainContext();
 
-        Agg.Get().setup();
+        var agg = Agg.Get();
+        agg.setup();
+        var midSong = agg.LoadMID(XmiKind.MIDI0002);
+        FileUtils.writeFile("out.mid", midSong);
+
         var engine = context.inject(Engine.class);
 
         var world = new World();

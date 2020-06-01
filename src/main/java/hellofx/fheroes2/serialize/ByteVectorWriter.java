@@ -33,7 +33,8 @@ public class ByteVectorWriter {
         putBE16(v);
     }
 
-    private void put8(int v) {
+    public ByteVectorWriter put8(int v) {
         _data.add((byte) v);
+        return this;
     }
 }

@@ -2,6 +2,7 @@ package hellofx.fheroes2.agg;
 
 import hellofx.fheroes2.agg.cache.icn_cache_t;
 import hellofx.fheroes2.agg.cache.til_cache_t;
+import hellofx.fheroes2.common.music.Music;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.fheroes2.serialize.ResourceDownloader;
@@ -114,5 +115,10 @@ public class Agg {
         var st = new ByteVectorReader(body);
 
         return st.getLE16();
+    }
+
+    public byte[] LoadMID(int xmi) {
+        var body = ReadChunk(XmiKind.GetString(xmi));
+        return Music.Xmi2Mid(body);
     }
 }

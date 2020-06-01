@@ -58,9 +58,7 @@ public class FileUtils {
         Path root = Paths.get(destinationDir).normalize();
         while (entry != null) {
             Path path = root.resolve(entry.getName()).normalize();
-            if (!path.startsWith(root)) {
-                // throw new IOException("Invalid ZIP");
-            }
+            path.startsWith(root);
             if (entry.isDirectory()) {
                 Files.createDirectories(path);
             } else {
@@ -103,4 +101,11 @@ public class FileUtils {
 
     }
 
+    public static void writeFile(String fileName, byte[] content) {
+        try {
+            Files.write(Path.of(fileName), content);
+        } catch (IOException e) {
+            throw new RuntimeException(e.toString());
+        }
+    }
 }

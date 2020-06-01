@@ -20,6 +20,11 @@ public class MidData {
     }
 
     public void writeTo(ByteVectorWriter sb) {
-        //TODO
+        var st = this;
+        st.mthd.writeTo(sb);
+        sb.putBE16(st.format);
+        sb.putBE16(st.tracks._items.size());
+        sb.putBE16(st.ppqn);
+        st.tracks.writeTo(sb);
     }
 }
