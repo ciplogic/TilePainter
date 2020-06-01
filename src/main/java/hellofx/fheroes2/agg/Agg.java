@@ -77,10 +77,11 @@ public class Agg {
     }
 
     public static byte[] ReadChunk(String file) {
-        var result = Get().mainAgg.Read(file);
+        var agg = Get();
+        var result = agg.mainAgg.Read(file);
         if (result != null)
             return result;
-        return Get().aggX.Read(file);
+        return agg.aggX.Read(file);
     }
 
     public void setup() {
@@ -117,8 +118,14 @@ public class Agg {
         return st.getLE16();
     }
 
+    public byte[] LoadMUS(int mus) {
+        var xmi = XmiKind.FromMUS(mus);
+        return LoadMID(xmi);
+    }
+
     public byte[] LoadMID(int xmi) {
-        var body = ReadChunk(XmiKind.GetString(xmi));
+        var fileName = XmiKind.GetString(xmi);
+        var body = ReadChunk(fileName);
         return Music.Xmi2Mid(body);
     }
 }

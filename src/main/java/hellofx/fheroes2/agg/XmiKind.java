@@ -39,7 +39,49 @@ public class XmiKind {
         if (icn == UNKNOWN)
             return "Unknown";
         var actualName = _toName.get(icn);
-        return actualName + ".MID";
+        return actualName + ".XMI";
     }
 
+    public static int FromMUS(int mus) {
+        switch (mus) {
+            case MusKind.BATTLE1:
+                return MIDI0002;
+            case MusKind.BATTLE2:
+                return MIDI0003;
+            case MusKind.BATTLE3:
+                return MIDI0004;
+            case MusKind.SORCERESS:
+                return MIDI0005;
+            case MusKind.WARLOCK:
+                return MIDI0006;
+            case MusKind.NECROMANCER:
+                return MIDI0007;
+            case MusKind.KNIGHT:
+                return MIDI0008;
+            case MusKind.BARBARIAN:
+                return MIDI0009;
+            case MusKind.WIZARD:
+                return MIDI0010;
+            case MusKind.LAVA:
+                return MIDI0011;
+            case MusKind.DESERT:
+                return MIDI0013;
+            case MusKind.SNOW:
+                return MIDI0014;
+            case MusKind.SWAMP:
+                return MIDI0015;
+            case MusKind.DIRT:
+                return MIDI0017;
+            case MusKind.GRASS:
+                return MIDI0018;
+            case MusKind.MAINMENU:
+                return MIDI0042;
+            case MusKind.VICTORY:
+                return MIDI0043;
+            default:
+                break;
+        }
+
+        return UNKNOWN;
+    }
 }

@@ -1,7 +1,7 @@
 package hellofx;
 
 import hellofx.fheroes2.agg.Agg;
-import hellofx.fheroes2.agg.XmiKind;
+import hellofx.fheroes2.agg.MusKind;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
@@ -50,7 +50,7 @@ public class HelloFx extends Application {
 
         var agg = Agg.Get();
         agg.setup();
-        var midSong = agg.LoadMID(XmiKind.MIDI0002);
+        var midSong = agg.LoadMUS(MusKind.NECROMANCER);
         FileUtils.writeFile("out.mid", midSong);
 
         var engine = context.inject(Engine.class);

@@ -1,0 +1,50 @@
+package hellofx.fheroes2.agg;
+
+public class MusKind {
+    public static final int UNUSED = 0;
+    public static final int DATATRACK = 1;
+    public static final int BATTLE1 = 2;
+    public static final int BATTLE2 = 3;
+    public static final int BATTLE3 = 4;
+    public static final int BARBARIAN = 5;
+    public static final int SORCERESS = 6;
+    public static final int WARLOCK = 7;
+    public static final int WIZARD = 8;
+    public static final int NECROMANCER = 9;
+    public static final int KNIGHT = 10;
+    public static final int LAVA = 11;
+    public static final int WASTELAND = 12;
+    public static final int DESERT = 13;
+    public static final int SNOW = 14;
+    public static final int SWAMP = 15;
+    public static final int BEACH = 16;
+    public static final int DIRT = 17;
+    public static final int GRASS = 18;
+    public static final int LOSTGAME = 19;
+    public static final int WEEK1 = 20;
+    public static final int WEEK2_MONTH1 = 21;
+    public static final int MONTH2 = 22;
+    public static final int PUZZLE = 23;
+    public static final int ROLAND = 24;
+    public static final int CARAVANS = 25;
+    public static final int CARAVANS_2 = 26;
+    public static final int CARAVANS_3 = 27;
+    public static final int COMPUTER = 28;
+    public static final int BATTLEWIN = 29;
+    public static final int BATTLELOSE = 30;
+    public static final int DEATH = 31;
+    public static final int WATERSPRING = 32;
+    public static final int ARABIAN = 33;
+    public static final int NOMADTENTS = 34;
+    public static final int TREEHOUSE = 35;
+    public static final int DEMONCAVE = 36;
+    public static final int EXPERIENCE = 37;
+    public static final int SKILL = 38;
+    public static final int WATCHTOWER = 39;
+    public static final int EVENT15 = 40;
+    public static final int NEWS = 41;
+    public static final int MAINMENU = 42;
+    public static final int VICTORY = 43;
+    public static final int UNKNOWN = 44;
+
+}
