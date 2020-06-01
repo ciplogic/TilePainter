@@ -29,7 +29,7 @@ public class XmiKind {
     static Map<Integer, String> _toName = new HashMap<>();
 
     static {
-        _names = FileUtils.EnumFieldsOfClass(IcnKind.class);
+        _names = FileUtils.EnumFieldsOfClass(XmiKind.class);
         for (var name : _names.keySet()) {
             _toName.put(_names.get(name), name);
         }

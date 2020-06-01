@@ -1,7 +1,5 @@
 package hellofx.fheroes2.serialize;
 
-import hellofx.fheroes2.agg.IcnKind;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -78,7 +76,7 @@ public class FileUtils {
 
     public static Map<String, Integer> EnumFieldsOfClass(Class<?> clazz) {
 
-        var fields = IcnKind.class.getFields();
+        var fields = clazz.getFields();
         Map<String, Integer> _names = new HashMap<>();
         for (var f : fields) {
             var name = f.getName();
