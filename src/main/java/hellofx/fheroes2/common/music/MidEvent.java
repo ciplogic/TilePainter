@@ -49,5 +49,9 @@ public class MidEvent {
 
         return res;
     }
+
+    public int size() {
+        return pack.size() + data[3] + 1;
+    }
 }
 
