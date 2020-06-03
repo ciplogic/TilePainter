@@ -18,7 +18,7 @@ public class SurfaceList {
 
     public boolean loadFromTil(Agg agg, int tile) {
         var tileName = TilKind.GetString(tile);
-        byte[] body = Agg.Read(tileName);
+        byte[] body = agg.Read(tileName);
 
         if (body.length == 0)
             return false;

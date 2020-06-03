@@ -21,8 +21,8 @@ public class AggPaint {
 
     }
 
-    public static IcnSprite RenderICNSprite(int icn, int index) {
-        var body = Agg.ReadICNChunk(icn);
+    public static IcnSprite RenderICNSprite(Agg agg, int icn, int index) {
+        var body = agg.ReadICNChunk(icn);
         if (body.length == 0) return new IcnSprite();
         var res = new IcnSprite();
 

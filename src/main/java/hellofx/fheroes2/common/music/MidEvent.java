@@ -1,10 +1,12 @@
 package hellofx.fheroes2.common.music;
 
 import hellofx.fheroes2.serialize.ByteVectorWriter;
-import it.unimi.dsi.fastutil.bytes.ByteArrayList;
+
+import static hellofx.fheroes2.common.music.meta_t.packValue;
+import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class MidEvent {
-    public ByteArrayList pack = new ByteArrayList();
+    public byte[] pack = new byte[0];
     public byte[] data = new byte[4];
 
     public MidEvent() {
@@ -26,33 +28,8 @@ public class MidEvent {
         pack = packValue(delta);
     }
 
-    public static ByteArrayList packValue(int delta) {
-        byte c1 = (byte) (delta & 0x0000007F);
-        byte c2 = (byte) ((delta & 0x00003F80) >> 7);
-        byte c3 = (byte) ((delta & 0x001FC000) >> 14);
-        byte c4 = (byte) ((delta & 0x0FE00000) >> 21);
-
-        var res = new ByteArrayList();
-        if (c4 != 0) {
-            res.add((byte) (c4 | 0x80));
-            res.add((byte) (c3 | 0x80));
-            res.add((byte) (c2 | 0x80));
-            res.add(c1);
-        } else if (c3 != 0) {
-            res.add((byte) (c3 | 0x80));
-            res.add((byte) (c2 | 0x80));
-            res.add(c1);
-        } else if (c2 != 0) {
-            res.add((byte) (c2 | 0x80));
-            res.add(c1);
-        } else
-            res.add(c1);
-
-        return res;
-    }
-
     public int size() {
-        return pack.size() + data[3] + 1;
+        return pack.length + toByte(data[3]) + 1;
     }
 
     public void writeTo(ByteVectorWriter sb) {

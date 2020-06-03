@@ -1,13 +1,12 @@
 package hellofx;
 
 import hellofx.fheroes2.agg.Agg;
-import hellofx.fheroes2.agg.MusKind;
 import hellofx.fheroes2.common.Engine;
+import hellofx.fheroes2.common.music.Music;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
-import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
 import hellofx.framework.controls.CanvasWrap;
@@ -17,15 +16,10 @@ import hellofx.framework.controls.PerFrameTimer;
 import hellofx.game.MapView;
 import hellofx.graphics.ImageRepo;
 import javafx.application.Application;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 
 /**
  * @author ciprian
@@ -35,14 +29,6 @@ public class HelloFx extends Application {
         Application.launch(HelloFx.class);
     }
 
-    public static void saveToFile(Image image, File outputFile) {
-        BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
-        try {
-            ImageIO.write(bImage, "png", outputFile);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     @Override
     public void start(Stage stage) {
@@ -50,8 +36,7 @@ public class HelloFx extends Application {
 
         var agg = Agg.Get();
         agg.setup();
-        var midSong = agg.LoadMUS(MusKind.MAINMENU);
-        FileUtils.writeFile("out.mid", midSong);
+        Music.ExtractAllMus(agg);
 
         var engine = context.inject(Engine.class);
 
@@ -60,8 +45,7 @@ public class HelloFx extends Application {
 
         var hero = new Heroes(HeroesKind.ARIEL, RaceKind.SORC);
         var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();
-        var img = heroBmp.toImage();
-        saveToFile(img, new File("cursor.png"));
+        heroBmp.saveToFile(new File("cursor.png"));
         var timer = context.inject(PerFrameTimer.class);
         context.inject(GamePreferences.class);
         context.inject(ImageRepo.class);

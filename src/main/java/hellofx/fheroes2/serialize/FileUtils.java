@@ -74,7 +74,23 @@ public class FileUtils {
         zis.close();
     }
 
-    public static Map<String, Integer> EnumFieldsOfClass(Class<?> clazz) {
+    public static void FillEnumValues(
+            Class<?> clazz,
+            Map<String, Integer> names,
+            Map<Integer, String> toName) {
+        names.clear();
+        toName.clear();
+        var _names = FileUtils.EnumFieldsOfClass(clazz);
+        for (var name : _names.keySet()) {
+            var key = name;
+            var value = _names.get(key);
+            names.put(key, value);
+            toName.put(value, key);
+        }
+
+    }
+
+    private static Map<String, Integer> EnumFieldsOfClass(Class<?> clazz) {
 
         var fields = clazz.getFields();
         Map<String, Integer> _names = new HashMap<>();

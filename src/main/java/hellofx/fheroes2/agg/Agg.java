@@ -24,11 +24,6 @@ public class Agg {
         return StaticInstance;
     }
 
-    public static byte[] ReadICNChunk(int icn) {
-        // hard fix artifact "ultimate stuff" sprite for loyalty version
-        return Read(IcnKind.GetString(icn));
-    }
-
     /**
      * In FHeroes2 it was returning false, now it would return null if nothing is to render
      *
@@ -37,8 +32,8 @@ public class Agg {
      * @param reflect
      * @return
      */
-    static Bitmap LoadOrgICN(int icn, int index, boolean reflect) {
-        IcnSprite icnSprite = AggPaint.RenderICNSprite(icn, index);
+    static Bitmap LoadOrgICN(Agg agg, int icn, int index, boolean reflect) {
+        IcnSprite icnSprite = AggPaint.RenderICNSprite(agg, icn, index);
         if (!icnSprite.isValid())
             return null;
         return icnSprite.CreateSprite(reflect, !IcnKind.SkipLocalAlpha(icn));
@@ -49,6 +44,7 @@ public class Agg {
     }
 
     public static Bitmap GetICN(int icn, int index, boolean reflect) {
+        var agg = Agg.Get();
         var v = StaticInstance.icn_cache.get(icn);
         if (v.sprites == null) {
             byte[] body = ReadChunk(IcnKind.GetString(icn));
@@ -63,7 +59,7 @@ public class Agg {
 
         var icnBmp = reflect ? v.reflect[index] : v.sprites[index];
         if (icnBmp == null || !icnBmp.isValid()) {
-            icnBmp = LoadOrgICN(icn, index, reflect);
+            icnBmp = LoadOrgICN(agg, icn, index, reflect);
             if (reflect)
                 v.reflect[index] = icnBmp;
             else v.sprites[index] = icnBmp;
@@ -72,7 +68,12 @@ public class Agg {
         return icnBmp;
     }
 
-    public static byte[] Read(String file) {
+    public byte[] ReadICNChunk(int icn) {
+        // hard fix artifact "ultimate stuff" sprite for loyalty version
+        return Read(IcnKind.GetString(icn));
+    }
+
+    public byte[] Read(String file) {
         return ReadChunk(file);
     }
 

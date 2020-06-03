@@ -11,15 +11,15 @@ public class MidEvents {
     public MidEvents(XmiTrack t) {
         var evnt = new ByteArrayListReader(t.evnt);
 
-        var ptr = 0;
+        var pos = 0;
         var end = evnt.size();
 
         var delta = 0;
         List<meta_t> notesoff = new ArrayList<>();
 
-        while (ptr < end) {
+        while (pos < end) {
 
-            var cur = evnt.get(ptr);
+            var cur = evnt.get(pos);
             // insert event: note off
             if (delta != 0) {
                 // sort duration
@@ -56,73 +56,76 @@ public class MidEvents {
             // interval
             if (cur < 128) {
                 delta += cur;
-                ++ptr;
-            } else
+                ++pos;
+                continue;
+            }
             // command
-            {
-                // end
-                if (0xFF == cur && (0x2F == evnt.get(ptr + 1))) {
-                    _items.add(new MidEvent(delta, evnt.get(ptr), evnt.get(ptr + 1), evnt.get(ptr + 2)));
-                    break;
+
+            // end
+            if (0xFF == cur && (0x2F == evnt.get(pos + 1))) {
+                _items.add(new MidEvent(delta, evnt.get(pos), evnt.get(pos + 1), evnt.get(pos + 2)));
+                break;
+            }
+            switch (evnt.get(pos) >> 4) {
+                // meta
+                case 0x0F: {
+                    var pack = meta_t.unpackValue(evnt, pos + 2);
+                    pos += pack.first + pack.second + 1;
+                    delta = 0;
                 }
-                switch (evnt.get(ptr) >> 4) {
-                    // meta
-                    case 0x0F: {
-                        var pack = meta_t.unpackValue(evnt, ptr + 2);
-                        ptr += pack.first + pack.second + 1;
-                        delta = 0;
-                    }
-                    break;
+                break;
 
-                    // key pressure
-                    case 0x0A:
-                        // control change
-                    case 0x0B:
-                        // pitch bend
-                    case 0x0E: {
-                        _items.add(new MidEvent(delta, evnt.get(ptr), evnt.get(ptr + 1), evnt.get(ptr + 2)));
-                        ptr += 3;
-                        delta = 0;
-                    }
-                    break;
-
-                    // note off
-                    case 0x08:
-                        // note on
-                    case 0x09: {
-                        _items.add(new MidEvent(delta, evnt.get(ptr), evnt.get(ptr + 1), evnt.get(ptr + 2)));
-                        var pack = meta_t.unpackValue(evnt, ptr + 3);
-                        notesoff.add(new meta_t(evnt.get(ptr) - 0x10, evnt.get(ptr + 1), pack.first));
-                        ptr += 3 + pack.second;
-                        delta = 0;
-                    }
-                    break;
-
-                    // program change
-                    case 0x0C:
-                        // chanel pressure
-                    case 0x0D: {
-                        _items.add(new MidEvent(delta, evnt.get(ptr), evnt.get(ptr + 1), evnt.get(ptr + 2)));
-                        ptr += 2;
-                        delta = 0;
-                    }
-                    break;
-
-                    // unused command
-                    default:
-                        _items.add(new MidEvent(0, 0xFF, 0x2F, 0));
-                        throw new RuntimeException("unknown st: 0x");
-
+                // key pressure
+                case 0x0A:
+                    // control change
+                case 0x0B:
+                    // pitch bend
+                case 0x0E: {
+                    _items.add(new MidEvent(delta, evnt.get(pos), evnt.get(pos + 1), evnt.get(pos + 2)));
+                    pos += 3;
+                    delta = 0;
                 }
+                break;
+
+                // note off
+                case 0x08:
+                    // note on
+                case 0x09: {
+                    _items.add(new MidEvent(delta, evnt.get(pos), evnt.get(pos + 1), evnt.get(pos + 2)));
+                    var pack = meta_t.unpackValue(evnt, pos + 3);
+                    notesoff.add(new meta_t(evnt.get(pos) - 0x10, evnt.get(pos + 1), pack.first));
+                    pos += 3 + pack.second;
+                    delta = 0;
+                }
+                break;
+
+                // program change
+                case 0x0C:
+                    // chanel pressure
+                case 0x0D: {
+
+                    _items.add(new MidEvent(delta, evnt.get(pos), evnt.get(pos + 1)));
+                    pos += 2;
+                    delta = 0;
+                }
+                break;
+
+                // unused command
+                default:
+                    _items.add(new MidEvent(0, 0xFF, 0x2F, 0));
+                    throw new RuntimeException("unknown st: 0x");
+
             }
         }
+
     }
 
 
     public int size() {
         var res = 0;
-        for (var it : _items)
+        for (var it : _items) {
             res += it.size();
+        }
         return res;
     }
 

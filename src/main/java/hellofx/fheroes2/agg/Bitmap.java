@@ -1,10 +1,15 @@
 package hellofx.fheroes2.agg;
 
+import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 
 import static java.lang.Math.min;
@@ -190,4 +195,13 @@ public class Bitmap {
         SetPixel(x, y, newPixel);
     }
 
+    public void saveToFile(File outputFile) {
+        Image image = toImage();
+        BufferedImage bImage = SwingFXUtils.fromFXImage(image, null);
+        try {
+            ImageIO.write(bImage, "png", outputFile);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

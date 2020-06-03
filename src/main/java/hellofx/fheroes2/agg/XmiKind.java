@@ -25,14 +25,11 @@ public class XmiKind {
     public static final int MIDI0042 = 16;
     public static final int MIDI0043 = 17;
 
-    static Map<String, Integer> _names;
+    static Map<String, Integer> _names = new HashMap<>();
     static Map<Integer, String> _toName = new HashMap<>();
 
     static {
-        _names = FileUtils.EnumFieldsOfClass(XmiKind.class);
-        for (var name : _names.keySet()) {
-            _toName.put(_names.get(name), name);
-        }
+        FileUtils.FillEnumValues(XmiKind.class, _names, _toName);
     }
 
     public static String GetString(int icn) {

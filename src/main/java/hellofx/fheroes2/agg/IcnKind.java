@@ -890,14 +890,11 @@ public class IcnKind {
     public static final int CSLMARKER = 881;
     public static final int LASTICN = 882;
 
-    static Map<String, Integer> _names;
+    static Map<String, Integer> _names = new HashMap<>();
     static Map<Integer, String> _toName = new HashMap<>();
 
     static {
-        _names = FileUtils.EnumFieldsOfClass(IcnKind.class);
-        for (var name : _names.keySet()) {
-            _toName.put(_names.get(name), name);
-        }
+        FileUtils.FillEnumValues(IcnKind.class, _names, _toName);
     }
 
     public static String GetString(int icn) {

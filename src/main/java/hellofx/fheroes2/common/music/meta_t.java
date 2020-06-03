@@ -1,6 +1,7 @@
 package hellofx.fheroes2.common.music;
 
 import hellofx.fheroes2.common.H2IntPair;
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
 
 import java.util.Comparator;
 
@@ -42,6 +43,31 @@ public class meta_t {
         res.second = p - ptr + 1;
 
         return res;
+    }
+
+    public static byte[] packValue(int delta) {
+        byte c1 = (byte) (delta & 0x0000007F);
+        byte c2 = (byte) ((delta & 0x00003F80) >> 7);
+        byte c3 = (byte) ((delta & 0x001FC000) >> 14);
+        byte c4 = (byte) ((delta & 0x0FE00000) >> 21);
+
+        var res = new ByteArrayList();
+        if (c4 != 0) {
+            res.add((byte) (c4 | 0x80));
+            res.add((byte) (c3 | 0x80));
+            res.add((byte) (c2 | 0x80));
+            res.add(c1);
+        } else if (c3 != 0) {
+            res.add((byte) (c3 | 0x80));
+            res.add((byte) (c2 | 0x80));
+            res.add(c1);
+        } else if (c2 != 0) {
+            res.add((byte) (c2 | 0x80));
+            res.add(c1);
+        } else
+            res.add(c1);
+
+        return res.toByteArray();
     }
 
     public void decrease_duration(int delta) {

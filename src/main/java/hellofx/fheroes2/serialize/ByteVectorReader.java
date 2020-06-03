@@ -60,7 +60,9 @@ public class ByteVectorReader {
 
     public byte[] getRaw(int size) {
         var result = new byte[size];
-        for (var i = 0; i < size; i++) result[i] = _fileContent[i + _pos];
+        if (size >= 0) {
+            System.arraycopy(_fileContent, _pos, result, 0, size);
+        }
 
         _pos += size;
         return result;

@@ -49,7 +49,6 @@ public class Gameplay {
             onFrameUpdate();
         });
         ctx.listen(EventNames.onMouse, (MouseEvent mEvent) -> {
-
         });
         stackPane = ctx.getObj(ObjectNames.mainStack);
 
@@ -58,9 +57,8 @@ public class Gameplay {
 
         engine.loadTiles(aggFile);
 
-        this.heroesImg = AggPaint.RenderICNSprite(IcnKind.HEROES, 0).first.doublePicture().toImage();
-        this.heroesImgSmooth = AggPaint.RenderICNSprite(IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
-
+        this.heroesImg = AggPaint.RenderICNSprite(aggFile, IcnKind.HEROES, 0).first.doublePicture().toImage();
+        this.heroesImgSmooth = AggPaint.RenderICNSprite(aggFile, IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
     }
 
     private void setupRandomLevel() {
@@ -71,7 +69,6 @@ public class Gameplay {
             var y = random.nextInt(mapView.height);
             ground.setValue(x, y, 7);
         }
-
     }
 
     void onFrameUpdate() {
