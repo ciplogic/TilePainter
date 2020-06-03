@@ -1,6 +1,8 @@
 package hellofx.fheroes2.game;
 
 public class GameConsts {
+    public static final int TILEWIDTH = 32;
+
     public static final int MP2OFFSETDATA = 428;
     public static final int SIZEOFMP2TILE = 20;
     public static final int SIZEOFMP2ADDON = 15;

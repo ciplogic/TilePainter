@@ -328,7 +328,7 @@ public class M82Kind {
         if (icn == UNKNOWN)
             return "Unknown";
         var actualName = _toName.get(icn);
-        return actualName + ".M82";
+        return actualName + ".82M";
     }
 
 }

@@ -3,6 +3,7 @@ package hellofx.fheroes2.maps;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.kingdom.H2Color;
+import hellofx.framework.controls.Painter;
 
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
@@ -106,7 +107,7 @@ public class Tiles {
         return mp2_object;
     }
 
-    private Heroes GetHeroes() {
+    public Heroes GetHeroes() {
         //TODO
         return null;
     }
@@ -118,5 +119,29 @@ public class Tiles {
     public TilesAddon FindObjectConst(int objs) {
         //TODO
         return null;
+    }
+
+    public void RedrawBottom(Painter dst, boolean b) {
+        //TODO
+    }
+
+    public void RedrawObjects(Painter dst) {
+        //TODO
+    }
+
+    public void RedrawTop(Painter dst) {
+        //TODO
+    }
+
+    public boolean isFog(int colors) {
+        //TODO
+        return false;
+    }
+
+    public void RedrawFogs(Painter dst, int colors) {
+    }
+
+    public void RedrawTile(Painter dst) {
+
     }
 }

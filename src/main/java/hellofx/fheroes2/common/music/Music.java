@@ -30,7 +30,7 @@ public class Music {
         var body = agg.Read(M82Kind.GetString(m82));
 
         if (body.length == 0)
-            return new byte[0];
+            return body;
         // create WAV format
         ByteVectorWriter wavHeader = new ByteVectorWriter(44);
         wavHeader.putLE32(0x46464952); // RIFF
@@ -62,6 +62,17 @@ public class Music {
         IntStream.range(1, XmiKind.MIDI0043 + 1)
                 .forEach(xmiId -> {
                     extractWavFromXmiId(agg, xmiId, player);
+                });
+    }
+
+    public static void ExtractAllWav(Agg agg) {
+        IntStream.range(0, M82Kind.UNKNOWN)
+                .forEach(m82Id -> {
+                    var bufData = LoadM82(agg, m82Id);
+                    if (bufData.length == 0)
+                        return;
+                    var fileName = M82Kind.GetString(m82Id).replace(".82M", "");
+                    FileUtils.writeFile("gamedata/" + fileName + ".wav", bufData);
                 });
     }
 

@@ -5,4 +5,9 @@ public class Players {
         //TODO
         return 0;
     }
+
+    public static int FriendColors() {
+        //TODO
+        return 0;
+    }
 }

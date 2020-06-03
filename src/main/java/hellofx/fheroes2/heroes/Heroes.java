@@ -12,6 +12,7 @@ import hellofx.fheroes2.maps.H2Obj;
 import hellofx.fheroes2.maps.IndexObject;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.spell.Spell;
+import hellofx.framework.controls.Painter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -172,5 +173,8 @@ public class Heroes extends HeroBase {
     private boolean HaveSpellBook() {
         //TODO
         return false;
+    }
+
+    public void Redraw(Painter dst, int x, int y, boolean b) {
     }
 }

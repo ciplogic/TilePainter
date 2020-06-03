@@ -478,4 +478,8 @@ public class World {
     private Castle GetCastle(H2Point center) {
         return vec_castles.Get(center);
     }
+
+    public Tiles GetTiles(int x, int y) {
+        return vec_tiles.get(x + (y * w));
+    }
 }

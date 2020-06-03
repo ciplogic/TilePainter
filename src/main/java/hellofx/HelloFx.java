@@ -2,7 +2,6 @@ package hellofx;
 
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
-import hellofx.fheroes2.common.music.Music;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
@@ -36,7 +35,8 @@ public class HelloFx extends Application {
 
         var agg = Agg.Get();
         agg.setup();
-        Music.ExtractAllMus(agg);
+        //Music.ExtractAllMus(agg);
+        //Music.ExtractAllWav(agg);
 
         var engine = context.inject(Engine.class);
 
