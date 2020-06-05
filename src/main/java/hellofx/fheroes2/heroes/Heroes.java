@@ -5,6 +5,7 @@ import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.ai.AI;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.common.H2Point;
+import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
@@ -147,8 +148,9 @@ public class Heroes extends HeroBase {
     }
 
     private Spell GetInitialSpell(int race) {
-        //TODO
-        return null;
+        stats_t ptr = GameStatic.GetSkillStats(race);
+        var resultId = ptr != null ? ptr.initial_spell : 0;
+        return new Spell(resultId);
     }
 
     private int GetMaxMovePoints() {

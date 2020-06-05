@@ -7,6 +7,7 @@ import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.fheroes2.serialize.ResourceDownloader;
 import hellofx.framework.MainContext;
+import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,6 +67,11 @@ public class Agg {
 
         }
         return icnBmp;
+    }
+
+    public static Image GetTIL(int ground32, int tileSpriteIndex, int tileSpriteShape) {
+        //TODO
+        return null;
     }
 
     public byte[] ReadICNChunk(int icn) {

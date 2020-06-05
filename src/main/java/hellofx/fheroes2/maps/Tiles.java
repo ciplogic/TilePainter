@@ -1,9 +1,13 @@
 package hellofx.fheroes2.maps;
 
+import hellofx.fheroes2.agg.Agg;
+import hellofx.fheroes2.agg.TilKind;
+import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.framework.controls.Painter;
+import javafx.scene.image.Image;
 
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
@@ -99,7 +103,7 @@ public class Tiles {
     }
 
     public int GetObject(boolean skip_hero) {
-        if (!skip_hero && H2Obj.OBJ_HEROES == mp2_object) {
+        if ((!skip_hero) && (H2Obj.OBJ_HEROES == mp2_object)) {
             var hero = GetHeroes();
             return hero != null ? hero.GetMapsObject() : H2Obj.OBJ_ZERO;
         }
@@ -142,6 +146,25 @@ public class Tiles {
     }
 
     public void RedrawTile(Painter dst) {
+        H2Point mp = GetPoint(GetIndex());
+        var surface = GetTileSurface();
+    }
 
+    private H2Point GetPoint(int index) {
+        H2Point res = new H2Point();
+
+        return res;
+    }
+
+    private Image GetTileSurface() {
+        return Agg.GetTIL(TilKind.GROUND32, TileSpriteIndex(), TileSpriteShape());
+    }
+
+    private int TileSpriteShape() {
+        return pack_sprite_index >> 14;
+    }
+
+    private int TileSpriteIndex() {
+        return pack_sprite_index & 0x3FFF;
     }
 }
