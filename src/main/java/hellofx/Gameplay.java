@@ -7,6 +7,7 @@ import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.AggPaint;
 import hellofx.fheroes2.agg.IcnKind;
 import hellofx.fheroes2.common.Engine;
+import hellofx.fheroes2.gui.GameArea;
 import hellofx.framework.EventNames;
 import hellofx.framework.MainContext;
 import hellofx.framework.ObjectNames;
@@ -32,8 +33,9 @@ public class Gameplay {
     public MainStackPane stackPane;
     public MainBorderPane borderPane;
 
+    public GameArea gameArea;
     public Engine engine;
-    public Agg aggFile;
+    public Agg agg;
 
 
     PlayerList playerList;
@@ -55,10 +57,10 @@ public class Gameplay {
         var topDialog = ViewAtoms.buildViewModel("Gold", "data/dlg_img/cash.png");
         borderPane.borderPane.setRight(topDialog.View);
 
-        engine.loadTiles(aggFile);
+        engine.loadTiles(agg);
 
-        this.heroesImg = AggPaint.RenderICNSprite(aggFile, IcnKind.HEROES, 0).first.doublePicture().toImage();
-        this.heroesImgSmooth = AggPaint.RenderICNSprite(aggFile, IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
+        this.heroesImg = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.doublePicture().toImage();
+        this.heroesImgSmooth = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
     }
 
     private void setupRandomLevel() {

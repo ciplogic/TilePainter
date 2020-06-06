@@ -62,10 +62,10 @@ public class MainContext {
         return injectInstance(obj);
     }
 
-    boolean hasMethod(Object obj, String methodName) {
+    boolean hasMethod(Object obj) {
         var methods = obj.getClass().getMethods();
         for (var m : methods) {
-            if (m.getName().equals(methodName))
+            if (m.getName().equals("setup"))
                 return true;
         }
         return false;
@@ -86,7 +86,7 @@ public class MainContext {
             }
         }
         setObjectType(obj);
-        if (hasMethod(obj, "setup")) {
+        if (hasMethod(obj)) {
             try {
                 var method = clazz.getMethod("setup");
                 method.invoke(obj);
