@@ -41,8 +41,8 @@ public class Bitmap {
         pixels[Width * y + x] = argbColor;
     }
 
-    public void SetPixelDirect(int index, int palColor) {
-        pixels[index] = palColor;
+    public void SetPixelDirect(int index, int argbColor) {
+        pixels[index] = argbColor;
     }
 
     public int GetIndex(int x, int y) {

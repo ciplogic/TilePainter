@@ -12,7 +12,7 @@ public class ByteVectorReader {
         return x & 0xFF;
     }
 
-    public static int toShort(short x) {
+    public static int toUShort(short x) {
         return x & 0xFFFF;
     }
 

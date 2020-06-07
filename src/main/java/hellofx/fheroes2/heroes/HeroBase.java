@@ -5,7 +5,7 @@ import hellofx.fheroes2.resource.BagArtifacts;
 import hellofx.fheroes2.spell.SpellBook;
 import hellofx.fheroes2.system.BitModes;
 
-import static hellofx.fheroes2.agg.IcnKind.*;
+import static hellofx.fheroes2.agg.icn.IcnKind.*;
 
 public class HeroBase {
     public BitModes bitModes = new BitModes();

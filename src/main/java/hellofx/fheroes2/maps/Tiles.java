@@ -1,15 +1,21 @@
 package hellofx.fheroes2.maps;
 
 import hellofx.fheroes2.agg.Agg;
+import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.agg.TilKind;
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.kingdom.H2Color;
+import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.monster.Monster;
+import hellofx.fheroes2.monster.MonsterKind;
 import hellofx.framework.controls.Painter;
 import javafx.scene.image.Image;
 
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
 
 public class Tiles {
     public Addons addons_level1 = new Addons();
@@ -22,6 +28,8 @@ public class Tiles {
     public byte quantity1 = 0;
     public byte quantity2 = 0;
     public byte quantity3 = 0;
+    private int maps_x;
+    private int maps_y;
 
     public void Init(int index, Mp2Tile mp2) {
         tile_passable = Direction.DIRECTION_ALL;
@@ -57,6 +65,9 @@ public class Tiles {
 
     private void SetIndex(int index) {
         maps_index = index;
+        var point = GetPoint(index);
+        maps_x = point.x;
+        maps_y = point.y;
     }
 
     private void SetTile(int sprite_index, int shape) {
@@ -103,9 +114,9 @@ public class Tiles {
     }
 
     public int GetObject(boolean skip_hero) {
-        if ((!skip_hero) && (H2Obj.OBJ_HEROES == mp2_object)) {
+        if ((!skip_hero) && (Mp2Kind.OBJ_HEROES == mp2_object)) {
             var hero = GetHeroes();
-            return hero != null ? hero.GetMapsObject() : H2Obj.OBJ_ZERO;
+            return hero != null ? hero.GetMapsObject() : Mp2Kind.OBJ_ZERO;
         }
 
         return mp2_object;
@@ -125,12 +136,127 @@ public class Tiles {
         return null;
     }
 
-    public void RedrawBottom(Painter dst, boolean b) {
+    public Bitmap RedrawBottom(Painter dst, boolean skip_objs, Agg agg) {
+        for (var it : addons_level1._items) {
+            // skip
+            if (skip_objs &&
+                    Mp2.isRemoveObject(GetObject()) &&
+                    FindObjectConst(GetObject()) == it)
+                continue;
+
+            var object = it.object;
+            var index = it.index;
+            var icn = Mp2.GetICNObject(object);
+
+            if (IcnKind.UNKNOWN == icn || IcnKind.MINIHERO == icn || IcnKind.MONS32 == icn)
+                continue;
+            var sprite = Agg.GetICN(icn, index);
+            return sprite;
+        /*
+            area.BlitOnTile(dst, sprite, mp);
+
+            // possible anime
+            var anime_index = IcnKind.AnimationFrame(icn, index, Game.MapsAnimationFrame(), quantity2);
+            if (anime_index == 0)
+                continue;
+        var anime_sprite = agg.GetICN(icn, anime_index);
+            area.BlitOnTile(dst, anime_sprite, mp);
+
+         */
+        }
         //TODO
+        return null;
     }
 
     public void RedrawObjects(Painter dst) {
+        switch (GetObject()) {
+            // boat
+            case Mp2Kind.OBJ_BOAT:
+                RedrawBoat(dst);
+                break;
+            // monster
+            case Mp2Kind.OBJ_MONSTER:
+                RedrawMonster(dst);
+                break;
+            //
+            default:
+                break;
+        }
         //TODO
+    }
+
+    Monster QuantityMonster() {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_WATCHTOWER:
+                return new Monster(MonsterKind.ORC);
+            case Mp2Kind.OBJ_EXCAVATION:
+                return new Monster(MonsterKind.SKELETON);
+            case Mp2Kind.OBJ_CAVE:
+                return new Monster(MonsterKind.CENTAUR);
+            case Mp2Kind.OBJ_TREEHOUSE:
+                return new Monster(MonsterKind.SPRITE);
+            case Mp2Kind.OBJ_ARCHERHOUSE:
+                return new Monster(MonsterKind.ARCHER);
+            case Mp2Kind.OBJ_GOBLINHUT:
+                return new Monster(MonsterKind.GOBLIN);
+            case Mp2Kind.OBJ_DWARFCOTT:
+                return new Monster(MonsterKind.DWARF);
+            case Mp2Kind.OBJ_HALFLINGHOLE:
+                return new Monster(MonsterKind.HALFLING);
+            case Mp2Kind.OBJ_PEASANTHUT:
+            case Mp2Kind.OBJ_THATCHEDHUT:
+                return new Monster(MonsterKind.PEASANT);
+
+            case Mp2Kind.OBJ_RUINS:
+                return new Monster(MonsterKind.MEDUSA);
+            case Mp2Kind.OBJ_TREECITY:
+                return new Monster(MonsterKind.SPRITE);
+            case Mp2Kind.OBJ_WAGONCAMP:
+                return new Monster(MonsterKind.ROGUE);
+            case Mp2Kind.OBJ_DESERTTENT:
+                return new Monster(MonsterKind.NOMAD);
+
+            case Mp2Kind.OBJ_TROLLBRIDGE:
+                return new Monster(MonsterKind.TROLL);
+            case Mp2Kind.OBJ_DRAGONCITY:
+                return new Monster(MonsterKind.RED_DRAGON);
+            case Mp2Kind.OBJ_CITYDEAD:
+                return new Monster(MonsterKind.POWER_LICH);
+
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+                return new Monster(MonsterKind.GENIE);
+
+            // loyalty version
+            case Mp2Kind.OBJ_WATERALTAR:
+                return new Monster(MonsterKind.WATER_ELEMENT);
+            case Mp2Kind.OBJ_AIRALTAR:
+                return new Monster(MonsterKind.AIR_ELEMENT);
+            case Mp2Kind.OBJ_FIREALTAR:
+                return new Monster(MonsterKind.FIRE_ELEMENT);
+            case Mp2Kind.OBJ_EARTHALTAR:
+                return new Monster(MonsterKind.EARTH_ELEMENT);
+            case Mp2Kind.OBJ_BARROWMOUNDS:
+                return new Monster(MonsterKind.GHOST);
+
+            case Mp2Kind.OBJ_MONSTER:
+                return new Monster(GetQuantity3());
+
+            default:
+                break;
+        }
+        var world = World.Instance;
+
+        return Mp2.isCaptureObject(GetObject(false))
+                ? world.GetCapturedObject(GetIndex()).GetTroop()._monster
+                : new Monster(MonsterKind.UNKNOWN);
+    }
+
+    private void RedrawMonster(Painter dst) {
+
+    }
+
+    private void RedrawBoat(Painter dst) {
+
     }
 
     public void RedrawTop(Painter dst) {
@@ -145,14 +271,17 @@ public class Tiles {
     public void RedrawFogs(Painter dst, int colors) {
     }
 
-    public void RedrawTile(Painter dst) {
-        H2Point mp = GetPoint(GetIndex());
+    public Image RedrawTile() {
         var surface = GetTileSurface();
+        return surface;
+
     }
 
     private H2Point GetPoint(int index) {
         H2Point res = new H2Point();
-
+        var world = World.Instance;
+        res.x = index % world.w;
+        res.y = index / world.w;
         return res;
     }
 
@@ -161,7 +290,7 @@ public class Tiles {
     }
 
     private int TileSpriteShape() {
-        return pack_sprite_index >> 14;
+        return toUShort(pack_sprite_index) >> 14;
     }
 
     private int TileSpriteIndex() {

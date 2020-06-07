@@ -1,13 +1,13 @@
 package hellofx;
 
-import hellofx.common.Tuple;
 import hellofx.dialogs.atoms.ViewAtoms;
-import hellofx.dialogs.controllers.ResourcesController;
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.AggPaint;
-import hellofx.fheroes2.agg.IcnKind;
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.Engine;
+import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.gui.GameArea;
+import hellofx.fheroes2.gui.LevelKind;
 import hellofx.framework.EventNames;
 import hellofx.framework.MainContext;
 import hellofx.framework.ObjectNames;
@@ -17,12 +17,13 @@ import hellofx.framework.controls.MainStackPane;
 import hellofx.game.MapView;
 import hellofx.graphics.ImageRepo;
 import hellofx.player.PlayerList;
-import javafx.scene.Parent;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 import java.util.Random;
+
+import static hellofx.common.Utilities.timeIt;
 
 public class Gameplay {
     public MainContext ctx;
@@ -39,7 +40,6 @@ public class Gameplay {
 
 
     PlayerList playerList;
-    Tuple<Parent, ResourcesController> fxmlRes;
     double idx = 0;
     private Image heroesImg;
     private Image heroesImgSmooth;
@@ -74,15 +74,21 @@ public class Gameplay {
     }
 
     void onFrameUpdate() {
-        idx += 0.0002;
+        idx += 2;
+        gameArea.cameraTopLeft.x = (int) idx;
+        gameArea.cameraTopLeft.y = (int) (idx * 2);
         var painter = canvasWrap.getPainter();
-        painter.clear(Color.ROYALBLUE);
-        var tileX = (int) (idx * 1000.0);
-        //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
-        painter.drawImage(heroesImgSmooth, 0, 0);
-        painter.drawImage(heroesImg, 0, 0);
+        timeIt("frame time", () -> {
 
+            painter.clear(Color.ROYALBLUE);
+            var tileX = (int) (idx * 1000.0);
+            //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
+            painter.drawImage(heroesImgSmooth, 0, 0);
+            painter.drawImage(heroesImg, 0, 0);
 
-        //fxmlRes.getV2().setValues(200, 50, 12, 15);
+            var rect = new H2Rect(0, 0, 109, 46);
+
+            gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
+        });
     }
 }

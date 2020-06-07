@@ -1,6 +1,6 @@
 package hellofx.fheroes2.maps;
 
-import hellofx.fheroes2.agg.IcnKind;
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.H2IntPair;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;

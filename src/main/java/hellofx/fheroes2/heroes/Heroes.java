@@ -9,8 +9,8 @@ import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
-import hellofx.fheroes2.maps.H2Obj;
 import hellofx.fheroes2.maps.IndexObject;
+import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.spell.Spell;
 import hellofx.framework.controls.Painter;
@@ -18,8 +18,8 @@ import hellofx.framework.controls.Painter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static hellofx.fheroes2.agg.IcnKind.MINIPORT;
-import static hellofx.fheroes2.agg.IcnKind.PORTMEDI;
+import static hellofx.fheroes2.agg.icn.IcnKind.MINIPORT;
+import static hellofx.fheroes2.agg.icn.IcnKind.PORTMEDI;
 import static hellofx.fheroes2.heroes.HeroFlags.*;
 import static hellofx.fheroes2.heroes.HeroPortraitSize.*;
 import static hellofx.fheroes2.heroes.HeroesKind.BAX;
@@ -97,7 +97,7 @@ public class Heroes extends HeroBase {
         killer_color.SetColor(H2Color.NONE);
 
         // save general object
-        save_maps_object = H2Obj.OBJ_ZERO;
+        save_maps_object = Mp2Kind.OBJ_ZERO;
 
         // fix zero army
         if (!army.m_troops.IsValid())

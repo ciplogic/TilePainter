@@ -7,7 +7,7 @@ public class ObjectColor {
     public int color;
 
     public ObjectColor() {
-        obj = H2Obj.OBJ_ZERO;
+        obj = Mp2Kind.OBJ_ZERO;
         color = H2Color.NONE;
     }
 }

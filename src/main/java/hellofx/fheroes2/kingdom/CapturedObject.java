@@ -8,6 +8,10 @@ public class CapturedObject {
     Troop guardians = new Troop();
     int split = 1;
 
+    public Troop GetTroop() {
+        return guardians;
+    }
+
     public void SetColor(int col) {
     }
 }

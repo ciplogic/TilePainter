@@ -44,7 +44,7 @@ public class HelloFx extends Application {
 
         var engine = context.inject(Engine.class);
 
-        var world = new World();
+        var world = World.Instance;
         world.loadMapMp2("maps/BROKENA.MP2");
 
         var hero = new Heroes(HeroesKind.ARIEL, RaceKind.SORC);

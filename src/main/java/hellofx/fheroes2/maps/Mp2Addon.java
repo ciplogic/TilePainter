@@ -28,7 +28,7 @@ public class Mp2Addon {
     @Override
     public String toString() {
         return "Mp2Addon{" +
-                "indexAddon=" + toShort(indexAddon) +
+                "indexAddon=" + toUShort(indexAddon) +
                 ", objectNameN1=" + toByte(objectNameN1) +
                 ", indexNameN1=" + toByte(indexNameN1) +
                 ", quantityN=" + toByte(quantityN) +

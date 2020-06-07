@@ -1,11 +1,10 @@
 package hellofx.fheroes2.maps;
 
-import hellofx.fheroes2.agg.IcnKind;
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.system.Settings;
 
 public class Mp2 {
     public static int GetICNObject(int type) {
-
         switch (type) {
             // reserverd
             case 0:
@@ -328,5 +327,91 @@ public class Mp2 {
         }
 
         return IcnKind.UNKNOWN;
+    }
+
+    public static boolean isRemoveObject(int obj) {
+        switch (obj) {
+            case Mp2Kind.OBJ_MONSTER:
+            case Mp2Kind.OBJ_BARRIER:
+                return true;
+
+            default:
+                break;
+        }
+
+        return isPickupObject(obj);
+    }
+
+    private static boolean isPickupObject(int obj) {
+
+        switch (obj) {
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_BOTTLE:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+            case Mp2Kind.OBJ_CAMPFIRE:
+            case Mp2Kind.OBJ_RESOURCE:
+            case Mp2Kind.OBJ_ARTIFACT:
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    public static boolean isQuantityObject(int obj) {
+        switch (obj) {
+            case Mp2Kind.OBJ_SKELETON:
+            case Mp2Kind.OBJ_WAGON:
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_RESOURCE:
+            case Mp2Kind.OBJ_MAGICGARDEN:
+            case Mp2Kind.OBJ_WATERWHEEL:
+            case Mp2Kind.OBJ_WINDMILL:
+            case Mp2Kind.OBJ_LEANTO:
+            case Mp2Kind.OBJ_CAMPFIRE:
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_DERELICTSHIP:
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_GRAVEYARD:
+            case Mp2Kind.OBJ_PYRAMID:
+            case Mp2Kind.OBJ_DAEMONCAVE:
+            case Mp2Kind.OBJ_ABANDONEDMINE:
+                return true;
+
+            default:
+                break;
+        }
+
+        return isPickupObject(obj);
+    }
+
+    public static boolean isCaptureObject(int obj) {
+        switch (obj) {
+            case Mp2Kind.OBJ_MINES:
+            case Mp2Kind.OBJ_ABANDONEDMINE:
+            case Mp2Kind.OBJ_ALCHEMYLAB:
+            case Mp2Kind.OBJ_SAWMILL:
+            case Mp2Kind.OBJ_LIGHTHOUSE:
+            case Mp2Kind.OBJ_CASTLE:
+                return true;
+
+            case Mp2Kind.OBJ_WATERWHEEL:
+            case Mp2Kind.OBJ_WINDMILL:
+            case Mp2Kind.OBJ_MAGICGARDEN:
+                return Settings.Get().ExtWorldExtObjectsCaptured();
+
+            default:
+                break;
+        }
+
+        return false;
     }
 }

@@ -35,7 +35,11 @@ public class World {
         Instance = new World();
     }
 
-    public short w;
+    public short w, h;
+
+    private World() {
+    }
+
     public AllCastles vec_castles = new AllCastles();
     public List<Tiles> vec_tiles = new ArrayList<>();
     public CapturedObjects map_captureobj = new CapturedObjects();
@@ -45,7 +49,6 @@ public class World {
     public List<String> vec_rumors = new ArrayList<>();
     public List<EventsDate> vec_eventsday = new ArrayList<>();
     IntArrayList vec_object = new IntArrayList();
-    private short h;
 
     public int GetIndexFromAbsPoint(int px, int py) {
         var res = py * w + px;
@@ -123,15 +126,15 @@ public class World {
                     var offsetAddonsBlock = mp2tile.loadFromMp2Stream(fs);
 
                     switch (toByte(Mp2Tile.generalObject)) {
-                        case H2Obj.OBJ_RNDTOWN:
-                        case H2Obj.OBJ_RNDCASTLE:
-                        case H2Obj.OBJ_CASTLE:
-                        case H2Obj.OBJ_HEROES:
-                        case H2Obj.OBJ_SIGN:
-                        case H2Obj.OBJ_BOTTLE:
-                        case H2Obj.OBJ_EVENT:
-                        case H2Obj.OBJ_SPHINX:
-                        case H2Obj.OBJ_JAIL:
+                        case Mp2Kind.OBJ_RNDTOWN:
+                        case Mp2Kind.OBJ_RNDCASTLE:
+                        case Mp2Kind.OBJ_CASTLE:
+                        case Mp2Kind.OBJ_HEROES:
+                        case Mp2Kind.OBJ_SIGN:
+                        case Mp2Kind.OBJ_BOTTLE:
+                        case Mp2Kind.OBJ_EVENT:
+                        case Mp2Kind.OBJ_SPHINX:
+                        case Mp2Kind.OBJ_JAIL:
                             vec_object.add(index);
                             break;
                         default:
@@ -209,7 +212,7 @@ public class World {
                     break;
             }
             // preload in to capture objects cache
-            map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_CASTLE, H2Color.NONE);
+            map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_CASTLE, H2Color.NONE);
         }
 
         fs.seek(endof_addons + 72 * 3);
@@ -227,11 +230,11 @@ public class World {
             switch (id) {
                 // mines: wood
                 case 0x00:
-                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_SAWMILL, H2Color.NONE);
+                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_SAWMILL, H2Color.NONE);
                     break;
                 // mines: mercury
                 case 0x01:
-                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_ALCHEMYLAB, H2Color.NONE);
+                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_ALCHEMYLAB, H2Color.NONE);
                     break;
                 // mines: ore
                 case 0x02:
@@ -243,19 +246,19 @@ public class World {
                 case 0x05:
                     // mines: gold
                 case 0x06:
-                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_MINES, H2Color.NONE);
+                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_MINES, H2Color.NONE);
                     break;
                 // lighthouse
                 case 0x64:
-                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_LIGHTHOUSE, H2Color.NONE);
+                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_LIGHTHOUSE, H2Color.NONE);
                     break;
                 // dragon city
                 case 0x65:
-                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_DRAGONCITY, H2Color.NONE);
+                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_DRAGONCITY, H2Color.NONE);
                     break;
                 // abandoned mines
                 case 0x67:
-                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), H2Obj.OBJ_ABANDONEDMINE, H2Color.NONE);
+                    map_captureobj.Set(GetIndexFromAbsPoint(cx, cy), Mp2Kind.OBJ_ABANDONEDMINE, H2Color.NONE);
                     break;
                 default:
                     break;
@@ -305,7 +308,7 @@ public class World {
                 TilesAddon addon;
 
                 switch (tile.GetObject()) {
-                    case H2Obj.OBJ_CASTLE:
+                    case Mp2Kind.OBJ_CASTLE:
                         // add castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
                         } else {
@@ -318,8 +321,8 @@ public class World {
                             }
                         }
                         break;
-                    case H2Obj.OBJ_RNDTOWN:
-                    case H2Obj.OBJ_RNDCASTLE:
+                    case Mp2Kind.OBJ_RNDTOWN:
+                    case Mp2Kind.OBJ_RNDCASTLE:
                         // add rnd castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
                         } else {
@@ -334,7 +337,7 @@ public class World {
                             }
                         }
                         break;
-                    case H2Obj.OBJ_JAIL:
+                    case Mp2Kind.OBJ_JAIL:
                         // add jail
                         if (SIZEOFMP2HEROES != pblock.length) {
                         } else {
@@ -368,10 +371,10 @@ public class World {
                             }
                         }
                         break;
-                    case H2Obj.OBJ_HEROES:
+                    case Mp2Kind.OBJ_HEROES:
                         // add heroes
                         if (SIZEOFMP2HEROES != pblock.length) {
-                        } else if (null != (addon = tile.FindObjectConst(H2Obj.OBJ_HEROES))) {
+                        } else if (null != (addon = tile.FindObjectConst(Mp2Kind.OBJ_HEROES))) {
                             H2IntPair colorRace = TilesAddon.ColorRaceFromHeroSprite(addon);
                             Kingdom kingdom = GetKingdom(colorRace.first);
 
@@ -396,8 +399,8 @@ public class World {
                             }
                         }
                         break;
-                    case H2Obj.OBJ_SIGN:
-                    case H2Obj.OBJ_BOTTLE:
+                    case Mp2Kind.OBJ_SIGN:
+                    case Mp2Kind.OBJ_BOTTLE:
                         // add sign or bottle
                         if (SIZEOFMP2SIGN - 1 < pblock.length && 0x01 == pblock[0]) {
                             var obj = new MapSign();
@@ -406,7 +409,7 @@ public class World {
                             map_objects.add(obj);
                         }
                         break;
-                    case H2Obj.OBJ_EVENT:
+                    case Mp2Kind.OBJ_EVENT:
                         // add event maps
                         if (SIZEOFMP2EVENT - 1 < pblock.length && 0x01 == pblock[0]) {
                             var obj = new MapEvent();
@@ -415,7 +418,7 @@ public class World {
                             map_objects.add(obj);
                         }
                         break;
-                    case H2Obj.OBJ_SPHINX:
+                    case Mp2Kind.OBJ_SPHINX:
                         // add riddle sphinx
                         if (SIZEOFMP2RIDDLE - 1 < pblock.length && 0x00 == pblock[0]) {
                             var obj = new MapSphinx();
@@ -480,6 +483,13 @@ public class World {
     }
 
     public Tiles GetTiles(int x, int y) {
-        return vec_tiles.get(x + (y * w));
+        var index = x + (y * w);
+        if (x < 0 || y < 0 || x >= w || y >= h)
+            return null;
+        return vec_tiles.get(index);
+    }
+
+    public CapturedObject GetCapturedObject(int index) {
+        return map_captureobj._items.get(index);
     }
 }

@@ -23,4 +23,9 @@ public class Settings {
     public boolean IS_DEVEL() {
         return false;
     }
+
+    public boolean ExtWorldExtObjectsCaptured() {
+        //TODO
+        return false;
+    }
 }
