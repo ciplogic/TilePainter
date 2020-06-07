@@ -469,7 +469,6 @@ public class World {
     }
 
     private Kingdom GetKingdom(int color) {
-
         return vec_kingdoms.GetKingdom(color);
     }
 
