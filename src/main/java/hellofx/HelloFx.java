@@ -3,6 +3,7 @@ package hellofx;
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.gui.GameArea;
+import hellofx.fheroes2.gui.GameCamera;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
@@ -40,6 +41,7 @@ public class HelloFx extends Application {
         //Music.ExtractAllWav(agg);
         context.injectInstance(agg);
 
+        context.inject(GameCamera.class);
         context.inject(GameArea.class);
 
         var engine = context.inject(Engine.class);

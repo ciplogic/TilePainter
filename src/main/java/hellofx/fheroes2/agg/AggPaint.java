@@ -58,7 +58,7 @@ public class AggPaint {
         var max = bufPos + sizeData;
 
         res.offset = new MutPoint(header1.offsetX, header1.offsetY);
-        res.SetSize(true, sz.Width, sz.Height, false);
+        res.SetSize(true, sz.w, sz.h, false);
 
         var shadowCol = H2RgbaColor.FromArgb(0, 0, 0, 0x40);
 
@@ -103,7 +103,7 @@ public class AggPaint {
                                     c = toByte(body[bufPos]);
                                 }
 
-                                if (res.second == null) res.SetSize(false, sz.Width, sz.Height, true);
+                                if (res.second == null) res.SetSize(false, sz.w, sz.h, true);
 
                                 while (c-- != 0) {
                                     res.second.SetPixel(pt.x, pt.y, shadowCol);

@@ -1,11 +1,11 @@
 package hellofx.fheroes2.common;
 
 public class H2Size {
-    public short Width;
-    public short Height;
+    public short w;
+    public short h;
 
-    public H2Size(short width, short height) {
-        Width = width;
-        Height = height;
+    public H2Size(int width, int height) {
+        w = (short) width;
+        h = (short) height;
     }
 }

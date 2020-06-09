@@ -252,7 +252,63 @@ public class Tiles {
     }
 
     private void RedrawMonster(Painter dst) {
+/*
+        // scan hero around
+        MapsIndexes v = new MapsIndexes();
+        ScanAroundObject(GetIndex(), Mp2Kind.OBJ_HEROES, v);
+        for (var it : v)
+        {
+        const var tile = world.GetTiles(it);
+            dst_index = it;
 
+            if (MP2.OBJ_HEROES != mp2_object ||
+                    // skip bottom, bottom_right, bottom_left with ground objects
+                    (DIRECTION_BOTTOM_ROW & Direction.Get(GetIndex(), it) && Mp2.isGroundObject(tile.GetObject(false))) ||
+            // skip ground check
+            tile.isWater() != isWater())
+            dst_index = -1;
+        else
+            break;
+        }
+
+     var sprite_index = QuantityMonster().GetSpriteIndex();
+
+        // draw attack sprite
+        if (-1 != dst_index && !conf.ExtWorldOnlyFirstMonsterAttack())
+        {
+            var revert = false;
+
+            switch (Direction.Get(GetIndex(), dst_index))
+            {
+                case Direction.TOP_LEFT:
+                case Direction.LEFT:
+                case Direction.BOTTOM_LEFT:
+                    revert = true;
+                    break;
+                default:
+                    break;
+            }
+
+        const var sprite_first = AGG.GetICN(ICN.MINIMON, sprite_index * 9 + (revert ? 8 : 7));
+            area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
+        }
+        else
+        {
+            // draw first sprite
+        const var sprite_first = AGG.GetICN(ICN.MINIMON, sprite_index * 9);
+            area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
+
+            // draw second sprite
+        const var sprite_next = AGG.GetICN(ICN.MINIMON, sprite_index * 9 + 1 +
+                monster_animation_cicle[
+                        (Game.MapsAnimationFrame() + mp.x * mp.y) %
+            ARRAY_COUNT(monster_animation_cicle)]);
+            area.BlitOnTile(dst, sprite_next, sprite_next.x() + 16, TILEWIDTH + sprite_next.y(), mp);
+        }
+        */
+    }
+
+    private void ScanAroundObject(int getIndex, int objHeroes, MapsIndexes v) {
     }
 
     private void RedrawBoat(Painter dst) {

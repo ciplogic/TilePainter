@@ -26,4 +26,9 @@ public class Direction {
     public static final int DIRECTION_TOP_LEFT_CORNER = (TOP | TOP_LEFT | LEFT);
     public static final int DIRECTION_BOTTOM_RIGHT_CORNER = (BOTTOM | BOTTOM_RIGHT | RIGHT);
     public static final int DIRECTION_BOTTOM_LEFT_CORNER = (BOTTOM | BOTTOM_LEFT | LEFT);
+    final static int[] directs = {TOP_LEFT, TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT};
+
+    public static int[] All() {
+        return directs;
+    }
 }

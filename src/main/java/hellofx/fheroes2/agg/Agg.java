@@ -4,6 +4,7 @@ import hellofx.fheroes2.agg.cache.icn_cache_t;
 import hellofx.fheroes2.agg.cache.til_cache_t;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.music.Music;
+import hellofx.fheroes2.gui.ImageScaler;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.fheroes2.serialize.ResourceDownloader;
@@ -21,6 +22,7 @@ public class Agg {
     public MainContext context;
     List<icn_cache_t> icn_cache = new ArrayList<>();
     List<til_cache_t> til_cache = new ArrayList<>();
+    public ImageScaler imageScaler = (bmp) -> bmp.toImage();
 
     public static Agg Get() {
         return StaticInstance;
@@ -104,7 +106,7 @@ public class Agg {
         var src = tilCache.sprites[index];
         var result = surface;
         result = Bitmap.RenderReflect(src, shape);
-        tilCache.setSprite(index2, result);
+        tilCache.setSprite(index2, result, agg.imageScaler);
         return tilCache.getImage(index2);
     }
 
@@ -164,7 +166,7 @@ public class Agg {
                     pos++;
                 }
             }
-            v.setSprite(ii, bmp);
+            v.setSprite(ii, bmp, imageScaler);
         }
         return true;
     }

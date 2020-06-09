@@ -35,7 +35,7 @@ public class World {
         Instance = new World();
     }
 
-    public short w, h;
+    public int w, h;
 
     private World() {
     }

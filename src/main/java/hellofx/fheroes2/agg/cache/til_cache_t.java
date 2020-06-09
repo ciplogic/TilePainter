@@ -1,6 +1,7 @@
 package hellofx.fheroes2.agg.cache;
 
 import hellofx.fheroes2.agg.Bitmap;
+import hellofx.fheroes2.gui.ImageScaler;
 import javafx.scene.image.Image;
 
 public class til_cache_t {
@@ -15,9 +16,9 @@ public class til_cache_t {
 
     }
 
-    public void setSprite(int index, Bitmap bmp) {
+    public void setSprite(int index, Bitmap bmp, ImageScaler scaler) {
         sprites[index] = bmp;
-        surfaces[index] = bmp.toImage();
+        surfaces[index] = scaler.scaleImage(bmp);
     }
 
     public Image getImage(int index) {

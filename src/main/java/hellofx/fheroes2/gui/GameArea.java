@@ -2,7 +2,6 @@ package hellofx.fheroes2.gui;
 
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.TilKind;
-import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.kingdom.World;
@@ -17,27 +16,24 @@ import static hellofx.fheroes2.gui.LevelKind.*;
 
 public class GameArea {
     public H2Rect rectMaps = new H2Rect(0, 0, 30, 20);
-    public H2Point cameraTopLeft = new H2Point();
+
+    public GameCamera camera;
 
     public void Repaint(Painter dst, int flag, H2Rect rt, Agg agg) {
         var world = World.Instance;
-        var camDivX = cameraTopLeft.x / 32;
-        var camModX = cameraTopLeft.x % 32;
-        var camDivY = cameraTopLeft.y / 32;
-        var camModY = cameraTopLeft.y % 32;
+        var tileX = camera.getLeftTile();
+        var tileY = camera.getTopTile();
         for (int stepX = 0; stepX < rt.w; ++stepX) {
-            var ox = rt.x + camDivX + stepX;
+            var ox = tileX + stepX;
             for (int stepY = 0; stepY < rt.h; ++stepY) {
-                var oy = rt.y + camDivY + stepY;
+                var oy = tileY + stepY;
                 var currentTile = world.GetTiles(ox, oy);
                 Image tileSurface;
                 if (currentTile == null) {
                     tileSurface = Agg.GetTIL(TilKind.GROUND32, 320, 0);
                 } else
                     tileSurface = currentTile.RedrawTile();
-                int finalPositionX = (stepX) * 32 - camModX;
-                int finalPositionY = stepY * 32 - camModY;
-                dst.drawImage(tileSurface, finalPositionX, finalPositionY);
+                camera.drawImageOnTile(dst, tileSurface, ox, oy);
             }
         }
         for (int stepX = 0; stepX < rt.w; ++stepX) {
@@ -52,8 +48,8 @@ public class GameArea {
                 if ((flag & LEVEL_BOTTOM) != 0) {
                     var tileSurface = currentTile.RedrawBottom(dst, (flag & LEVEL_OBJECTS) == 0, agg);
                     if (tileSurface != null) {
-                        int finalPositionX = (stepX) * 32 - camModX;
-                        int finalPositionY = stepY * 32 - camModY;
+                        int finalPositionX = (stepX) * 32;
+                        int finalPositionY = stepY * 32;
                         dst.drawImage(tileSurface.toImage(), finalPositionX, finalPositionY);
                     }
                 }
@@ -77,7 +73,7 @@ public class GameArea {
                 if (tile.GetObject() == Mp2Kind.OBJ_HEROES && ((flag & LEVEL_HEROES) != 0)) {
                     Heroes hero = tile.GetHeroes();
                     if (hero != null)
-                        hero.Redraw(dst, cameraTopLeft.x + TILEWIDTH * ox, cameraTopLeft.y + TILEWIDTH * oy, true);
+                        hero.Redraw(dst, TILEWIDTH * ox, TILEWIDTH * oy, true);
                 }
             }
 

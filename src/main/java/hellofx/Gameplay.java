@@ -40,7 +40,7 @@ public class Gameplay {
 
 
     PlayerList playerList;
-    double idx = 0;
+    double idx = -300;
     private Image heroesImg;
     private Image heroesImgSmooth;
 
@@ -58,6 +58,7 @@ public class Gameplay {
         borderPane.borderPane.setRight(topDialog.View);
 
         engine.loadTiles(agg);
+        agg.imageScaler = gameArea.camera.getScaler();
 
         this.heroesImg = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.doublePicture().toImage();
         this.heroesImgSmooth = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
@@ -75,8 +76,8 @@ public class Gameplay {
 
     void onFrameUpdate() {
         idx += 2;
-        gameArea.cameraTopLeft.x = (int) idx;
-        gameArea.cameraTopLeft.y = (int) (idx * 2);
+        gameArea.camera.left = (int) idx;
+        gameArea.camera.top = (int) (idx * 2);
         var painter = canvasWrap.getPainter();
         timeIt("frame time", () -> {
 
