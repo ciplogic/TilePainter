@@ -6,6 +6,9 @@ public class Troop {
     public Monster _monster = new Monster(0);
     public int count;
 
+    public Troop() {
+    }
+
     public void SetMonster(Monster monster) {
         _monster.id = monster.id;
     }

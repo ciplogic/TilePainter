@@ -24,4 +24,5 @@ public class Troops {
         _items.clear();
         _items.addAll(Arrays.asList(troops));
     }
+
 }

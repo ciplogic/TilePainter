@@ -38,4 +38,9 @@ public class Settings {
         //TODO
         return false;
     }
+
+    public boolean ExtCastleAllowRecruitSpecialHeroes() {
+        //TODO
+        return false;
+    }
 }

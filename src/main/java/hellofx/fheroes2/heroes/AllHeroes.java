@@ -1,15 +1,15 @@
 package hellofx.fheroes2.heroes;
 
+import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.system.Settings;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 public class AllHeroes extends VecHeroes {
-    public Heroes GetFreeman(int race) {
-        //TODO
-        return null;
-    }
 
     public void Init() {
+
 
         var loyalty = Settings.Get().PriceLoyaltyVersion();
 
@@ -62,4 +62,78 @@ public class AllHeroes extends VecHeroes {
         _items.add(new Heroes(Settings.Get().IS_DEVEL() ? HeroesKind.SANDYSANDY : HeroesKind.UNKNOWN, RaceKind.WRLK));
         _items.add(new Heroes(HeroesKind.UNKNOWN, RaceKind.KNGT));
     }
+
+    public Heroes GetFreeman(int race) {
+        var conf = Settings.Get();
+
+        int min = HeroesKind.UNKNOWN;
+        int max = HeroesKind.UNKNOWN;
+
+        switch (race) {
+            case RaceKind.KNGT:
+                min = HeroesKind.LORDKILBURN;
+                max = HeroesKind.DIMITRY;
+                break;
+
+            case RaceKind.BARB:
+                min = HeroesKind.THUNDAX;
+                max = HeroesKind.ATLAS;
+                break;
+
+            case RaceKind.SORC:
+                min = HeroesKind.ASTRA;
+                max = HeroesKind.LUNA;
+                break;
+
+            case RaceKind.WRLK:
+                min = HeroesKind.ARIE;
+                max = HeroesKind.WRATHMONT;
+                break;
+
+            case RaceKind.WZRD:
+                min = HeroesKind.MYRA;
+                max = HeroesKind.MANDIGAL;
+                break;
+
+            case RaceKind.NECR:
+                min = HeroesKind.ZOM;
+                max = HeroesKind.CELIA;
+                break;
+
+            default:
+                min = HeroesKind.LORDKILBURN;
+                max = conf.ExtCastleAllowRecruitSpecialHeroes()
+                        ? (conf.PriceLoyaltyVersion()
+                        ? HeroesKind.JARKONAS
+                        : HeroesKind.BAX)
+                        : HeroesKind.CELIA;
+                break;
+        }
+
+        IntArrayList freeman_heroes = new IntArrayList(GameConsts.HEROESMAXCOUNT);
+
+        // find freeman in race (skip: manual changes)
+        for (int ii = min; ii <= max; ++ii)
+            if (_items.get(ii).isFreeman() && !_items.get(ii).bitModes.Modes(HeroFlags.NOTDEFAULTS))
+                freeman_heroes.add(ii);
+
+        // not found, find any race
+        if (RaceKind.NONE != race && freeman_heroes.size() == 0) {
+            min = HeroesKind.LORDKILBURN;
+            max = conf.ExtCastleAllowRecruitSpecialHeroes()
+                    ? (conf.PriceLoyaltyVersion() ? HeroesKind.JARKONAS : HeroesKind.BAX)
+                    : HeroesKind.CELIA;
+
+            for (int ii = min; ii <= max; ++ii)
+                if (_items.get(ii).isFreeman()) freeman_heroes.add(ii);
+        }
+
+        // not found, all heroes busy
+        if (freeman_heroes.size() == 0) {
+            return null;
+        }
+
+        return _items.get(Rand.Get(freeman_heroes));
+    }
+
 }

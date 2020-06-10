@@ -1,5 +1,7 @@
 package hellofx.fheroes2.common;
 
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Rand {
@@ -12,4 +14,8 @@ public class Rand {
         return Get(0, max);
     }
 
+    public static int Get(IntArrayList values) {
+        var index = Get(values.size() - 1);
+        return values.getInt(index);
+    }
 }

@@ -29,6 +29,7 @@ import static hellofx.fheroes2.heroes.HeroFlags.*;
 import static hellofx.fheroes2.heroes.HeroPortraitSize.*;
 import static hellofx.fheroes2.heroes.HeroesKind.BAX;
 import static hellofx.fheroes2.heroes.HeroesKind.SANDYSANDY;
+import static hellofx.fheroes2.system.Translate.tr;
 
 public class Heroes extends HeroBase {
     public String name;
@@ -57,10 +58,56 @@ public class Heroes extends HeroBase {
 
     public List<IndexObject> visit_object = new ArrayList<>();
 
+    private static final String[] heroNames = {
+            // knight
+            tr("Lord Kilburn"), tr("Sir Gallanth"), tr("Ector"), tr("Gwenneth"), tr("Tyro"), tr("Ambrose"), tr("Ruby"),
+            tr("Maximus"), tr("Dimitry"),
+            // barbarian
+            tr("Thundax"), tr("Fineous"), tr("Jojosh"), tr("Crag Hack"), tr("Jezebel"), tr("Jaclyn"), tr("Ergon"), tr("Tsabu"),
+            tr("Atlas"),
+            // sorceress
+            tr("Astra"), tr("Natasha"), tr("Troyan"), tr("Vatawna"), tr("Rebecca"), tr("Gem"), tr("Ariel"), tr("Carlawn"),
+            tr("Luna"),
+            // warlock
+            tr("Arie"), tr("Alamar"), tr("Vesper"), tr("Crodo"), tr("Barok"), tr("Kastore"), tr("Agar"), tr("Falagar"),
+            tr("Wrathmont"),
+            // wizard
+            tr("Myra"), tr("Flint"), tr("Dawn"), tr("Halon"), tr("Myrini"), tr("Wilfrey"), tr("Sarakin"), tr("Kalindra"),
+            tr("Mandigal"),
+            // necromant
+            tr("Zom"), tr("Darlana"), tr("Zam"), tr("Ranloo"), tr("Charity"), tr("Rialdo"), tr("Roxana"), tr("Sandro"),
+            tr("Celia"),
+            // campains
+            tr("Roland"), tr("Lord Corlagon"), tr("Sister Eliza"), tr("Archibald"), tr("Lord Halton"), tr("Brother Bax"),
+            // loyalty version
+            tr("Solmyr"), tr("Dainwin"), tr("Mog"), tr("Uncle Ivan"), tr("Joseph"), tr("Gallavant"), tr("Elderian"),
+            tr("Ceallach"), tr("Drakonia"), tr("Martine"), tr("Jarkonas"),
+            // debug
+            "SandySandy", "Unknown"
+    };
+
     public Heroes(int heroid, int rc) {
         super(HeroType.HEROES, rc);
         hid = heroid;
         portrait = heroid;
+
+        color.color = H2Color.NONE;
+        experience = (0);
+        move_point_scale = (-1);
+        secondary_skills = new SecSkills(rc);
+        army = new Army(this);
+        race = (rc);
+        save_maps_object = (Mp2Kind.OBJ_ZERO);
+        //TODO
+        //path(this);
+        direction = (Direction.RIGHT);
+        sprite_index = (18);
+        patrol_square = (0);
+        name = Heroes.GetName(heroid);
+    }
+
+    private static String GetName(int heroid) {
+        return heroNames[heroid];
     }
 
     public int GetMapsObject() {
