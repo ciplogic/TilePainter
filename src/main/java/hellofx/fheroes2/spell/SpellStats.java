@@ -1,11 +1,11 @@
 package hellofx.fheroes2.spell;
 
-import hellofx.fheroes2.resource.cost_t;
+import hellofx.fheroes2.resource.Funds;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static hellofx.fheroes2.resource.cost_t.NONE;
+import static hellofx.fheroes2.resource.Funds.NONE;
 import static hellofx.fheroes2.system.Translate.tr;
 
 public class SpellStats {
@@ -205,7 +205,7 @@ public class SpellStats {
                            int sprite,
                            int extra,
                            int bits,
-                           cost_t cost,
+                           Funds cost,
                            String description) {
         var item = new spellstats_t();
         item.sp = (short) sp;

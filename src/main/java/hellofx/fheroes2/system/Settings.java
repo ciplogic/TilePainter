@@ -33,4 +33,9 @@ public class Settings {
         //TODO
         return false;
     }
+
+    public boolean ExtHeroRecruitCostDependedFromLevel() {
+        //TODO
+        return false;
+    }
 }

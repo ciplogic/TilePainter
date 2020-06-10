@@ -389,7 +389,7 @@ public class World {
                                 if (pblock[17] != 0 && pblock[18] < HeroesKind.BAX)
                                     hero = vec_heroes.Get(pblock[18]);
 
-                                if (hero != null || !hero.isFreeman())
+                                if (hero == null || !hero.isFreeman())
                                     hero = vec_heroes.GetFreeman(colorRace.second);
 
                                 if (hero != null) {

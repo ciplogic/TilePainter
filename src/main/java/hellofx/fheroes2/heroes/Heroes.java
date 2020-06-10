@@ -183,8 +183,16 @@ public class Heroes extends HeroBase {
     }
 
     public boolean isFreeman() {
-        //TODO
-        return false;
+
+        return isValid() && H2Color.NONE == GetColor() && (!bitModes.Modes(JAIL));
+    }
+
+    private int GetColor() {
+        return color.GetColor();
+    }
+
+    private boolean isValid() {
+        return hid != HeroesKind.UNKNOWN;
     }
 
     public static Bitmap GetPortrait(int id, int type) {

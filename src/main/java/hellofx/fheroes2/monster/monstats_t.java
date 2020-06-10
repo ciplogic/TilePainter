@@ -1,6 +1,6 @@
 package hellofx.fheroes2.monster;
 
-import hellofx.fheroes2.resource.cost_t;
+import hellofx.fheroes2.resource.Funds;
 
 public class monstats_t {
     public byte attack;
@@ -13,7 +13,7 @@ public class monstats_t {
     public byte shots;
     public String name;
     public String multiname;
-    public cost_t cost = new cost_t();
+    public Funds cost = new Funds();
 
     public monstats_t() {
     }
@@ -28,7 +28,7 @@ public class monstats_t {
                       int shots,
                       String name,
                       String multiname,
-                      cost_t cost) {
+                      Funds cost) {
         this.attack = (byte) attack;
         this.defense = (byte) defense;
         this.damageMin = (byte) damageMin;

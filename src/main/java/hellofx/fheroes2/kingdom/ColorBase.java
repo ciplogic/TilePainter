@@ -6,4 +6,8 @@ public class ColorBase {
     public void SetColor(int col) {
         color = col;
     }
+
+    public int GetColor() {
+        return color;
+    }
 }

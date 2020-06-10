@@ -1,6 +1,6 @@
 package hellofx.fheroes2.spell;
 
-import hellofx.fheroes2.resource.cost_t;
+import hellofx.fheroes2.resource.Funds;
 
 public class spellstats_t {
     String name;
@@ -9,6 +9,6 @@ public class spellstats_t {
     short sprite;
     short extra;
     short bits;
-    cost_t cost;
+    Funds cost;
     String description;
 }
