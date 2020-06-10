@@ -20,6 +20,14 @@ public class Bitmap {
     public int Width;
     public int Height;
 
+    @Override
+    public String toString() {
+        return "Bitmap{" +
+                "Width=" + Width +
+                ", Height=" + Height +
+                '}';
+    }
+
     public Image rendered;
 
     public static final Bitmap Empty = new Bitmap(0, 0);

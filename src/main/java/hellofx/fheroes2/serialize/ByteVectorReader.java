@@ -4,6 +4,15 @@ public class ByteVectorReader {
     private final byte[] _fileContent;
     private int _pos;
 
+    @Override
+    public String toString() {
+        var value = _pos < _fileContent.length ? get() : 0;
+        return "ByteVectorReader{" +
+                "_pos=" + _pos +
+                ", currentValue: " + value +
+                '}';
+    }
+
     public ByteVectorReader(byte[] fileContent) {
         _fileContent = fileContent;
     }

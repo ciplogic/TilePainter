@@ -9,4 +9,13 @@ public class SpritePos extends Bitmap {
         super(bitmap);
         pos = new H2Point(pt);
     }
+
+    @Override
+    public String toString() {
+        return "SpritePos{" +
+                "pos=" + pos +
+                ", Width=" + Width +
+                ", Height=" + Height +
+                '}';
+    }
 }

@@ -31,4 +31,12 @@ public class H2Point {
     public int hashCode() {
         return Objects.hash(x, y);
     }
+
+    @Override
+    public String toString() {
+        return "H2Point{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

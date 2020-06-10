@@ -23,8 +23,6 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-import static hellofx.common.Utilities.timeIt;
-
 public class Gameplay {
     public MainContext ctx;
     public CanvasWrap canvasWrap;
@@ -76,16 +74,14 @@ public class Gameplay {
 
     void onFrameUpdate() {
         var painter = canvasWrap.getPainter();
-        timeIt("frame time", () -> {
 
-            painter.clear(Color.ROYALBLUE);
-            //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
-            painter.drawImage(heroesImgSmooth, 0, 0);
-            painter.drawImage(heroesImg, 0, 0);
+        painter.clear(Color.ROYALBLUE);
+        //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
+        painter.drawImage(heroesImgSmooth, 0, 0);
+        painter.drawImage(heroesImg, 0, 0);
 
-            var rect = new H2Rect(0, 0, 109, 46);
+        var rect = new H2Rect(0, 0, 109, 46);
 
-            gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
-        });
+        gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
     }
 }

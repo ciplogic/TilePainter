@@ -5,7 +5,8 @@ public class Artifact {
     int ext;
 
     public Artifact(int art) {
-        id = art;
+
+        id = Math.min(art, ArtifactKind.UNKNOWN);
     }
 
     public Artifact() {
