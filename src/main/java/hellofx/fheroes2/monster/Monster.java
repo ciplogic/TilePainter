@@ -278,4 +278,8 @@ public class Monster {
     public boolean IsValid() {
         return id != MonsterKind.UNKNOWN;
     }
+
+    public int GetSpriteIndex() {
+        return MonsterKind.UNKNOWN < id ? id - 1 : 0;
+    }
 }

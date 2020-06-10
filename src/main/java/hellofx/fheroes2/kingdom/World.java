@@ -491,4 +491,8 @@ public class World {
     public CapturedObject GetCapturedObject(int index) {
         return map_captureobj._items.get(index);
     }
+
+    public Tiles GetTiles(int index) {
+        return vec_tiles.get(index);
+    }
 }

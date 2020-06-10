@@ -414,4 +414,98 @@ public class Mp2 {
 
         return false;
     }
+
+    public static boolean isGroundObject(int obj) {
+        switch (obj) {
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_ALCHEMYLAB:
+            case Mp2Kind.OBJ_SIGN:
+            case Mp2Kind.OBJ_SKELETON:
+            case Mp2Kind.OBJ_DAEMONCAVE:
+            case Mp2Kind.OBJ_FAERIERING:
+            case Mp2Kind.OBJ_CAMPFIRE:
+            case Mp2Kind.OBJ_FOUNTAIN:
+            case Mp2Kind.OBJ_GAZEBO:
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+            case Mp2Kind.OBJ_GRAVEYARD:
+            case Mp2Kind.OBJ_ARCHERHOUSE:
+            case Mp2Kind.OBJ_GOBLINHUT:
+            case Mp2Kind.OBJ_DWARFCOTT:
+            case Mp2Kind.OBJ_PEASANTHUT:
+            case Mp2Kind.OBJ_THATCHEDHUT:
+            case Mp2Kind.OBJ_DRAGONCITY:
+            case Mp2Kind.OBJ_LIGHTHOUSE:
+            case Mp2Kind.OBJ_WATERWHEEL:
+            case Mp2Kind.OBJ_MINES:
+            case Mp2Kind.OBJ_OBELISK:
+            case Mp2Kind.OBJ_OASIS:
+            case Mp2Kind.OBJ_RESOURCE:
+            case Mp2Kind.OBJ_SAWMILL:
+            case Mp2Kind.OBJ_ORACLE:
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_DESERTTENT:
+            case Mp2Kind.OBJ_STONELIGHTS:
+            case Mp2Kind.OBJ_WAGONCAMP:
+            case Mp2Kind.OBJ_WINDMILL:
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_WATCHTOWER:
+            case Mp2Kind.OBJ_TREEHOUSE:
+            case Mp2Kind.OBJ_TREECITY:
+            case Mp2Kind.OBJ_RUINS:
+            case Mp2Kind.OBJ_FORT:
+            case Mp2Kind.OBJ_TRADINGPOST:
+            case Mp2Kind.OBJ_ABANDONEDMINE:
+            case Mp2Kind.OBJ_STANDINGSTONES:
+            case Mp2Kind.OBJ_IDOL:
+            case Mp2Kind.OBJ_TREEKNOWLEDGE:
+            case Mp2Kind.OBJ_DOCTORHUT:
+            case Mp2Kind.OBJ_TEMPLE:
+            case Mp2Kind.OBJ_HILLFORT:
+            case Mp2Kind.OBJ_HALFLINGHOLE:
+            case Mp2Kind.OBJ_MERCENARYCAMP:
+            case Mp2Kind.OBJ_WATERINGHOLE:
+            case Mp2Kind.OBJ_SHRINE1:
+            case Mp2Kind.OBJ_SHRINE2:
+            case Mp2Kind.OBJ_SHRINE3:
+            case Mp2Kind.OBJ_PYRAMID:
+            case Mp2Kind.OBJ_CITYDEAD:
+            case Mp2Kind.OBJ_EXCAVATION:
+            case Mp2Kind.OBJ_SPHINX:
+            case Mp2Kind.OBJ_WAGON:
+            case Mp2Kind.OBJ_ARTESIANSPRING:
+            case Mp2Kind.OBJ_TROLLBRIDGE:
+            case Mp2Kind.OBJ_WITCHSHUT:
+            case Mp2Kind.OBJ_XANADU:
+            case Mp2Kind.OBJ_CAVE:
+            case Mp2Kind.OBJ_LEANTO:
+            case Mp2Kind.OBJ_MAGICWELL:
+            case Mp2Kind.OBJ_MAGICGARDEN:
+            case Mp2Kind.OBJ_OBSERVATIONTOWER:
+            case Mp2Kind.OBJ_FREEMANFOUNDRY:
+
+            case Mp2Kind.OBJ_MONSTER:
+            case Mp2Kind.OBJ_CASTLE:
+            case Mp2Kind.OBJ_BOAT:
+
+            case Mp2Kind.OBJ_BARRIER:
+            case Mp2Kind.OBJ_TRAVELLERTENT:
+            case Mp2Kind.OBJ_FIREALTAR:
+            case Mp2Kind.OBJ_AIRALTAR:
+            case Mp2Kind.OBJ_EARTHALTAR:
+            case Mp2Kind.OBJ_WATERALTAR:
+            case Mp2Kind.OBJ_BARROWMOUNDS:
+            case Mp2Kind.OBJ_ARENA:
+            case Mp2Kind.OBJ_JAIL:
+            case Mp2Kind.OBJ_STABLES:
+            case Mp2Kind.OBJ_ALCHEMYTOWER:
+            case Mp2Kind.OBJ_HUTMAGI:
+            case Mp2Kind.OBJ_EYEMAGI:
+                return true;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
 }

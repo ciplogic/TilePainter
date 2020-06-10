@@ -1,5 +1,6 @@
 package hellofx.fheroes2.agg;
 
+import hellofx.fheroes2.gui.ImageScaler;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.image.PixelFormat;
@@ -18,6 +19,8 @@ public class Bitmap {
     private final int[] pixels;
     public int Width;
     public int Height;
+
+    public Image rendered;
 
     public static final Bitmap Empty = new Bitmap(0, 0);
 
@@ -179,6 +182,13 @@ public class Bitmap {
                 res.setPixelBlended(x, y, GetPixel(x, y));
             }
         }
+    }
+
+    public Image renderedImage(ImageScaler scaler) {
+        if (rendered != null)
+            return rendered;
+        rendered = scaler.scaleImage(this);
+        return rendered;
     }
 
     private void setPixelBlended(int x, int y, int pixel) {

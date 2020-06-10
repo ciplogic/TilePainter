@@ -27,9 +27,30 @@ public class Maps {
         }
     }
 
-    private int GetDirectionIndex(int center, int direction) {
-        //TODO
-        return 0;
+    public static int GetDirectionIndex(int from, int vector) {
+        var world = World.Instance;
+        switch (vector) {
+            case Direction.TOP:
+                return from - world.w;
+            case Direction.TOP_RIGHT:
+                return from - world.w + 1;
+            case Direction.RIGHT:
+                return from + 1;
+            case Direction.BOTTOM_RIGHT:
+                return from + world.w + 1;
+            case Direction.BOTTOM:
+                return from + world.w;
+            case Direction.BOTTOM_LEFT:
+                return from + world.w - 1;
+            case Direction.LEFT:
+                return from - 1;
+            case Direction.TOP_LEFT:
+                return from - world.w - 1;
+            default:
+                break;
+        }
+
+        return -1;
     }
 
     private boolean isValidDirection(int from, int vector, H2Size world) {
@@ -62,7 +83,7 @@ public class Maps {
         return false;
     }
 
-    private boolean isValidAbsIndex(int index) {
+    public static boolean isValidAbsIndex(int index) {
         var world = World.Instance;
         return index > 0 && (index < (world.w * world.h));
     }

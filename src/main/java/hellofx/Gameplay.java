@@ -75,14 +75,10 @@ public class Gameplay {
     }
 
     void onFrameUpdate() {
-        idx += 2;
-        gameArea.camera.left = (int) idx;
-        gameArea.camera.top = (int) (idx * 2);
         var painter = canvasWrap.getPainter();
         timeIt("frame time", () -> {
 
             painter.clear(Color.ROYALBLUE);
-            var tileX = (int) (idx * 1000.0);
             //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
             painter.drawImage(heroesImgSmooth, 0, 0);
             painter.drawImage(heroesImg, 0, 0);

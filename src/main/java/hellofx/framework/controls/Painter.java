@@ -1,5 +1,6 @@
 package hellofx.framework.controls;
 
+import hellofx.fheroes2.agg.Sprite;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
@@ -39,6 +40,12 @@ public class Painter {
     public void draw(String text, int x, int y, int thickness) {
         gc.setLineWidth(thickness);
         gc.strokeText(text, x, y);
+    }
+
+    public void drawSprite(Sprite tileSurface, int x, int y) {
+        var xPos = x + tileSurface.pos.x;
+        var yPos = x + tileSurface.pos.y;
+        drawImage(tileSurface.toImage(), xPos, yPos);
     }
 }
 

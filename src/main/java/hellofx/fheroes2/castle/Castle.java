@@ -8,7 +8,7 @@ import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.heroes.HeroType;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
-import hellofx.fheroes2.maps.objects.MapPosition;
+import hellofx.fheroes2.maps.MapPosition;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.system.BitModes;

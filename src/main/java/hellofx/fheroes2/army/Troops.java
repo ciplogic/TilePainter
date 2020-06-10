@@ -19,4 +19,9 @@ public class Troops {
         _items.clear();
         _items.addAll(Arrays.asList(troops));
     }
+
+    public void Assign(Troop[] troops) {
+        _items.clear();
+        _items.addAll(Arrays.asList(troops));
+    }
 }

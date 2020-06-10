@@ -1,6 +1,7 @@
 package hellofx.fheroes2.heroes;
 
-import hellofx.fheroes2.maps.objects.MapPosition;
+import hellofx.fheroes2.kingdom.ColorBase;
+import hellofx.fheroes2.maps.MapPosition;
 import hellofx.fheroes2.resource.BagArtifacts;
 import hellofx.fheroes2.spell.SpellBook;
 import hellofx.fheroes2.system.BitModes;
@@ -10,6 +11,8 @@ import static hellofx.fheroes2.agg.icn.IcnKind.*;
 public class HeroBase {
     public BitModes bitModes = new BitModes();
     public MapPosition mapPosition = new MapPosition();
+    public ColorBase color = new ColorBase();
+
     public Primary primary = new Primary();
 
 

@@ -2,6 +2,7 @@ package hellofx.fheroes2.maps;
 
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.Bitmap;
+import hellofx.fheroes2.agg.Sprite;
 import hellofx.fheroes2.agg.TilKind;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.H2Point;
@@ -11,9 +12,10 @@ import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.monster.MonsterKind;
+import hellofx.fheroes2.system.Settings;
 import hellofx.framework.controls.Painter;
-import javafx.scene.image.Image;
 
+import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
 
@@ -59,10 +61,6 @@ public class Tiles {
             AddonsPushLevel1(new TilesAddon(0, Mp2Tile.uniqNumber2, Mp2Tile.objectName2, Mp2Tile.indexName2));
     }
 
-    private void SetObject(byte generalObject) {
-        mp2_object = generalObject;
-    }
-
     private void SetIndex(int index) {
         maps_index = index;
         var point = GetPoint(index);
@@ -86,9 +84,9 @@ public class Tiles {
 
     private void AddonsPushLevel1(TilesAddon ta) {
         if (TilesAddon.ForceLevel2(ta))
-            addons_level1._items.add(ta);
-        else
             addons_level2._items.add(ta);
+        else
+            addons_level1._items.add(ta);
     }
 
     public void AddonsPushLevel2(Mp2Addon mp2Addon) {
@@ -113,13 +111,17 @@ public class Tiles {
         return GetObject(true);
     }
 
+    public void SetObject(int mp2Kind) {
+        mp2_object = (byte) mp2Kind;
+    }
+
     public int GetObject(boolean skip_hero) {
-        if ((!skip_hero) && (Mp2Kind.OBJ_HEROES == mp2_object)) {
+        if ((!skip_hero) && (Mp2Kind.OBJ_HEROES == toByte(mp2_object))) {
             var hero = GetHeroes();
             return hero != null ? hero.GetMapsObject() : Mp2Kind.OBJ_ZERO;
         }
 
-        return mp2_object;
+        return toByte(mp2_object);
     }
 
     public Heroes GetHeroes() {
@@ -136,7 +138,7 @@ public class Tiles {
         return null;
     }
 
-    public Bitmap RedrawBottom(Painter dst, boolean skip_objs, Agg agg) {
+    public Sprite RedrawBottom(Painter dst, boolean skip_objs, Agg agg) {
         for (var it : addons_level1._items) {
             // skip
             if (skip_objs &&
@@ -144,8 +146,8 @@ public class Tiles {
                     FindObjectConst(GetObject()) == it)
                 continue;
 
-            var object = it.object;
-            var index = it.index;
+            var object = toByte(it.object);
+            var index = toByte(it.index);
             var icn = Mp2.GetICNObject(object);
 
             if (IcnKind.UNKNOWN == icn || IcnKind.MINIHERO == icn || IcnKind.MONS32 == icn)
@@ -168,21 +170,23 @@ public class Tiles {
         return null;
     }
 
-    public void RedrawObjects(Painter dst) {
-        switch (GetObject()) {
+    public Sprite[] RedrawObjects(Painter dst) {
+        var obj = GetObject();
+        switch (obj) {
             // boat
             case Mp2Kind.OBJ_BOAT:
                 RedrawBoat(dst);
                 break;
             // monster
             case Mp2Kind.OBJ_MONSTER:
-                RedrawMonster(dst);
-                break;
+                return RedrawMonster(dst);
+
             //
             default:
                 break;
         }
         //TODO
+        return null;
     }
 
     Monster QuantityMonster() {
@@ -251,35 +255,42 @@ public class Tiles {
                 : new Monster(MonsterKind.UNKNOWN);
     }
 
-    private void RedrawMonster(Painter dst) {
-/*
+    private Sprite[] RedrawMonster(Painter dst) {
+
+        if (GetIndex() == 288) {
+            System.out.println("Care!");
+        }
         // scan hero around
         MapsIndexes v = new MapsIndexes();
         ScanAroundObject(GetIndex(), Mp2Kind.OBJ_HEROES, v);
-        for (var it : v)
-        {
-        const var tile = world.GetTiles(it);
+        var world = World.Instance;
+        var dst_index = -1;
+        int[] elements = v.values.elements();
+        var sizeLoop = v.values.size();
+        for (int i = 0; i < sizeLoop; i++) {
+            int it = elements[i];
+            var tile = world.GetTiles(it);
             dst_index = it;
 
-            if (MP2.OBJ_HEROES != mp2_object ||
+            if (Mp2Kind.OBJ_HEROES != mp2_object ||
                     // skip bottom, bottom_right, bottom_left with ground objects
-                    (DIRECTION_BOTTOM_ROW & Direction.Get(GetIndex(), it) && Mp2.isGroundObject(tile.GetObject(false))) ||
-            // skip ground check
-            tile.isWater() != isWater())
-            dst_index = -1;
-        else
-            break;
+                    (((DIRECTION_BOTTOM_ROW & Direction.Get(GetIndex(), it)) != 0)
+                            && Mp2.isGroundObject(tile.GetObject(false)))
+                    ||
+                    // skip ground check
+                    tile.isWater() != isWater())
+                dst_index = -1;
+            else
+                break;
         }
 
-     var sprite_index = QuantityMonster().GetSpriteIndex();
-
+        var sprite_index = QuantityMonster().GetSpriteIndex();
+        var conf = Settings.Get();
         // draw attack sprite
-        if (-1 != dst_index && !conf.ExtWorldOnlyFirstMonsterAttack())
-        {
+        if (-1 != dst_index && !conf.ExtWorldOnlyFirstMonsterAttack()) {
             var revert = false;
 
-            switch (Direction.Get(GetIndex(), dst_index))
-            {
+            switch (Direction.Get(GetIndex(), dst_index)) {
                 case Direction.TOP_LEFT:
                 case Direction.LEFT:
                 case Direction.BOTTOM_LEFT:
@@ -289,23 +300,29 @@ public class Tiles {
                     break;
             }
 
-        const var sprite_first = AGG.GetICN(ICN.MINIMON, sprite_index * 9 + (revert ? 8 : 7));
-            area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
-        }
-        else
-        {
+            var sprite_first = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9 + (revert ? 8 : 7));
+            return new Sprite[]{sprite_first};
+
+        } else {
+            /*
             // draw first sprite
-        const var sprite_first = AGG.GetICN(ICN.MINIMON, sprite_index * 9);
+         var sprite_first = AGG.GetICN(ICN.MINIMON, sprite_index * 9);
             area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
 
             // draw second sprite
-        const var sprite_next = AGG.GetICN(ICN.MINIMON, sprite_index * 9 + 1 +
+         var sprite_next = AGG.GetICN(ICN.MINIMON, sprite_index * 9 + 1 +
                 monster_animation_cicle[
                         (Game.MapsAnimationFrame() + mp.x * mp.y) %
             ARRAY_COUNT(monster_animation_cicle)]);
             area.BlitOnTile(dst, sprite_next, sprite_next.x() + 16, TILEWIDTH + sprite_next.y(), mp);
+
+             */
         }
-        */
+        return null;
+    }
+
+    private boolean isWater() {
+        return 30 > TileSpriteIndex();
     }
 
     private void ScanAroundObject(int getIndex, int objHeroes, MapsIndexes v) {
@@ -327,7 +344,7 @@ public class Tiles {
     public void RedrawFogs(Painter dst, int colors) {
     }
 
-    public Image RedrawTile() {
+    public Bitmap RedrawTile() {
         var surface = GetTileSurface();
         return surface;
 
@@ -341,7 +358,7 @@ public class Tiles {
         return res;
     }
 
-    private Image GetTileSurface() {
+    private Bitmap GetTileSurface() {
         return Agg.GetTIL(TilKind.GROUND32, TileSpriteIndex(), TileSpriteShape());
     }
 

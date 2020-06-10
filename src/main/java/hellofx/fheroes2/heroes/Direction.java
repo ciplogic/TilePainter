@@ -1,5 +1,7 @@
 package hellofx.fheroes2.heroes;
 
+import hellofx.fheroes2.maps.objects.Maps;
+
 public class Direction {
     public static final int UNKNOWN = 0x0000;
     public static final int TOP_LEFT = 0x0001;
@@ -30,5 +32,15 @@ public class Direction {
 
     public static int[] All() {
         return directs;
+    }
+
+    public static int Get(int from, int to) {
+        var directions = All();
+        for (var direction : directions) {
+            if (to == Maps.GetDirectionIndex(from, direction))
+                return direction;
+        }
+        return to == from ? CENTER : UNKNOWN;
+
     }
 }

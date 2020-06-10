@@ -29,7 +29,7 @@ public class IcnSprite {
         }
     }
 
-    public Bitmap CreateSprite(boolean reflect, boolean shadow) {
+    public Sprite CreateSprite(boolean reflect, boolean shadow) {
         var res = new Bitmap(first.Width, first.Height);
         first.BlitTo(res);
 

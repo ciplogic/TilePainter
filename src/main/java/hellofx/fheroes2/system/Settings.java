@@ -28,4 +28,9 @@ public class Settings {
         //TODO
         return false;
     }
+
+    public boolean ExtWorldOnlyFirstMonsterAttack() {
+        //TODO
+        return false;
+    }
 }

@@ -9,7 +9,6 @@ import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
 import hellofx.fheroes2.serialize.ResourceDownloader;
 import hellofx.framework.MainContext;
-import javafx.scene.image.Image;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,18 +35,18 @@ public class Agg {
      * @param reflect
      * @return
      */
-    static Bitmap LoadOrgICN(Agg agg, int icn, int index, boolean reflect) {
+    static Sprite LoadOrgICN(Agg agg, int icn, int index, boolean reflect) {
         IcnSprite icnSprite = AggPaint.RenderICNSprite(agg, icn, index);
         if (!icnSprite.isValid())
             return null;
         return icnSprite.CreateSprite(reflect, !IcnKind.SkipLocalAlpha(icn));
     }
 
-    public static Bitmap GetICN(int icn, int index) {
+    public static Sprite GetICN(int icn, int index) {
         return GetICN(icn, index, false);
     }
 
-    public static Bitmap GetICN(int icn, int index, boolean reflect) {
+    public static Sprite GetICN(int icn, int index, boolean reflect) {
         var agg = Agg.Get();
         var v = StaticInstance.icn_cache.get(icn);
         if (v.sprites == null) {
@@ -72,7 +71,7 @@ public class Agg {
         return icnBmp;
     }
 
-    public static Image GetTIL(int til, int index, int shape) {
+    public static Bitmap GetTIL(int til, int index, int shape) {
         var agg = StaticInstance;
         while (agg.til_cache.size() <= til)
             agg.til_cache.add(new til_cache_t());
@@ -106,7 +105,7 @@ public class Agg {
         var src = tilCache.sprites[index];
         var result = surface;
         result = Bitmap.RenderReflect(src, shape);
-        tilCache.setSprite(index2, result, agg.imageScaler);
+        tilCache.setSprite(index2, result);
         return tilCache.getImage(index2);
     }
 
@@ -166,7 +165,7 @@ public class Agg {
                     pos++;
                 }
             }
-            v.setSprite(ii, bmp, imageScaler);
+            v.setSprite(ii, bmp);
         }
         return true;
     }

@@ -1,13 +1,14 @@
 package hellofx.fheroes2.gui;
 
+import hellofx.fheroes2.agg.Bitmap;
+import hellofx.fheroes2.agg.Sprite;
 import hellofx.framework.controls.Painter;
-import javafx.scene.image.Image;
 
 public class GameCamera {
-    public int left = -300;
-    public int top = -200;
+    public int left;
+    public int top;
     public int originalTileSize = 32;
-    public int tileSize = 64;
+    public int tileSize = 32;
 
     public int coordinateOfTile(int countTiles) {
         return countTiles * tileSize;
@@ -34,12 +35,12 @@ public class GameCamera {
         top += addY;
     }
 
-    public void drawImageOnTile(Painter dst, Image tileSurface, int tileX, int tileY) {
+    public void drawImageOnTile(Painter dst, Bitmap tileSurface, int tileX, int tileY) {
         var tileXMap = coordinateOfTile(tileX);
         var tileYMap = coordinateOfTile(tileY);
         var screenX = tileXMap - left;
         var screenY = tileYMap - top;
-        dst.drawImage(tileSurface, screenX, screenY);
+        dst.drawImage(tileSurface.renderedImage(getScaler()), screenX, screenY);
 
     }
 
@@ -48,5 +49,13 @@ public class GameCamera {
             var scaleFactor = tileSize / originalTileSize;
             return bmp.bilinearScale(bmp.Width * scaleFactor, bmp.Height * scaleFactor).toImage();
         };
+    }
+
+    public void drawSpriteOnTile(Painter dst, Sprite tileSurface, int tileX, int tileY) {
+        var tileXMap = coordinateOfTile(tileX) + tileSurface.pos.x;
+        var tileYMap = coordinateOfTile(tileY) + tileSurface.pos.y;
+        var screenX = tileXMap - left;
+        var screenY = tileYMap - top;
+        dst.drawImage(tileSurface.renderedImage(getScaler()), screenX, screenY);
     }
 }

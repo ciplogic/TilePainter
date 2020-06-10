@@ -13,4 +13,8 @@ public class Troop {
     public boolean IsValid() {
         return (_monster.IsValid() && count > 0);
     }
+
+    public void SetCount(int c) {
+        count = c;
+    }
 }

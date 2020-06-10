@@ -1,6 +1,7 @@
 package hellofx.fheroes2.gui;
 
 import hellofx.fheroes2.agg.Agg;
+import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.agg.TilKind;
 import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.heroes.Heroes;
@@ -9,7 +10,6 @@ import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.maps.Tiles;
 import hellofx.fheroes2.system.Players;
 import hellofx.framework.controls.Painter;
-import javafx.scene.image.Image;
 
 import static hellofx.fheroes2.game.GameConsts.TILEWIDTH;
 import static hellofx.fheroes2.gui.LevelKind.*;
@@ -28,7 +28,7 @@ public class GameArea {
             for (int stepY = 0; stepY < rt.h; ++stepY) {
                 var oy = tileY + stepY;
                 var currentTile = world.GetTiles(ox, oy);
-                Image tileSurface;
+                Bitmap tileSurface;
                 if (currentTile == null) {
                     tileSurface = Agg.GetTIL(TilKind.GROUND32, 320, 0);
                 } else
@@ -41,16 +41,13 @@ public class GameArea {
             for (int stepY = 0; stepY < rt.h; ++stepY) {
                 var oy = rt.y + rectMaps.y + stepY;
                 var currentTile = world.GetTiles(ox, oy);
-
                 if (currentTile == null)
                     continue;
                 // bottom
                 if ((flag & LEVEL_BOTTOM) != 0) {
                     var tileSurface = currentTile.RedrawBottom(dst, (flag & LEVEL_OBJECTS) == 0, agg);
                     if (tileSurface != null) {
-                        int finalPositionX = (stepX) * 32;
-                        int finalPositionY = stepY * 32;
-                        dst.drawImage(tileSurface.toImage(), finalPositionX, finalPositionY);
+                        camera.drawSpriteOnTile(dst, tileSurface, ox, oy);
                     }
                 }
 
