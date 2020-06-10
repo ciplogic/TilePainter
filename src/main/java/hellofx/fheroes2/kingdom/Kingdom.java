@@ -5,7 +5,7 @@ import hellofx.fheroes2.system.BitModes;
 public class Kingdom {
     public BitModes bitModes = new BitModes();
 
-    public boolean AllowRecruitHero(boolean b, int i) {
+    public boolean AllowRecruitHero(boolean check_payment, int level) {
         //TODO
         return false;
     }

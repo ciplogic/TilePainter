@@ -15,6 +15,9 @@ import hellofx.fheroes2.monster.MonsterKind;
 import hellofx.fheroes2.system.Settings;
 import hellofx.framework.controls.Painter;
 
+import java.util.List;
+import java.util.function.Predicate;
+
 import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
@@ -133,10 +136,294 @@ public class Tiles {
         return maps_index;
     }
 
-    public TilesAddon FindObjectConst(int objs) {
-        //TODO
-        return null;
+    boolean isStream(TilesAddon ta) {
+        return IcnKind.STREAM == Mp2.GetICNObject(ta.object) ||
+                (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && ta.index < 14);
     }
+
+    boolean isRoad(TilesAddon ta) {
+        return IcnKind.ROAD == Mp2.GetICNObject(ta.object);
+    }
+
+    boolean isWaterResource(TilesAddon ta) {
+        return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.object) &&
+                (0 == ta.index || // buttle
+                        19 == ta.index || // chest
+                        45 == ta.index || // flotsam
+                        111 == ta.index) // surviror
+                ;
+    }
+
+    boolean isWhirlPool(TilesAddon ta) {
+        return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.object) &&
+                (toByte(ta.index) >= 202 && toByte(ta.index) <= 225);
+    }
+
+    boolean isStandingStone(TilesAddon ta) {
+        return IcnKind.OBJNMULT == Mp2.GetICNObject(ta.object) &&
+                (ta.index == 84 || ta.index == 85);
+    }
+
+    boolean isResource(TilesAddon ta) {
+        // OBJNRSRC
+        return (IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.object) && ((ta.index % 2) != 0)) ||
+                // TREASURE
+                IcnKind.TREASURE == Mp2.GetICNObject(ta.object);
+    }
+
+    boolean isRandomResource(TilesAddon ta) {
+        // OBJNRSRC
+        return IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.object) && 17 == ta.index;
+    }
+
+    boolean isArtifact(TilesAddon ta) {
+        // OBJNARTI (skip ultimate)
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && ta.index > 0x10 && ((ta.index % 2) != 0);
+    }
+
+    boolean isRandomArtifact(TilesAddon ta) {
+        // OBJNARTI
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA3 == toByte(ta.index);
+    }
+
+    boolean isRandomArtifact1(TilesAddon ta) {
+        // OBJNARTI
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA7 == toByte(ta.index);
+    }
+
+    boolean isRandomArtifact2(TilesAddon ta) {
+        // OBJNARTI
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA9 == toByte(ta.index);
+    }
+
+    boolean isRandomArtifact3(TilesAddon ta) {
+        // OBJNARTI
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xAB == toByte(ta.index);
+    }
+
+    boolean isUltimateArtifact(TilesAddon ta) {
+        // OBJNARTI
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA4 == toByte(ta.index);
+    }
+
+    boolean isCampFire(TilesAddon ta) {
+        // MTNDSRT
+        return (IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) && 61 == ta.index) ||
+                // OBJNMULT
+                (IcnKind.OBJNMULT == Mp2.GetICNObject(ta.object) && 131 == toByte(ta.index)) ||
+                // OBJNSNOW
+                (IcnKind.OBJNSNOW == Mp2.GetICNObject(ta.object) && 4 == ta.index);
+    }
+
+    boolean isMonster(TilesAddon ta) {
+        // MONS32
+        return IcnKind.MONS32 == Mp2.GetICNObject(ta.object);
+    }
+
+    boolean isArtesianSpring(TilesAddon ta) {
+        return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.object) &&
+                (ta.index == 3 || ta.index == 4);
+    }
+
+    boolean isSkeleton(TilesAddon ta) {
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) && ta.index == 84;
+    }
+
+    boolean isSkeletonFix(TilesAddon ta) {
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) && ta.index == 83;
+    }
+
+    boolean isOasis(TilesAddon ta) {
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) &&
+                (ta.index == 108 || ta.index == 109);
+    }
+
+    boolean isWateringHole(TilesAddon ta) {
+        return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.object) &&
+                (ta.index >= 217 && ta.index <= 220);
+    }
+
+    boolean isJail(TilesAddon ta) {
+        return IcnKind.X_LOC2 == Mp2.GetICNObject(ta.object) && 0x09 == ta.index;
+    }
+
+    boolean isEvent(TilesAddon ta) {
+        // OBJNMUL2
+        return IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && 0xA3 == ta.index;
+    }
+
+    boolean isMine(TilesAddon ta) {
+        // EXTRAOVR
+        return IcnKind.EXTRAOVR == Mp2.GetICNObject(ta.object);
+    }
+
+    boolean isBoat(TilesAddon ta) {
+        // OBJNWAT2
+        return IcnKind.OBJNWAT2 == Mp2.GetICNObject(ta.object) && 0x17 == ta.index;
+    }
+
+    boolean isMiniHero(TilesAddon ta) {
+        // MINIHERO
+        return IcnKind.MINIHERO == Mp2.GetICNObject(ta.object);
+    }
+
+    boolean isCastle(TilesAddon ta) {
+        // OBJNTOWN
+        return IcnKind.OBJNTOWN == Mp2.GetICNObject(ta.object);
+    }
+
+    boolean isRandomCastle(TilesAddon ta) {
+        // OBJNTWRD
+        return IcnKind.OBJNTWRD == Mp2.GetICNObject(ta.object) && 32 > ta.index;
+    }
+
+    boolean isRandomMonster(TilesAddon ta) {
+        // MONS32
+        return IcnKind.MONS32 == Mp2.GetICNObject(ta.object) &&
+                (0x41 < ta.index && 0x47 > ta.index);
+    }
+
+    boolean isBarrier(TilesAddon ta) {
+        return IcnKind.X_LOC3 == Mp2.GetICNObject(ta.object) &&
+                60 <= ta.index && 102 >= ta.index && 0 == ta.index % 6;
+    }
+
+    TilesAddon find_if(List<TilesAddon> addons, Predicate<TilesAddon> isFound) {
+        return addons.stream().filter(isFound::test).findFirst().orElse(null);
+    }
+
+
+    public TilesAddon FindObjectConst(int objs) {
+        TilesAddon it = null;
+        switch (objs) {
+            case Mp2Kind.OBJ_CAMPFIRE:
+                it = find_if(addons_level1._items, this::isCampFire);
+                break;
+
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+            case Mp2Kind.OBJ_RESOURCE:
+                it = find_if(addons_level1._items, this::isResource);
+                break;
+
+            case Mp2Kind.OBJ_RNDRESOURCE:
+                it = find_if(addons_level1._items, this::isRandomResource);
+                break;
+
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_BOTTLE:
+                it = find_if(addons_level1._items, this::isWaterResource);
+                break;
+
+            case Mp2Kind.OBJ_ARTIFACT:
+                it = find_if(addons_level1._items, this::isArtifact);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT:
+                it = find_if(addons_level1._items, this::isRandomArtifact);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT1:
+                it = find_if(addons_level1._items, this::isRandomArtifact1);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT2:
+                it = find_if(addons_level1._items, this::isRandomArtifact2);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT3:
+                it = find_if(addons_level1._items, this::isRandomArtifact3);
+                break;
+
+            case Mp2Kind.OBJ_RNDULTIMATEARTIFACT:
+                it = find_if(addons_level1._items, this::isUltimateArtifact);
+                break;
+
+            case Mp2Kind.OBJ_MONSTER:
+                it = find_if(addons_level1._items, this::isMonster);
+                break;
+
+            case Mp2Kind.OBJ_WHIRLPOOL:
+                it = find_if(addons_level1._items, this::isWhirlPool);
+                break;
+
+            case Mp2Kind.OBJ_STANDINGSTONES:
+                it = find_if(addons_level1._items, this::isStandingStone);
+                break;
+
+            case Mp2Kind.OBJ_ARTESIANSPRING:
+                it = find_if(addons_level1._items, this::isArtesianSpring);
+                break;
+
+            case Mp2Kind.OBJ_OASIS:
+                it = find_if(addons_level1._items, this::isOasis);
+                break;
+
+            case Mp2Kind.OBJ_WATERINGHOLE:
+                it = find_if(addons_level1._items, this::isWateringHole);
+                break;
+
+            case Mp2Kind.OBJ_MINES:
+                it = find_if(addons_level1._items, this::isMine);
+                break;
+
+            case Mp2Kind.OBJ_JAIL:
+                it = find_if(addons_level1._items, this::isJail);
+                break;
+
+            case Mp2Kind.OBJ_EVENT:
+                it = find_if(addons_level1._items, this::isEvent);
+                break;
+
+            case Mp2Kind.OBJ_BOAT:
+                it = find_if(addons_level1._items, this::isBoat);
+                break;
+
+            case Mp2Kind.OBJ_BARRIER:
+                it = find_if(addons_level1._items, this::isBarrier);
+                break;
+
+            case Mp2Kind.OBJ_HEROES:
+                it = find_if(addons_level1._items, this::isMiniHero);
+                break;
+
+            case Mp2Kind.OBJ_CASTLE:
+                it = find_if(addons_level1._items, this::isCastle);
+                if (it == null) {
+                    it = find_if(addons_level2._items, this::isCastle);
+                    return it;
+                }
+                break;
+
+            case Mp2Kind.OBJ_RNDCASTLE:
+                it = find_if(addons_level1._items, this::isRandomCastle);
+                if (it == null) {
+                    it = find_if(addons_level2._items, this::isRandomCastle);
+                    return it;
+                }
+                break;
+
+            case Mp2Kind.OBJ_RNDMONSTER:
+            case Mp2Kind.OBJ_RNDMONSTER1:
+            case Mp2Kind.OBJ_RNDMONSTER2:
+            case Mp2Kind.OBJ_RNDMONSTER3:
+            case Mp2Kind.OBJ_RNDMONSTER4:
+                it = find_if(addons_level1._items, this::isRandomMonster);
+                break;
+
+            case Mp2Kind.OBJ_SKELETON:
+                it = find_if(addons_level1._items, this::isSkeleton);
+                break;
+
+            default:
+                //FIXME for: " << Mp2Kind.StringObject(objs));
+                break;
+        }
+        return it;
+    }
+
 
     public Sprite RedrawBottom(Painter dst, boolean skip_objs, Agg agg) {
         for (var it : addons_level1._items) {
@@ -306,11 +593,11 @@ public class Tiles {
         } else {
             /*
             // draw first sprite
-         var sprite_first = AGG.GetICN(ICN.MINIMON, sprite_index * 9);
+         var sprite_first = AGG.GetICN(IcnKind.MINIMON, sprite_index * 9);
             area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
 
             // draw second sprite
-         var sprite_next = AGG.GetICN(ICN.MINIMON, sprite_index * 9 + 1 +
+         var sprite_next = AGG.GetICN(IcnKind.MINIMON, sprite_index * 9 + 1 +
                 monster_animation_cicle[
                         (Game.MapsAnimationFrame() + mp.x * mp.y) %
             ARRAY_COUNT(monster_animation_cicle)]);
