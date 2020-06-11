@@ -458,6 +458,9 @@ public class Tiles {
     }
 
     public Sprite[] RedrawObjects(Painter dst) {
+        if (maps_x == 0 && maps_y == 4) {
+            System.out.println("Here is a monster");
+        }
         var obj = GetObject();
         switch (obj) {
             // boat
@@ -591,19 +594,19 @@ public class Tiles {
             return new Sprite[]{sprite_first};
 
         } else {
-            /*
+
             // draw first sprite
-         var sprite_first = AGG.GetICN(IcnKind.MINIMON, sprite_index * 9);
-            area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
+            var sprite_first = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9);
+            /*area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
 
             // draw second sprite
-         var sprite_next = AGG.GetICN(IcnKind.MINIMON, sprite_index * 9 + 1 +
+         var sprite_next = Agg.GetICNIcnKind.MINIMON, sprite_index * 9 + 1 +
                 monster_animation_cicle[
                         (Game.MapsAnimationFrame() + mp.x * mp.y) %
             ARRAY_COUNT(monster_animation_cicle)]);
             area.BlitOnTile(dst, sprite_next, sprite_next.x() + 16, TILEWIDTH + sprite_next.y(), mp);
+*/
 
-             */
         }
         return null;
     }

@@ -2,6 +2,7 @@ package hellofx.fheroes2.agg;
 
 import hellofx.fheroes2.agg.cache.icn_cache_t;
 import hellofx.fheroes2.agg.cache.til_cache_t;
+import hellofx.fheroes2.agg.icn.Icn;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.music.Music;
 import hellofx.fheroes2.gui.ImageScaler;
@@ -39,7 +40,7 @@ public class Agg {
         IcnSprite icnSprite = AggPaint.RenderICNSprite(agg, icn, index);
         if (!icnSprite.isValid())
             return null;
-        return icnSprite.CreateSprite(reflect, !IcnKind.SkipLocalAlpha(icn));
+        return icnSprite.CreateSprite(reflect, !Icn.SkipLocalAlpha(icn));
     }
 
     public static Sprite GetICN(int icn, int index) {
