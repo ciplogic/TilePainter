@@ -5,6 +5,8 @@ import hellofx.fheroes2.common.H2IntPair;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
 
+import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+
 public class TilesAddon {
 
     public int uniq;
@@ -25,8 +27,6 @@ public class TilesAddon {
     }
 
     public static H2IntPair ColorRaceFromHeroSprite(TilesAddon ta) {
-        //TODO
-
         H2IntPair res = new H2IntPair();
 
         if (7 > ta.index)
@@ -62,5 +62,14 @@ public class TilesAddon {
 
     public static boolean ForceLevel2(TilesAddon ta) {
         return false;
+    }
+
+    @Override
+    public String toString() {
+        return "{" +
+                "level:" + toByte(level) +
+                ",object:" + toByte(object) +
+                ",index:" + toByte(index) +
+                '}';
     }
 }

@@ -125,7 +125,7 @@ public class World {
                     // offset first addon
                     var offsetAddonsBlock = mp2tile.loadFromMp2Stream(fs);
 
-                    switch (toByte(Mp2Tile.generalObject)) {
+                    switch (toByte(mp2tile.generalObject)) {
                         case Mp2Kind.OBJ_RNDTOWN:
                         case Mp2Kind.OBJ_RNDCASTLE:
                         case Mp2Kind.OBJ_CASTLE:
@@ -144,6 +144,11 @@ public class World {
                     var tile = vec_tiles.get(index);
 
                     tile.Init(index, mp2tile);
+
+                    if (tile.maps_x == 0 && tile.maps_y == 4) {
+                        //here
+                        int m = 5;
+                    }
 
                     // load all addon for current tils
                     while (offsetAddonsBlock != 0) {

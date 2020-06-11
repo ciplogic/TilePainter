@@ -3,18 +3,36 @@ package hellofx.fheroes2.maps;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 
 public class Mp2Tile {
-    public static short tileIndex; // tile (ocean, grass, snow, swamp, lava, desert, dirt, wasteland, beach)
-    public static byte objectName1; // level 1.0
-    public static byte indexName1; // index level 1.0 or 0xFF
-    public static byte quantity1; // count
-    public static byte quantity2; // count
-    public static byte objectName2; // level 2.0
-    public static byte indexName2; // index level 2.0 or 0xFF
-    public static byte shape; // shape reflect % 4, 0 none, 1 vertical, 2 horizontal, 3 any
-    public static byte generalObject; // zero or object
-    public static short indexAddon; // zero or index addons_t
-    public static int uniqNumber1; // level 1.0
-    public static int uniqNumber2; // level 2.0
+    public short tileIndex; // tile (ocean, grass, snow, swamp, lava, desert, dirt, wasteland, beach)
+    public byte objectName1; // level 1.0
+    public byte indexName1; // index level 1.0 or 0xFF
+    public byte quantity1; // count
+    public byte quantity2; // count
+    public byte objectName2; // level 2.0
+    public byte indexName2; // index level 2.0 or 0xFF
+    public byte shape; // shape reflect % 4, 0 none, 1 vertical, 2 horizontal, 3 any
+    public byte generalObject; // zero or object
+    public short indexAddon; // zero or index addons_t
+    public int uniqNumber1; // level 1.0
+    public int uniqNumber2; // level 2.0
+
+    @Override
+    public String toString() {
+        return "Mp2Tile{" +
+                "tileIndex=" + tileIndex +
+                ", objectName1=" + objectName1 +
+                ", indexName1=" + indexName1 +
+                ", quantity1=" + quantity1 +
+                ", quantity2=" + quantity2 +
+                ", objectName2=" + objectName2 +
+                ", indexName2=" + indexName2 +
+                ", shape=" + shape +
+                ", generalObject=" + generalObject +
+                ", indexAddon=" + indexAddon +
+                ", uniqNumber1=" + uniqNumber1 +
+                ", uniqNumber2=" + uniqNumber2 +
+                '}';
+    }
 
     public int loadFromMp2Stream(ByteVectorReader fs) {
         tileIndex = (short) fs.getLE16();

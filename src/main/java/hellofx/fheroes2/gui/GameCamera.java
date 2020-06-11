@@ -36,6 +36,9 @@ public class GameCamera {
     }
 
     public void drawImageOnTile(Painter dst, Bitmap tileSurface, int tileX, int tileY) {
+        if (tileSurface == null) {
+            return;
+        }
         var tileXMap = coordinateOfTile(tileX);
         var tileYMap = coordinateOfTile(tileY);
         var screenX = tileXMap - left;
@@ -52,6 +55,9 @@ public class GameCamera {
     }
 
     public void drawSpriteOnTile(Painter dst, Sprite tileSurface, int tileX, int tileY) {
+        if (tileSurface == null) {
+            return;
+        }
         var tileXMap = coordinateOfTile(tileX) + tileSurface.pos.x;
         var tileYMap = coordinateOfTile(tileY) + tileSurface.pos.y;
         var screenX = tileXMap - left;

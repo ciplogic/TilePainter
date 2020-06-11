@@ -33,19 +33,19 @@ public class Tiles {
     public byte quantity1 = 0;
     public byte quantity2 = 0;
     public byte quantity3 = 0;
-    private int maps_x;
-    private int maps_y;
+    public int maps_x;
+    public int maps_y;
 
     public void Init(int index, Mp2Tile mp2) {
         tile_passable = Direction.DIRECTION_ALL;
-        quantity1 = Mp2Tile.quantity1;
-        quantity2 = Mp2Tile.quantity2;
+        quantity1 = mp2.quantity1;
+        quantity2 = mp2.quantity2;
         quantity3 = 0;
         fog_colors = H2Color.ALL;
 
-        SetTile(Mp2Tile.tileIndex, Mp2Tile.shape);
+        SetTile(mp2.tileIndex, mp2.shape);
         SetIndex(index);
-        SetObject(Mp2Tile.generalObject);
+        SetObject(mp2.generalObject);
 
         addons_level1._items.clear();
         addons_level2._items.clear();
@@ -54,14 +54,14 @@ public class Tiles {
         AddonsPushLevel2(mp2);
     }
 
-    private void AddonsPushLevel1(Mp2Tile mt) {
-        if (Mp2Tile.objectName1 != 0 && toByte(Mp2Tile.indexName1) < 0xFF)
-            AddonsPushLevel1(new TilesAddon(0, Mp2Tile.uniqNumber1, Mp2Tile.objectName1, Mp2Tile.indexName1));
+    private void AddonsPushLevel1(Mp2Tile mp2) {
+        if (mp2.objectName1 != 0 && toByte(mp2.indexName1) < 0xFF)
+            AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber1, mp2.objectName1, mp2.indexName1));
     }
 
-    private void AddonsPushLevel2(Mp2Tile mt) {
-        if (Mp2Tile.objectName2 != 0 && toByte(Mp2Tile.indexName2) < 0xFF)
-            AddonsPushLevel1(new TilesAddon(0, Mp2Tile.uniqNumber2, Mp2Tile.objectName2, Mp2Tile.indexName2));
+    private void AddonsPushLevel2(Mp2Tile mp2) {
+        if (mp2.objectName2 != 0 && toByte(mp2.indexName2) < 0xFF)
+            AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber2, mp2.objectName2, mp2.indexName2));
     }
 
     private void SetIndex(int index) {
@@ -96,6 +96,20 @@ public class Tiles {
     }
 
     public void AddonsSort() {
+        addons_level1._items.sort((ta1, ta2) -> {
+            var level1 = ta1.level % 4;
+            var level2 = ta2.level % 4;
+            if (level1 == level2)
+                return 0;
+            return level1 > level2 ? 1 : -1;
+        });
+        addons_level2._items.sort((ta1, ta2) -> {
+            var level1 = ta1.level % 4;
+            var level2 = ta2.level % 4;
+            if (level1 == level2)
+                return 0;
+            return level1 > level2 ? -1 : 1;
+        });
     }
 
     public int GetQuantity1() {
@@ -658,5 +672,23 @@ public class Tiles {
 
     private int TileSpriteIndex() {
         return pack_sprite_index & 0x3FFF;
+    }
+
+    @Override
+    public String toString() {
+        return "Tiles{" +
+                " maps_x=" + maps_x +
+                ", maps_y=" + maps_y +
+                ", addons_level1=" + addons_level1 +
+                ", addons_level2=" + addons_level2 +
+                ", maps_index=" + maps_index +
+                ", pack_sprite_index=" + pack_sprite_index +
+                ", tile_passable=" + tile_passable +
+                ", mp2_object=" + toByte(mp2_object) +
+                ", fog_colors=" + toByte(fog_colors) +
+                ", quantity1=" + toByte(quantity1) +
+                ", quantity2=" + toByte(quantity2) +
+                ", quantity3=" + toByte(quantity3) +
+                '}';
     }
 }
