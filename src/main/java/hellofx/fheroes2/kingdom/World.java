@@ -48,13 +48,26 @@ public class World {
     public AllCastles vec_castles = new AllCastles();
     public Tiles[] vec_tiles;
     public CapturedObjects map_captureobj = new CapturedObjects();
-    public MapObjects map_objects = new MapObjects();
     public AllHeroes vec_heroes = new AllHeroes();
     public Kingdoms vec_kingdoms = new Kingdoms();
     public List<String> vec_rumors = new ArrayList<>();
     public List<EventsDate> vec_eventsday = new ArrayList<>();
     IntArrayList vec_object = new IntArrayList();
     UltimateArtifact ultimate_artifact = new UltimateArtifact();
+
+
+    int day;
+    int week;
+    int month;
+
+    Week week_current = new Week();
+    Week week_next = new Week();
+
+    int heroes_cond_wins;
+    int heroes_cond_loss;
+
+    MapActions map_actions = new MapActions();
+    MapObjects map_objects = new MapObjects();
 
     public int GetIndexFromAbsPoint(int px, int py) {
         var res = py * w + px;
@@ -769,5 +782,13 @@ public class World {
     public int CountWeek() {
         //TODO
         return 0;
+    }
+
+    public int GetUniq() {
+        return ++GameStatic.uniq;
+    }
+
+    public Week GetWeekType() {
+        return week_current;
     }
 }

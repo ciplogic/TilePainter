@@ -1,9 +1,14 @@
 package hellofx.fheroes2.monster;
 
+import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.system.Settings;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import static hellofx.fheroes2.castle.BuildingKind.*;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
 
 public class Monster {
     public int id;
@@ -15,6 +20,47 @@ public class Monster {
 
     public Monster(int race, int dw) {
         id = FromDwelling(race, dw).id;
+    }
+
+    public static int Rand(int level) {
+
+        switch (level) {
+            default:
+                return Rand.Get(MonsterKind.PEASANT, MonsterKind.WATER_ELEMENT);
+
+            case MonsterLevel.LEVEL1:
+            case MonsterLevel.LEVEL2:
+            case MonsterLevel.LEVEL3:
+            case MonsterLevel.LEVEL4:
+                break;
+        }
+
+        var monsters = new IntArrayList(30);
+
+        for (var ii = MonsterKind.PEASANT; ii <= MonsterKind.WATER_ELEMENT; ++ii) {
+            Monster mons = new Monster(ii);
+            if (mons.GetLevel() == level) {
+                monsters.add(ii);
+            }
+        }
+
+        return monsters.size() != 0 ? Rand.Get(monsters) : MonsterKind.UNKNOWN;
+    }
+
+    private int GetLevel() {
+        return switch (id) {
+            case MonsterKind.PEASANT, MonsterKind.ARCHER, MonsterKind.GOBLIN, MonsterKind.ORC, MonsterKind.SPRITE, MonsterKind.CENTAUR, MonsterKind.HALFLING, MonsterKind.SKELETON, MonsterKind.ZOMBIE, MonsterKind.ROGUE, MonsterKind.MONSTER_RND1 -> MonsterLevel.LEVEL1;
+            case MonsterKind.RANGER, MonsterKind.PIKEMAN, MonsterKind.VETERAN_PIKEMAN, MonsterKind.ORC_CHIEF, MonsterKind.WOLF, MonsterKind.DWARF, MonsterKind.BATTLE_DWARF, MonsterKind.ELF, MonsterKind.GRAND_ELF, MonsterKind.GARGOYLE, MonsterKind.BOAR, MonsterKind.IRON_GOLEM, MonsterKind.MUTANT_ZOMBIE, MonsterKind.MUMMY, MonsterKind.NOMAD, MonsterKind.MONSTER_RND2 -> MonsterLevel.LEVEL2;
+            case MonsterKind.SWORDSMAN, MonsterKind.MASTER_SWORDSMAN, MonsterKind.CAVALRY, MonsterKind.CHAMPION, MonsterKind.OGRE, MonsterKind.OGRE_LORD, MonsterKind.TROLL, MonsterKind.WAR_TROLL, MonsterKind.DRUID, MonsterKind.GREATER_DRUID, MonsterKind.GRIFFIN, MonsterKind.MINOTAUR, MonsterKind.MINOTAUR_KING, MonsterKind.STEEL_GOLEM, MonsterKind.ROC, MonsterKind.MAGE, MonsterKind.ARCHMAGE, MonsterKind.ROYAL_MUMMY, MonsterKind.VAMPIRE, MonsterKind.VAMPIRE_LORD, MonsterKind.LICH, MonsterKind.GHOST, MonsterKind.MEDUSA, MonsterKind.EARTH_ELEMENT, MonsterKind.AIR_ELEMENT, MonsterKind.FIRE_ELEMENT, MonsterKind.WATER_ELEMENT, MonsterKind.MONSTER_RND3 -> MonsterLevel.LEVEL3;
+            case MonsterKind.PALADIN, MonsterKind.CRUSADER, MonsterKind.CYCLOPS, MonsterKind.UNICORN, MonsterKind.PHOENIX, MonsterKind.HYDRA, MonsterKind.GREEN_DRAGON, MonsterKind.RED_DRAGON, MonsterKind.BLACK_DRAGON, MonsterKind.GIANT, MonsterKind.TITAN, MonsterKind.POWER_LICH, MonsterKind.BONE_DRAGON, MonsterKind.GENIE, MonsterKind.MONSTER_RND4 -> MonsterLevel.LEVEL4;
+            case MonsterKind.MONSTER_RND -> switch (Rand.Get(0, 3)) {
+                default -> MonsterLevel.LEVEL1;
+                case 1 -> MonsterLevel.LEVEL2;
+                case 2 -> MonsterLevel.LEVEL3;
+                case 3 -> MonsterLevel.LEVEL4;
+            };
+            default -> MonsterLevel.LEVEL0;
+        };
     }
 
     private Monster FromDwelling(int race, int dwelling) {
@@ -283,8 +329,63 @@ public class Monster {
         return MonsterKind.UNKNOWN < id ? id - 1 : 0;
     }
 
-    public int GetRNDSize(boolean b) {
-//TODO
-        return 0;
+    public int GetRNDSize(boolean skip_factor) {
+        int hps = (GetGrown() != 0 ? GetGrown() : 1) * GetHitPoints();
+        var res = Rand.Get(hps, hps + hps / 2);
+        if (!skip_factor) {
+            var factor = 100;
+
+            switch (Settings.Get().GameDifficulty()) {
+                case DifficultyEnum.EASY:
+                    factor = 80;
+                    break;
+                case DifficultyEnum.NORMAL:
+                    factor = 100;
+                    break;
+                case DifficultyEnum.HARD:
+                    factor = 130;
+                    break;
+                case DifficultyEnum.EXPERT:
+                    factor = 160;
+                    break;
+                case DifficultyEnum.IMPOSSIBLE:
+                    factor = 190;
+                    break;
+                default:
+                    break;
+            }
+
+            res = res * factor / 100;
+            // force minimal
+            if (res == 0) res = 1;
+        }
+
+        return IsValid() ? GetCountFromHitPoints(id, res) : 0;
+    }
+
+    int GetCountFromHitPoints(int monsterId, int hp) {
+        if (hp == 0)
+            return 0;
+        var hp1 = GetHitPoints(monsterId);
+        var count = hp / hp1;
+        return count * hp1 < hp ? count + 1 : count;
+    }
+
+    private int GetHitPoints() {
+
+        return GetHitPoints(this.id);
+    }
+
+    private int GetHitPoints(int id) {
+
+        return toUShort(MonsterStats.get(id).hp);
+    }
+
+    public boolean isElemental() {
+        return switch (id) {
+            case MonsterKind.EARTH_ELEMENT, MonsterKind.AIR_ELEMENT, MonsterKind.FIRE_ELEMENT, MonsterKind.WATER_ELEMENT -> true;
+            default -> false;
+        };
+
     }
 }

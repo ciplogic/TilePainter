@@ -9,14 +9,18 @@ import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.common.RandQueue;
+import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.Secondary;
 import hellofx.fheroes2.kingdom.CapturedObject;
 import hellofx.fheroes2.kingdom.H2Color;
+import hellofx.fheroes2.kingdom.WeekKind;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.monster.Monster;
+import hellofx.fheroes2.monster.MonsterJoin;
 import hellofx.fheroes2.monster.MonsterKind;
+import hellofx.fheroes2.monster.MonsterLevel;
 import hellofx.fheroes2.resource.*;
 import hellofx.fheroes2.spell.Spell;
 import hellofx.fheroes2.system.Settings;
@@ -730,9 +734,7 @@ public class Tiles {
     @Override
     public String toString() {
         return "{" +
-                "{x>" + maps_x +
-                ",y:" + maps_y +
-                "}, addons1=" + addons_level1 +
+                "{x:" + maps_x + ",y:" + maps_y + "}, addons1=" + addons_level1 +
                 ", addons2=" + addons_level2 +
                 ", index=" + maps_index +
                 ", sprite_index=" + pack_sprite_index +
@@ -1266,8 +1268,13 @@ public class Tiles {
         //TODO
     }
 
+    public int MonsterCount() {
+        return toByte(quantity1) << 8 | quantity2;
+    }
+
     private void MonsterSetCount(int count) {
-        //TODO
+        quantity1 = (byte) (count >> 8);
+        quantity2 = (byte) (0x00FF & count);
     }
 
     private void UpdateStoneLightsSprite(Tiles tiles) {
@@ -1290,8 +1297,146 @@ public class Tiles {
         //TODO
     }
 
-    private void UpdateMonsterInfo(Tiles tiles) {
-        //TODO
+    private void UpdateMonsterInfo(Tiles tile) {
+        int mons = -1;
+
+        if (Mp2Kind.OBJ_MONSTER == tile.GetObject()) {
+            TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
+
+            if (addon != null)
+                mons = new Monster(addon.index + 1).id; // ICN.MONS32 start from PEASANT
+        } else {
+            TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_RNDMONSTER);
+
+            switch (tile.GetObject()) {
+                case Mp2Kind.OBJ_RNDMONSTER:
+                    mons = Monster.Rand(MonsterLevel.LEVEL0);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER1:
+                    mons = Monster.Rand(MonsterLevel.LEVEL1);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER2:
+                    mons = Monster.Rand(MonsterLevel.LEVEL2);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER3:
+                    mons = Monster.Rand(MonsterLevel.LEVEL3);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER4:
+                    mons = Monster.Rand(MonsterLevel.LEVEL4);
+                    break;
+                default:
+                    break;
+            }
+
+            // fixed random sprite
+            tile.SetObject(Mp2Kind.OBJ_MONSTER);
+
+            if (addon != null)
+                addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
+        }
+
+        var count = 0;
+
+        // update count (mp2 format)
+        if (tile.quantity1 != 0 || tile.quantity2 != 0) {
+            count = tile.quantity2;
+            count <<= 8;
+            count |= tile.quantity1;
+            count >>= 3;
+        }
+
+        PlaceMonsterOnTile(tile, mons, count);
+
+    }
+
+    private void PlaceMonsterOnTile(Tiles tile, int mons, int count) {
+        var monster = new Monster(mons);
+        tile.SetObject(Mp2Kind.OBJ_MONSTER);
+        // monster type
+        tile.SetQuantity3(mons);
+
+        if (count != 0) {
+            tile.MonsterSetFixedCount();
+            tile.MonsterSetCount(count);
+        } else {
+            int mul = 4;
+
+            // set random count
+            switch (Settings.Get().GameDifficulty()) {
+                case DifficultyEnum.EASY:
+                    mul = 3;
+                    break;
+                case DifficultyEnum.NORMAL:
+                    mul = 4;
+                    break;
+                case DifficultyEnum.HARD:
+                    mul = 4;
+                    break;
+                case DifficultyEnum.EXPERT:
+                    mul = 5;
+                    break;
+                case DifficultyEnum.IMPOSSIBLE:
+                    mul = 6;
+                    break;
+                default:
+                    break;
+            }
+
+            tile.MonsterSetCount(mul * monster.GetRNDSize(true));
+        }
+
+        var world = World.Instance;
+        // skip join
+        if (mons == MonsterKind.GHOST || monster.isElemental())
+            tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_SKIP);
+        else
+            // fixed count: for money
+            if (tile.MonsterFixedCount() != 0 ||
+                    // month of monster
+                    (world.GetWeekType().GetType() == WeekKind.MONSTERS &&
+                            world.GetWeekType().GetMonster() == mons))
+                tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
+            else {
+                // 20% chance for join
+                if (3 > Rand.Get(1, 10))
+                    tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_FREE);
+                else
+                    tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
+            }
+
+        //
+        TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
+
+        if (addon == null) {
+            // add new sprite
+            tile.AddonsPushLevel1(new TilesAddon(TilesAddonLevel.UPPER, World.Instance.GetUniq(), 0x33, monster.GetSpriteIndex()));
+        } else if (toByte(addon.index) != mons - 1) {
+            // fixed sprite
+            addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
+        }
+    }
+
+    private int MonsterFixedCount() {
+        var addon = FindObjectConst(Mp2Kind.OBJ_MONSTER);
+        return addon != null ? addon.tmp & 0x80 : 0;
+    }
+
+    private void MonsterSetJoinCondition(int cond) {
+
+        TilesAddon addon = FindObject(Mp2Kind.OBJ_MONSTER);
+        if (addon == null)
+            return;
+        addon.tmp &= 0xFC;
+        addon.tmp |= cond & 0x03;
+    }
+
+    private void MonsterSetFixedCount() {
+        var addon = FindObject(Mp2Kind.OBJ_MONSTER);
+        if (addon != null) addon.tmp |= 0x80;
+    }
+
+    private void SetQuantity3(int mod) {
+        quantity3 = (byte) mod;
     }
 
     private void QuantitySetExt(int value) {

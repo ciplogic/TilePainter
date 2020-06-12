@@ -68,9 +68,11 @@ public class MonsterKind {
     public static final int AIR_ELEMENT = 64;
     public static final int FIRE_ELEMENT = 65;
     public static final int WATER_ELEMENT = 66;
-    public static final int MONSTER_RND6 = 67;
+    public static final int MONSTER_RND1 = 67;
     public static final int MONSTER_RND2 = 68;
     public static final int MONSTER_RND3 = 69;
     public static final int MONSTER_RND4 = 70;
     public static final int MONSTER_RND = 71;
+
 }
+
