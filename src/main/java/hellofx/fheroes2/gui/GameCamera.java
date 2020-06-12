@@ -70,7 +70,7 @@ public class GameCamera {
             return;
         }
         for (var sprite : sprites) {
-            drawImageOnTile(dst, sprite, tileX, tileY);
+            drawSpriteOnTile(dst, sprite, tileX, tileY);
         }
     }
 }

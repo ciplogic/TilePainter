@@ -76,8 +76,8 @@ public class Gameplay {
     void onFrameUpdate() {
         Game.nextFrame();
         idx += 1;
-        gameArea.camera.left = (int) idx;
-        gameArea.camera.top = (int) idx / 2;
+        //gameArea.camera.left = (int) idx/ 2;
+        //gameArea.camera.top = (int) idx ;
         var painter = canvasWrap.getPainter();
 
         painter.clear(Color.ROYALBLUE);

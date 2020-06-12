@@ -702,7 +702,7 @@ public class Tiles {
                 var anime_sprite = Agg.GetICN(IcnKind.OBJNHAUN, Game.MapsAnimationFrame() % 15);
                 return anime_sprite;
             } else if (addon != null && addon.tmp >= SpellKind.SETEGUARDIAN && addon.tmp <= SpellKind.SETWGUARDIAN) {
-                //return Agg.GetICN(IcnKind.MONS32, new Monster(new Spell(addon.tmp)).GetSpriteIndex());
+                return Agg.GetICN(IcnKind.MONS32, new Monster(new Spell(addon.tmp)).GetSpriteIndex());
 
             }
         }

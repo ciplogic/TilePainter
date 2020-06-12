@@ -3,6 +3,8 @@ package hellofx.fheroes2.monster;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.spell.Spell;
+import hellofx.fheroes2.spell.SpellKind;
 import hellofx.fheroes2.system.Settings;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
@@ -20,6 +22,37 @@ public class Monster {
 
     public Monster(int race, int dw) {
         id = FromDwelling(race, dw).id;
+    }
+
+    public Monster(Spell spell) {
+        var sp = spell.id;
+        switch (sp) {
+            case SpellKind.SETEGUARDIAN:
+            case SpellKind.SUMMONEELEMENT:
+                id = MonsterKind.EARTH_ELEMENT;
+                break;
+
+            case SpellKind.SETAGUARDIAN:
+            case SpellKind.SUMMONAELEMENT:
+                id = MonsterKind.AIR_ELEMENT;
+                break;
+
+            case SpellKind.SETFGUARDIAN:
+            case SpellKind.SUMMONFELEMENT:
+                id = MonsterKind.FIRE_ELEMENT;
+                break;
+
+            case SpellKind.SETWGUARDIAN:
+            case SpellKind.SUMMONWELEMENT:
+                id = MonsterKind.WATER_ELEMENT;
+                break;
+
+            case SpellKind.HAUNT:
+                id = MonsterKind.GHOST;
+                break;
+            default:
+                break;
+        }
     }
 
     public static int Rand(int level) {
