@@ -6,6 +6,14 @@ import hellofx.fheroes2.maps.objects.Maps;
 public class MapPosition {
     public H2Point center = new H2Point();
 
+    public MapPosition() {
+
+    }
+
+    public MapPosition(H2Point h2Point) {
+        center = h2Point;
+    }
+
     public H2Point GetCenter() {
         return center;
     }

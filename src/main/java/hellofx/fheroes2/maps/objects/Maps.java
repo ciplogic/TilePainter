@@ -13,6 +13,27 @@ public class Maps {
         return new H2Point(index % world.w, index / world.w);
     }
 
+    public static boolean isValidAbsPoint(int x, int y) {
+        var world = World.Instance;
+        return 0 <= x && world.w > x && 0 <= y && world.h > y;
+    }
+
+    public static int GetIndexFromAbsPoint(H2Point pt) {
+        return GetIndexFromAbsPoint(pt.x, pt.y);
+    }
+
+    public static int GetIndexFromAbsPoint(int px, int py) {
+        var world = World.Instance;
+        var res = py * world.w + px;
+
+        if (px < 0 || py < 0) {
+            System.out.println("Maps::GetIndexFromAbsPoint: error coods, " + "x: " + px + ", y: " + py);
+            return -1;
+        }
+
+        return res;
+    }
+
     void GetAroundIndexes(int center, MapsIndexes result) {
         result.values.clear();
         if (!isValidAbsIndex(center)) {

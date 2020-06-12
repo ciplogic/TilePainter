@@ -1,5 +1,6 @@
 package hellofx.fheroes2.army;
 
+import hellofx.fheroes2.castle.Captain;
 import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.heroes.HeroBase;
 import hellofx.fheroes2.kingdom.H2Color;
@@ -32,5 +33,8 @@ public class Army {
     }
 
     public void Reset(boolean b) {
+    }
+
+    public void SetCommander(Captain captain) {
     }
 }

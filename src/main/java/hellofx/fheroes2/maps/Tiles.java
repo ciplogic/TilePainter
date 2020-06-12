@@ -676,7 +676,7 @@ public class Tiles {
         }
     }
 
-    private boolean isWater() {
+    public boolean isWater() {
         return 30 > TileSpriteIndex();
     }
 

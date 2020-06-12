@@ -13,7 +13,12 @@ public class CapturedObjects {
     }
 
     private CapturedObject Get(int index) {
-        return _items.get(index);
+        var res = _items.get(index);
+        if (res == null) {
+            res = new CapturedObject();
+            _items.put(index, res);
+        }
+        return res;
     }
 
 }

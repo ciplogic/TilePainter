@@ -8,12 +8,16 @@ import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.heroes.HeroType;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.maps.MapPosition;
+import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.system.BitModes;
 import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
+
+import java.util.stream.IntStream;
 
 import static hellofx.fheroes2.castle.BuildingKind.*;
 import static hellofx.fheroes2.castle.CastleFlags.*;
@@ -35,8 +39,12 @@ public class Castle {
     public Castle() {
     }
 
-    public Castle(int cx, int cy, int race) {
+    public Castle(int cx, int cy, int rc) {
+        mapPosition = new MapPosition(new H2Point(cx, cy));
+        captain = new Captain(this);
         //TODO
+        //fill(dwelling, dwelling + CASTLEMAXMONSTER, 0);
+        army.SetCommander(captain);
     }
 
     public boolean isPosition(H2Point center) {
@@ -134,7 +142,9 @@ public class Castle {
         // custom troops
         var custom_troops = st.get() != 0;
         if (custom_troops) {
-            Troop[] troops = new Troop[5];
+            var troops = new Troop[5];
+            IntStream.range(0, 5)
+                    .forEach(i -> troops[i] = new Troop());
 
             // set monster id
             for (var troop : troops)
@@ -159,27 +169,13 @@ public class Castle {
         // race
         var kingdom_race = Players.GetPlayerRace(GetColor());
         switch (st.get()) {
-            case 0:
-                race = RaceKind.KNGT;
-                break;
-            case 1:
-                race = RaceKind.BARB;
-                break;
-            case 2:
-                race = RaceKind.SORC;
-                break;
-            case 3:
-                race = RaceKind.WRLK;
-                break;
-            case 4:
-                race = RaceKind.WZRD;
-                break;
-            case 5:
-                race = RaceKind.NECR;
-                break;
-            default:
-                race = H2Color.NONE != GetColor() && ((RaceKind.ALL & kingdom_race) != 0) ? kingdom_race : RaceKind.Rand();
-                break;
+            case 0 -> race = RaceKind.KNGT;
+            case 1 -> race = RaceKind.BARB;
+            case 2 -> race = RaceKind.SORC;
+            case 3 -> race = RaceKind.WRLK;
+            case 4 -> race = RaceKind.WZRD;
+            case 5 -> race = RaceKind.NECR;
+            default -> race = H2Color.NONE != GetColor() && ((RaceKind.ALL & kingdom_race) != 0) ? kingdom_race : RaceKind.Rand();
         }
 
         // castle
@@ -268,7 +264,17 @@ public class Castle {
     }
 
     private boolean HaveNearlySea() {
-        //TODO
+        var centerPos = GetCenter();
+        var world = World.Instance;
+        // check nearest ocean
+        if (Maps.isValidAbsPoint(centerPos.x, centerPos.y + 2)) {
+            var index = Maps.GetIndexFromAbsPoint(centerPos.x, centerPos.y + 2);
+            var left = world.GetTiles(index - 1);
+            var right = world.GetTiles(index + 1);
+            var center = world.GetTiles(index);
+
+            return left.isWater() || right.isWater() || center.isWater();
+        }
         return false;
     }
 
@@ -300,7 +306,8 @@ public class Castle {
         return (building & BUILD_CASTLE) != 0;
     }
 
-    public void ChangeColor(int color) {
-        //TODO
+    public void ChangeColor(int cl) {
+        SetColor(cl);
+        army.SetColor(cl);
     }
 }

@@ -75,7 +75,7 @@ public class Gameplay {
 
     void onFrameUpdate() {
         Game.nextFrame();
-        idx += 0.1;
+        idx += 1;
         gameArea.camera.left = (int) idx;
         gameArea.camera.top = (int) idx / 2;
         var painter = canvasWrap.getPainter();

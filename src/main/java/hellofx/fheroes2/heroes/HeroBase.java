@@ -26,7 +26,7 @@ public class HeroBase {
         LoadDefaults(type, race);
     }
 
-    private void LoadDefaults(int type, int race) {
+    public void LoadDefaults(int type, int race) {
     }
 
     public static int PORTxxxx(int heroId) {
