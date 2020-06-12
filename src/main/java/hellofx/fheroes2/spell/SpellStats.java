@@ -11,6 +11,7 @@ import static hellofx.fheroes2.system.Translate.tr;
 public class SpellStats {
     public static final List<spellstats_t> _items = new ArrayList<>();
     public static spellstats_t[] spells;
+    public static final int SP_DISABLE = 0x01;
 
     static {
         setup();

@@ -54,4 +54,8 @@ public class Kingdom {
     public int GetRace() {
         return 0;
     }
+
+    public KingdomCastles GetCastles() {
+        return castles;
+    }
 }

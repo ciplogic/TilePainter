@@ -10,4 +10,9 @@ public class Players {
         //TODO
         return 0;
     }
+
+    public static int HumanColors() {
+        //TODO
+        return 0;
+    }
 }

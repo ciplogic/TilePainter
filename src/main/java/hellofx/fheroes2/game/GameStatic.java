@@ -90,4 +90,16 @@ public class GameStatic {
 
         return null;
     }
+
+    static secondary_t _from_witch_hut = new secondary_t(
+
+            /* archery */ 1, /* ballistics */ 1, /* diplomacy */ 1, /* eagleeye */ 1,
+            /* estates */ 1, /* leadership */ 0, /* logistics */ 1, /* luck */ 1,
+            /* mysticism */ 1, /* navigation */ 1, /* necromancy*/ 0, /* pathfinding */ 1,
+            /* scouting */ 1, /* wisdom */ 1
+    );
+
+    public static secondary_t GetSkillForWitchHut() {
+        return _from_witch_hut;
+    }
 }

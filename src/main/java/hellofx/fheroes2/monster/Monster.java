@@ -282,4 +282,9 @@ public class Monster {
     public int GetSpriteIndex() {
         return MonsterKind.UNKNOWN < id ? id - 1 : 0;
     }
+
+    public int GetRNDSize(boolean b) {
+//TODO
+        return 0;
+    }
 }

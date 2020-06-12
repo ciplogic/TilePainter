@@ -1,9 +1,11 @@
 package hellofx.fheroes2.kingdom;
 
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.castle.AllCastles;
 import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.common.H2IntPair;
 import hellofx.fheroes2.common.H2Point;
+import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.heroes.AllHeroes;
@@ -15,6 +17,7 @@ import hellofx.fheroes2.maps.objects.MapEvent;
 import hellofx.fheroes2.maps.objects.MapSign;
 import hellofx.fheroes2.maps.objects.MapSphinx;
 import hellofx.fheroes2.maps.objects.Maps;
+import hellofx.fheroes2.resource.UltimateArtifact;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
@@ -24,9 +27,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import static hellofx.common.Utilities.resizeList;
+import static hellofx.common.Utilities.find_if;
 import static hellofx.fheroes2.game.GameConsts.*;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+import static hellofx.fheroes2.system.Translate.StringReplace;
+import static hellofx.fheroes2.system.Translate.tr;
 
 public class World {
     public static World Instance;
@@ -41,7 +46,7 @@ public class World {
     }
 
     public AllCastles vec_castles = new AllCastles();
-    public List<Tiles> vec_tiles = new ArrayList<>();
+    public Tiles[] vec_tiles;
     public CapturedObjects map_captureobj = new CapturedObjects();
     public MapObjects map_objects = new MapObjects();
     public AllHeroes vec_heroes = new AllHeroes();
@@ -49,6 +54,7 @@ public class World {
     public List<String> vec_rumors = new ArrayList<>();
     public List<EventsDate> vec_eventsday = new ArrayList<>();
     IntArrayList vec_object = new IntArrayList();
+    UltimateArtifact ultimate_artifact = new UltimateArtifact();
 
     public int GetIndexFromAbsPoint(int px, int py) {
         var res = py * w + px;
@@ -114,9 +120,11 @@ public class World {
         );
         var endof_addons = fs.tell();
         fs.seek(MP2OFFSETDATA);
-        vec_tiles.clear();
 
-        resizeList(vec_tiles, w * h, Tiles::new);
+        vec_tiles = new Tiles[w * h];
+        IntStream.range(0, w * h).forEach(i -> {
+            vec_tiles[i] = new Tiles();
+        });
 
         IntStream.range(0, w * h)
                 .forEach(index -> {
@@ -141,14 +149,14 @@ public class World {
                             break;
                     }
 
-                    var tile = vec_tiles.get(index);
+                    var tile = vec_tiles[index];
 
-                    tile.Init(index, mp2tile);
-
-                    if (tile.maps_x == 0 && tile.maps_y == 4) {
+                    if (index == 1311) {
                         //here
                         int m = 5;
                     }
+
+                    tile.Init(index, mp2tile);
 
                     // load all addon for current tils
                     while (offsetAddonsBlock != 0) {
@@ -297,7 +305,7 @@ public class World {
             var pblock = fs.getRaw(sizeblock);
 
             for (var it_index = 0; it_index != vec_object.size() && findobject < 0; ++it_index) {
-                var tile = vec_tiles.get(vec_object.getInt(it_index));
+                var tile = vec_tiles[vec_object.getInt(it_index)];
 
                 // orders(quantity2, quantity1)
                 var orders = tile.GetQuantity2();
@@ -309,77 +317,80 @@ public class World {
             }
 
             if (0 <= findobject) {
-                var tile = vec_tiles.get(findobject);
+                var tile = vec_tiles[findobject];
                 TilesAddon addon;
 
                 switch (tile.GetObject()) {
-                    case Mp2Kind.OBJ_CASTLE:
+                    case Mp2Kind.OBJ_CASTLE: {
                         // add castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
-                        } else {
-                            var castle = GetCastle(Maps.GetPoint(findobject));
-                            if (castle != null) {
-                                var bvr = new ByteVectorReader(pblock);
-                                castle.LoadFromMP2(bvr);
-                                Maps.MinimizeAreaForCastle(castle.GetCenter());
-                                map_captureobj.SetColor(tile.GetIndex(), castle.GetColor());
-                            }
+                            break;
                         }
-                        break;
+                        var castle = GetCastle(Maps.GetPoint(findobject));
+                        if (castle != null) {
+                            var bvr = new ByteVectorReader(pblock);
+                            castle.LoadFromMP2(bvr);
+                            Maps.MinimizeAreaForCastle(castle.GetCenter());
+                            map_captureobj.SetColor(tile.GetIndex(), castle.GetColor());
+                        }
+                    }
+                    break;
                     case Mp2Kind.OBJ_RNDTOWN:
                     case Mp2Kind.OBJ_RNDCASTLE:
                         // add rnd castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
-                        } else {
-                            var castle = GetCastle(Maps.GetPoint(findobject));
-                            if (castle != null) {
-                                var bvr = new ByteVectorReader(pblock);
-                                castle.LoadFromMP2(bvr);
-                                Maps.UpdateRNDSpriteForCastle(castle.GetCenter(), castle.GetRace(), castle.isCastle());
-                                Maps.MinimizeAreaForCastle(castle.GetCenter());
-                                map_captureobj.SetColor(tile.GetIndex(), castle.GetColor());
-                            } else {
-                            }
+                            break;
+                        }
+                        var castle = GetCastle(Maps.GetPoint(findobject));
+                        if (castle != null) {
+                            var bvr = new ByteVectorReader(pblock);
+                            castle.LoadFromMP2(bvr);
+                            Maps.UpdateRNDSpriteForCastle(castle.GetCenter(), castle.GetRace(), castle.isCastle());
+                            Maps.MinimizeAreaForCastle(castle.GetCenter());
+                            map_captureobj.SetColor(tile.GetIndex(), castle.GetColor());
                         }
                         break;
-                    case Mp2Kind.OBJ_JAIL:
+                    case Mp2Kind.OBJ_JAIL: {
                         // add jail
                         if (SIZEOFMP2HEROES != pblock.length) {
-                        } else {
-                            int race = RaceKind.KNGT;
-                            switch (pblock[0x3c]) {
-                                case 1:
-                                    race = RaceKind.BARB;
-                                    break;
-                                case 2:
-                                    race = RaceKind.SORC;
-                                    break;
-                                case 3:
-                                    race = RaceKind.WRLK;
-                                    break;
-                                case 4:
-                                    race = RaceKind.WZRD;
-                                    break;
-                                case 5:
-                                    race = RaceKind.NECR;
-                                    break;
-                                default:
-                                    break;
-                            }
-
-                            var hero = GetFreemanHeroes(race);
-
-                            if (hero != null) {
-                                var bvr = new ByteVectorReader(pblock);
-                                hero.LoadFromMP2(findobject, H2Color.NONE, hero.GetRace(), bvr);
-                                hero.bitModes.SetModes(HeroFlags.JAIL);
-                            }
+                            break;
                         }
-                        break;
+                        int race = RaceKind.KNGT;
+                        switch (pblock[0x3c]) {
+                            case 1:
+                                race = RaceKind.BARB;
+                                break;
+                            case 2:
+                                race = RaceKind.SORC;
+                                break;
+                            case 3:
+                                race = RaceKind.WRLK;
+                                break;
+                            case 4:
+                                race = RaceKind.WZRD;
+                                break;
+                            case 5:
+                                race = RaceKind.NECR;
+                                break;
+                            default:
+                                break;
+                        }
+
+                        var hero = GetFreemanHeroes(race);
+
+                        if (hero != null) {
+                            var bvr = new ByteVectorReader(pblock);
+                            hero.LoadFromMP2(findobject, H2Color.NONE, hero.GetRace(), bvr);
+                            hero.bitModes.SetModes(HeroFlags.JAIL);
+                        }
+                    }
+                    break;
                     case Mp2Kind.OBJ_HEROES:
                         // add heroes
                         if (SIZEOFMP2HEROES != pblock.length) {
-                        } else if (null != (addon = tile.FindObjectConst(Mp2Kind.OBJ_HEROES))) {
+                            break;
+                        }
+                        if (null != (addon = tile.FindObjectConst(Mp2Kind.OBJ_HEROES))) {
                             H2IntPair colorRace = TilesAddon.ColorRaceFromHeroSprite(addon);
                             Kingdom kingdom = GetKingdom(colorRace.first);
 
@@ -460,7 +471,241 @@ public class World {
             else {
             }
         }
+        PostLoad();
         return true;
+    }
+
+    void PostLoad() {
+        // modify other objects
+        for (var ii = 0; ii < vec_tiles.length; ++ii) {
+            var tile = vec_tiles[ii];
+
+            tile.FixedPreload();
+
+            //
+            switch (tile.GetObject()) {
+                case Mp2Kind.OBJ_WITCHSHUT:
+                case Mp2Kind.OBJ_SHRINE1:
+                case Mp2Kind.OBJ_SHRINE2:
+                case Mp2Kind.OBJ_SHRINE3:
+                case Mp2Kind.OBJ_STONELIGHTS:
+                case Mp2Kind.OBJ_FOUNTAIN:
+                case Mp2Kind.OBJ_EVENT:
+                case Mp2Kind.OBJ_BOAT:
+                case Mp2Kind.OBJ_RNDARTIFACT:
+                case Mp2Kind.OBJ_RNDARTIFACT1:
+                case Mp2Kind.OBJ_RNDARTIFACT2:
+                case Mp2Kind.OBJ_RNDARTIFACT3:
+                case Mp2Kind.OBJ_RNDRESOURCE:
+                case Mp2Kind.OBJ_WATERCHEST:
+                case Mp2Kind.OBJ_TREASURECHEST:
+                case Mp2Kind.OBJ_ARTIFACT:
+                case Mp2Kind.OBJ_RESOURCE:
+                case Mp2Kind.OBJ_MAGICGARDEN:
+                case Mp2Kind.OBJ_WATERWHEEL:
+                case Mp2Kind.OBJ_WINDMILL:
+                case Mp2Kind.OBJ_WAGON:
+                case Mp2Kind.OBJ_SKELETON:
+                case Mp2Kind.OBJ_LEANTO:
+                case Mp2Kind.OBJ_CAMPFIRE:
+                case Mp2Kind.OBJ_FLOTSAM:
+                case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+                case Mp2Kind.OBJ_DERELICTSHIP:
+                case Mp2Kind.OBJ_SHIPWRECK:
+                case Mp2Kind.OBJ_GRAVEYARD:
+                case Mp2Kind.OBJ_PYRAMID:
+                case Mp2Kind.OBJ_DAEMONCAVE:
+                case Mp2Kind.OBJ_ABANDONEDMINE:
+                case Mp2Kind.OBJ_ALCHEMYLAB:
+                case Mp2Kind.OBJ_SAWMILL:
+                case Mp2Kind.OBJ_MINES:
+                case Mp2Kind.OBJ_TREEKNOWLEDGE:
+                case Mp2Kind.OBJ_BARRIER:
+                case Mp2Kind.OBJ_TRAVELLERTENT:
+                case Mp2Kind.OBJ_MONSTER:
+                case Mp2Kind.OBJ_RNDMONSTER:
+                case Mp2Kind.OBJ_RNDMONSTER1:
+                case Mp2Kind.OBJ_RNDMONSTER2:
+                case Mp2Kind.OBJ_RNDMONSTER3:
+                case Mp2Kind.OBJ_RNDMONSTER4:
+                case Mp2Kind.OBJ_ANCIENTLAMP:
+                case Mp2Kind.OBJ_WATCHTOWER:
+                case Mp2Kind.OBJ_EXCAVATION:
+                case Mp2Kind.OBJ_CAVE:
+                case Mp2Kind.OBJ_TREEHOUSE:
+                case Mp2Kind.OBJ_ARCHERHOUSE:
+                case Mp2Kind.OBJ_GOBLINHUT:
+                case Mp2Kind.OBJ_DWARFCOTT:
+                case Mp2Kind.OBJ_HALFLINGHOLE:
+                case Mp2Kind.OBJ_PEASANTHUT:
+                case Mp2Kind.OBJ_THATCHEDHUT:
+                case Mp2Kind.OBJ_RUINS:
+                case Mp2Kind.OBJ_TREECITY:
+                case Mp2Kind.OBJ_WAGONCAMP:
+                case Mp2Kind.OBJ_DESERTTENT:
+                case Mp2Kind.OBJ_TROLLBRIDGE:
+                case Mp2Kind.OBJ_DRAGONCITY:
+                case Mp2Kind.OBJ_CITYDEAD:
+                    tile.QuantityUpdate();
+                    break;
+
+                case Mp2Kind.OBJ_WATERALTAR:
+                case Mp2Kind.OBJ_AIRALTAR:
+                case Mp2Kind.OBJ_FIREALTAR:
+                case Mp2Kind.OBJ_EARTHALTAR:
+                case Mp2Kind.OBJ_BARROWMOUNDS:
+                    tile.QuantityReset();
+                    tile.QuantityUpdate();
+                    break;
+
+                case Mp2Kind.OBJ_HEROES: {
+                    var addon = tile.FindAddonICN1(IcnKind.MINIHERO);
+                    // remove event sprite
+                    if (addon != null) tile.Remove(addon.uniq);
+
+                    //TODO: fix heroes
+                    // tile.SetHeroes(GetHeroes(Maps.GetPoint(ii)));
+                }
+                break;
+
+                default:
+                    break;
+            }
+        }
+
+        var world = World.Instance;
+        // add heroes to kingdoms
+        vec_kingdoms.AddHeroes(vec_heroes);
+
+        // add castles to kingdoms
+        vec_kingdoms.AddCastles(vec_castles);
+/*
+        // update wins, loss conditions
+        if (GameOver.WINS_HERO & Settings.Get().ConditionWins())
+        {
+            Heroes hero = GetHeroes(Settings.Get().WinsMapsPositionObject());
+            heroes_cond_wins = hero!=null ? hero.GetID() : HeroesKind.UNKNOWN;
+        }
+        if (GameOver.LOSS_HERO & Settings.Get().ConditionLoss())
+        {
+            Heroes hero = GetHeroes(Settings.Get().LossMapsPositionObject());
+            if (hero!=null)
+            {
+                heroes_cond_loss = hero.GetID();
+                hero.bitModes.SetModes(Heroes.NOTDISMISS | Heroes.NOTDEFAULTS);
+            }
+        }
+
+        // update tile passable
+        Arrays.stream(vec_tiles). forEach(tile -> {
+            tile.UpdatePassable();
+        });
+
+        // play with hero
+        vec_kingdoms.ApplyPlayWithStartingHero();
+
+        if (Settings.Get().ExtWorldStartHeroLossCond4Humans())
+        vec_kingdoms.AddCondLossHeroes(vec_heroes);
+
+        // play with debug hero
+        if (Settings.Get().IS_DEVEL())
+        {
+            // get first castle position
+            var kingdom = GetKingdom(H2Color.GetFirst(Players.HumanColors()));
+
+            if (kingdom.GetCastles()._items.size() != 0)
+            {
+            var castle = kingdom.GetCastles()._items.get(0);
+                var hero = vec_heroes.Get(HeroesKind.SANDYSANDY);
+
+                if (hero!=null)
+                {
+                var cp = castle.GetCenter();
+                    hero.Recruit(castle.GetColor(), new H2Point(cp.x, cp.y + 1));
+                }
+            }
+        }
+*/
+        // set ultimate
+        var it = find_if(vec_tiles, (var tile) ->
+        {
+            return tile.isObject(Mp2Kind.OBJ_RNDULTIMATEARTIFACT);
+        });
+
+        H2Point ultimate_pos = new H2Point();
+
+        // not found
+        if (null == it) {
+            // generate position for ultimate
+            MapsIndexes pools = new MapsIndexes();
+
+            for (var tile : vec_tiles) {
+                var x = tile.maps_x;
+                var y = tile.maps_y;
+                if (tile.GoodForUltimateArtifact() &&
+                        x > 5 && x < world.w - 5 && y > 5 && y < world.h - 5)
+                    pools.values.add(tile.GetIndex());
+            }
+
+            if (pools.values.size() != 0) {
+                int pos = Rand.Get(pools.values);
+                //TODO
+                //ultimate_artifact.Set(pos, Artifact.Rand(ArtifactLevel.ART_ULTIMATE));
+                ultimate_pos = Maps.GetPoint(pos);
+            }
+        } else {
+            TilesAddon addon = it.FindObject(Mp2Kind.OBJ_RNDULTIMATEARTIFACT);
+
+            // remove ultimate artifact sprite
+            if (addon != null) {
+                //TODO
+                //ultimate_artifact.Set(it.GetIndex(), Artifact.FromMP2IndexSprite(addon.index));
+                it.Remove(addon.uniq);
+                it.SetObject(Mp2Kind.OBJ_ZERO);
+                ultimate_pos = it.GetCenter();
+            }
+        }
+
+        String rumor = tr("The ultimate artifact is really the %{name}");
+        rumor = StringReplace(rumor, "%{name}", ultimate_artifact.GetName());
+        vec_rumors.add(rumor);
+
+        rumor = tr("The ultimate artifact may be found in the %{name} regions of the world.");
+
+        if (world.h / 3 > ultimate_pos.y) {
+            if (world.w / 3 > ultimate_pos.x)
+                rumor = StringReplace(rumor, "%{name}", tr("north-west"));
+            else if (2 * world.w / 3 > ultimate_pos.x)
+                rumor = StringReplace(rumor, "%{name}", tr("north"));
+            else
+                rumor = StringReplace(rumor, "%{name}", tr("north-east"));
+        } else if (2 * world.h / 3 > ultimate_pos.y) {
+            if (world.w / 3 > ultimate_pos.x)
+                rumor = StringReplace(rumor, "%{name}", tr("west"));
+            else if (2 * world.w / 3 > ultimate_pos.x)
+                rumor = StringReplace(rumor, "%{name}", tr("center"));
+            else
+                rumor = StringReplace(rumor, "%{name}", tr("east"));
+        } else {
+            if (world.w / 3 > ultimate_pos.x)
+                rumor = StringReplace(rumor, "%{name}", tr("south-west"));
+            else if (2 * world.w / 3 > ultimate_pos.x)
+                rumor = StringReplace(rumor, "%{name}", tr("south"));
+            else
+                rumor = StringReplace(rumor, "%{name}", tr("south-east"));
+        }
+        vec_rumors.add(rumor);
+
+        vec_rumors.add(tr("The truth is out there."));
+        vec_rumors.add(tr("The dark side is stronger."));
+        vec_rumors.add(tr("The end of the world is near."));
+        vec_rumors.add(tr("The bones of Lord Slayer are buried in the foundation of the arena."));
+        vec_rumors.add(tr("A Black Dragon will take out a Titan any day of the week."));
+        vec_rumors.add(tr("He told her: Yada yada yada...  and then she said: Blah, blah, blah..."));
+
+        vec_rumors.add(
+                tr("You can load the newest version of game from a site:\n http://sf.net/projects/fheroes2"));
+        vec_rumors.add(tr("This game is now in beta development version. ;)"));
     }
 
     private void Defaults() {
@@ -490,7 +735,7 @@ public class World {
         var index = x + (y * w);
         if (x < 0 || y < 0 || x >= w || y >= h)
             return null;
-        return vec_tiles.get(index);
+        return vec_tiles[index];
     }
 
     public CapturedObject GetCapturedObject(int index) {
@@ -498,6 +743,31 @@ public class World {
     }
 
     public Tiles GetTiles(int index) {
-        return vec_tiles.get(index);
+        return vec_tiles[index];
+    }
+
+    public void CaptureObject(int index, int color) {
+
+        int obj = GetTiles(index).GetObject(false);
+        map_captureobj.Set(index, obj, color);
+
+        if (Mp2Kind.OBJ_CASTLE == obj) {
+            Castle castle = GetCastle(Maps.GetPoint(index));
+            if (castle != null && castle.GetColor() != color)
+                castle.ChangeColor(color);
+        }
+
+        if ((color & (H2Color.ALL | H2Color.UNUSED)) != 0)
+            GetTiles(index).CaptureFlags32(obj, color);
+    }
+
+    public int CountDay() {
+        //TODO
+        return 0;
+    }
+
+    public int CountWeek() {
+        //TODO
+        return 0;
     }
 }

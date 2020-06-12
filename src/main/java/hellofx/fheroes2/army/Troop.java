@@ -20,4 +20,9 @@ public class Troop {
     public void SetCount(int c) {
         count = c;
     }
+
+    public void Set(int monsterType, int count) {
+        _monster = new Monster(monsterType);
+        this.count = count;
+    }
 }

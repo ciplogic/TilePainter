@@ -2,6 +2,8 @@ package hellofx.fheroes2.maps;
 
 import hellofx.fheroes2.serialize.ByteVectorReader;
 
+import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+
 public class Mp2Tile {
     public short tileIndex; // tile (ocean, grass, snow, swamp, lava, desert, dirt, wasteland, beach)
     public byte objectName1; // level 1.0
@@ -25,9 +27,9 @@ public class Mp2Tile {
                 ", quantity1=" + quantity1 +
                 ", quantity2=" + quantity2 +
                 ", objectName2=" + objectName2 +
-                ", indexName2=" + indexName2 +
+                ", indexName2=" + toByte(indexName2) +
                 ", shape=" + shape +
-                ", generalObject=" + generalObject +
+                ", generalObject=" + toByte(generalObject) +
                 ", indexAddon=" + indexAddon +
                 ", uniqNumber1=" + uniqNumber1 +
                 ", uniqNumber2=" + uniqNumber2 +

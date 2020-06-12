@@ -1,5 +1,12 @@
 package hellofx.fheroes2.spell;
 
+import hellofx.fheroes2.common.Rand;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static hellofx.fheroes2.spell.SpellStats.SP_DISABLE;
+import static hellofx.fheroes2.spell.SpellStats.spells;
 import static hellofx.fheroes2.spell.SpellType.*;
 
 public class Spell {
@@ -7,6 +14,27 @@ public class Spell {
 
     public Spell(int s) {
         id = s > STONE ? NONE : s;
+    }
+
+    public static Spell RandCombat(int lvl) {
+        return Rand(lvl, false);
+    }
+
+    private static Spell Rand(int lvl, boolean adv) {
+        List<Spell> v = new ArrayList<>(15);
+
+        for (var sp = NONE; sp < STONE; ++sp) {
+            Spell spell = new Spell(sp);
+            if (((adv && !spell.isCombat()) || (!adv && spell.isCombat())) &&
+                    lvl == spell.Level() &&
+                    (spells[sp].bits & SP_DISABLE) == 0)
+                v.add(spell);
+        }
+        return v.size() != 0 ? Rand.Get(v) : new Spell(NONE);
+    }
+
+    public static Spell RandAdventure(int lvl) {
+        return Rand(lvl, true);
     }
 
     public boolean isValid() {

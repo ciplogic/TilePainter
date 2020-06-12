@@ -348,4 +348,8 @@ public class Heroes extends HeroBase {
 
     public void Redraw(Painter dst, int x, int y, boolean b) {
     }
+
+    public int GetID() {
+        return hid;
+    }
 }

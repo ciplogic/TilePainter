@@ -10,4 +10,9 @@ public class H2Color {
     public static final int PURPLE = 0x20;
     public static final int UNUSED = 0x80;
     public static final int ALL = BLUE | GREEN | RED | YELLOW | ORANGE | PURPLE;
+
+    public static int GetFirst(int colors) {
+        //TODO
+        return 0;
+    }
 }

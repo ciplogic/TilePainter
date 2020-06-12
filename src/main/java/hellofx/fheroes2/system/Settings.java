@@ -43,4 +43,24 @@ public class Settings {
         //TODO
         return false;
     }
+
+    public boolean ExtWorldStartHeroLossCond4Humans() {
+        //TODO
+        return false;
+    }
+
+    public boolean ExtWorldNoRequirementsForArtifacts() {
+//TODO
+        return false;
+    }
+
+    public boolean ExtWorldDisableBarrowMounds() {
+//TODO
+        return false;
+    }
+
+    public boolean ExtWorldAbandonedMineRandom() {
+//TODO
+        return false;
+    }
 }

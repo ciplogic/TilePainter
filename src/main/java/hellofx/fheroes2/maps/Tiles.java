@@ -5,19 +5,27 @@ import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.agg.Sprite;
 import hellofx.fheroes2.agg.TilKind;
 import hellofx.fheroes2.agg.icn.IcnKind;
+import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
+import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.common.RandQueue;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.heroes.Secondary;
+import hellofx.fheroes2.kingdom.CapturedObject;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.monster.MonsterKind;
+import hellofx.fheroes2.resource.*;
+import hellofx.fheroes2.spell.Spell;
 import hellofx.fheroes2.system.Settings;
 import hellofx.framework.controls.Painter;
 
 import java.util.List;
 import java.util.function.Predicate;
 
+import static hellofx.common.Utilities.find_if;
 import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
@@ -35,6 +43,41 @@ public class Tiles {
     public byte quantity3 = 0;
     public int maps_x;
     public int maps_y;
+
+    public void FixedPreload() {
+        var tile = this;
+        var it = find_if(addons_level1._items, this::isSkeletonFix);
+        if (it != null) {
+            tile.SetObject(Mp2Kind.OBJ_SKELETON);
+        }
+        // fix price loyalty objects.
+        if (!Settings.Get().PriceLoyaltyVersion())
+            return;
+        switch (tile.GetObject()) {
+            case Mp2Kind.OBJ_UNKNW_79:
+            case Mp2Kind.OBJ_UNKNW_7A:
+            case Mp2Kind.OBJ_UNKNW_F9:
+            case Mp2Kind.OBJ_UNKNW_FA: {
+                int newobj = Mp2Kind.OBJ_ZERO;
+                it = find_if(tile.addons_level1._items,
+                        TilesAddon::isX_LOC123);
+                if (it != null) {
+                    newobj = TilesAddon.GetLoyaltyObject(it);
+                } else {
+                    it = find_if(tile.addons_level2._items, TilesAddon::isX_LOC123);
+                    if (it != null)
+                        newobj = TilesAddon.GetLoyaltyObject(it);
+                }
+
+                if (Mp2Kind.OBJ_ZERO != newobj)
+                    tile.SetObject(newobj);
+            }
+            break;
+
+            default:
+                break;
+        }
+    }
 
     public void Init(int index, Mp2Tile mp2) {
         tile_passable = Direction.DIRECTION_ALL;
@@ -254,7 +297,7 @@ public class Tiles {
 
     boolean isWateringHole(TilesAddon ta) {
         return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.object) &&
-                (ta.index >= 217 && ta.index <= 220);
+                (toByte(ta.index) >= 217 && toByte(ta.index) <= 220);
     }
 
     boolean isJail(TilesAddon ta) {
@@ -263,7 +306,7 @@ public class Tiles {
 
     boolean isEvent(TilesAddon ta) {
         // OBJNMUL2
-        return IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && 0xA3 == ta.index;
+        return IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && 0xA3 == toByte(ta.index);
     }
 
     boolean isMine(TilesAddon ta) {
@@ -288,24 +331,34 @@ public class Tiles {
 
     boolean isRandomCastle(TilesAddon ta) {
         // OBJNTWRD
-        return IcnKind.OBJNTWRD == Mp2.GetICNObject(ta.object) && 32 > ta.index;
+        return IcnKind.OBJNTWRD == Mp2.GetICNObject(ta.object) && 32 > toByte(ta.index);
     }
 
     boolean isRandomMonster(TilesAddon ta) {
         // MONS32
         return IcnKind.MONS32 == Mp2.GetICNObject(ta.object) &&
-                (0x41 < ta.index && 0x47 > ta.index);
+                (0x41 < toByte(ta.index) && 0x47 > toByte(ta.index));
     }
 
     boolean isBarrier(TilesAddon ta) {
         return IcnKind.X_LOC3 == Mp2.GetICNObject(ta.object) &&
-                60 <= ta.index && 102 >= ta.index && 0 == ta.index % 6;
+                60 <= ta.index && 102 >= ta.index && 0 == toByte(ta.index) % 6;
     }
 
+    TilesAddon find_if_reverse(List<TilesAddon> addons, Predicate<TilesAddon> isFound) {
+        for (var i = addons.size() - 1; i >= 0; i--) {
+            var item = addons.get(i);
+            if (isFound.test(item))
+                return item;
+        }
+        return null;
+    }
+
+/*
     TilesAddon find_if(List<TilesAddon> addons, Predicate<TilesAddon> isFound) {
         return addons.stream().filter(isFound::test).findFirst().orElse(null);
     }
-
+*/
 
     public TilesAddon FindObjectConst(int objs) {
         TilesAddon it = null;
@@ -472,7 +525,7 @@ public class Tiles {
     }
 
     public Sprite[] RedrawObjects(Painter dst) {
-        if (maps_x == 0 && maps_y == 4) {
+        if (maps_index == 1311) {
             System.out.println("Here is a monster");
         }
         var obj = GetObject();
@@ -676,19 +729,807 @@ public class Tiles {
 
     @Override
     public String toString() {
-        return "Tiles{" +
-                " maps_x=" + maps_x +
-                ", maps_y=" + maps_y +
-                ", addons_level1=" + addons_level1 +
-                ", addons_level2=" + addons_level2 +
-                ", maps_index=" + maps_index +
-                ", pack_sprite_index=" + pack_sprite_index +
-                ", tile_passable=" + tile_passable +
+        return "{" +
+                "{x>" + maps_x +
+                ",y:" + maps_y +
+                "}, addons1=" + addons_level1 +
+                ", addons2=" + addons_level2 +
+                ", index=" + maps_index +
+                ", sprite_index=" + pack_sprite_index +
+                ", passable=" + tile_passable +
                 ", mp2_object=" + toByte(mp2_object) +
-                ", fog_colors=" + toByte(fog_colors) +
                 ", quantity1=" + toByte(quantity1) +
                 ", quantity2=" + toByte(quantity2) +
                 ", quantity3=" + toByte(quantity3) +
                 '}';
+    }
+
+    void QuantitySetSkill(int skill) {
+        if (GetObject(false) == Mp2Kind.OBJ_WITCHSHUT) {
+            quantity1 = (byte) skill;
+        }
+    }
+
+    public void QuantityUpdate() {
+        var world = World.Instance;
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_WITCHSHUT:
+                QuantitySetSkill(Secondary.RandForWitchHut());
+                break;
+
+            case Mp2Kind.OBJ_SHRINE1: {
+                var spell = Rand.GetBool() ? Spell.RandCombat(1) : Spell.RandAdventure(1);
+                QuantitySetSpell(spell.id);
+            }
+            break;
+
+            case Mp2Kind.OBJ_SHRINE2: {
+                var spell = Rand.GetBool() ? Spell.RandCombat(2) : Spell.RandAdventure(2);
+                QuantitySetSpell(spell.id);
+            }
+            break;
+
+            case Mp2Kind.OBJ_SHRINE3: {
+                var spell = Rand.GetBool() ? Spell.RandCombat(3) : Spell.RandAdventure(3);
+                QuantitySetSpell(spell.id);
+            }
+            break;
+
+            case Mp2Kind.OBJ_SKELETON: {
+                RandQueue percents = new RandQueue();
+                // 80%: empty
+                percents.Push(0, 80);
+                // 20%: artifact 1 or 2 or 3
+                percents.Push(1, 20);
+
+                if (percents.Get() != 0)
+                    QuantitySetArtifact(Artifact.Rand(ArtifactLevel.ART_LEVEL123));
+                else
+                    QuantityReset();
+            }
+            break;
+
+            case Mp2Kind.OBJ_WAGON: {
+                quantity2 = 0;
+
+                RandQueue percents = new RandQueue();
+                // 20%: empty
+                percents.Push(0, 20);
+                // 10%: artifact 1 or 2
+                percents.Push(1, 10);
+                // 50%: resource
+                percents.Push(2, 50);
+
+                switch (percents.Get()) {
+                    case 1:
+                        QuantitySetArtifact(Artifact.Rand(Rand.GetBool() ? ArtifactLevel.ART_LEVEL1 : ArtifactLevel.ART_LEVEL2));
+                        break;
+                    case 2:
+                        QuantitySetResource(Resource.Rand(), Rand.Get(2, 5));
+                        break;
+                    default:
+                        QuantityReset();
+                        break;
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_ARTIFACT: {
+                TilesAddon addon = FindObject(Mp2Kind.OBJ_ARTIFACT);
+                if (addon != null) {
+                    int art = Artifact.FromMP2IndexSprite(addon.index).GetID();
+
+                    if (ArtifactKind.UNKNOWN != art) {
+                        if (art == ArtifactKind.SPELL_SCROLL) {
+                            QuantitySetVariant(15);
+                            // spell from origin mp2
+                            QuantitySetSpell(1 + (quantity2 * 256 + quantity1) / 8);
+                        } else {
+                            // 0: 70% none
+                            // 1,2,3 - 2000g, 2500g+3res, 3000g+5res,
+                            // 4,5 - need have skill wisard or leadership,
+                            // 6 - 50 rogues, 7 - 1 gin, 8,9,10,11,12,13 - 1 monster level4,
+                            // 15 - spell
+                            int cond = Rand.Get(1, 10) < 4 ? Rand.Get(1, 13) : 0;
+
+                            // always available
+                            if (Settings.Get().ExtWorldNoRequirementsForArtifacts())
+                                cond = 0;
+
+                            QuantitySetVariant(cond);
+                            QuantitySetArtifact(art);
+
+                            if (cond == 2 || cond == 3)
+                                QuantitySetExt(Resource.GetIndexSprite2(Resource.Rand()) + 1);
+                        }
+                    }
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_RESOURCE: {
+                TilesAddon addon = FindObject(Mp2Kind.OBJ_RESOURCE);
+                if (addon != null) {
+                    int res = Resource.FromIndexSprite(addon.index);
+                    var count = 0;
+
+                    switch (res) {
+                        case ResourceKind.GOLD:
+                            count = 100 * Rand.Get(5, 10);
+                            break;
+                        case ResourceKind.WOOD:
+                        case ResourceKind.ORE:
+                            count = Rand.Get(5, 10);
+                            break;
+                        default:
+                            count = Rand.Get(3, 6);
+                            break;
+                    }
+
+                    QuantitySetResource(res, count);
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_CAMPFIRE: {
+                // 4-6 rnd resource and + 400-600 gold
+                QuantitySetResource(Resource.Rand(), Rand.Get(4, 6));
+            }
+            break;
+
+            case Mp2Kind.OBJ_MAGICGARDEN:
+                // 5 gems or 500 gold
+                if (Rand.GetBool())
+                    QuantitySetResource(ResourceKind.GEMS, 5);
+                else
+                    QuantitySetResource(ResourceKind.GOLD, 500);
+                break;
+
+            case Mp2Kind.OBJ_WATERWHEEL:
+                // first week 500 gold, next week 1000 gold
+                QuantitySetResource(ResourceKind.GOLD, 0 == world.CountDay() ? 500 : 1000);
+                break;
+
+            case Mp2Kind.OBJ_WINDMILL: {
+                int res = ResourceKind.WOOD;
+                // except: wood, bugs: #3117478
+                while (res == ResourceKind.WOOD) res = Resource.Rand();
+
+                // 2 rnd resource
+                QuantitySetResource(res, 2);
+            }
+            break;
+
+            case Mp2Kind.OBJ_LEANTO:
+                // 1-4 rnd resource
+                QuantitySetResource(Resource.Rand(), Rand.Get(1, 4));
+                break;
+
+            case Mp2Kind.OBJ_FLOTSAM: {
+                switch (Rand.Get(1, 4)) {
+                    // 25%: empty
+                    default:
+                        break;
+                    // 25%: 500 gold + 10 wood
+                    case 1:
+                        QuantitySetResource(ResourceKind.GOLD, 500);
+                        quantity1 = 10;
+                        break;
+                    // 25%: 200 gold + 5 wood
+                    case 2:
+                        QuantitySetResource(ResourceKind.GOLD, 200);
+                        quantity1 = 5;
+                        break;
+                    // 25%: 5 wood
+                    case 3:
+                        quantity1 = 5;
+                        break;
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR: {
+                RandQueue percents = new RandQueue();
+                // 55%: artifact 1
+                percents.Push(1, 55);
+                // 30%: artifact 2
+                percents.Push(1, 30);
+                // 15%: artifact 3
+                percents.Push(1, 15);
+
+                // variant
+                switch (percents.Get()) {
+                    case 1:
+                        QuantitySetArtifact(Artifact.Rand(ArtifactLevel.ART_LEVEL1));
+                        break;
+                    case 2:
+                        QuantitySetArtifact(Artifact.Rand(ArtifactLevel.ART_LEVEL2));
+                        break;
+                    default:
+                        QuantitySetArtifact(Artifact.Rand(ArtifactLevel.ART_LEVEL3));
+                        break;
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_WATERCHEST: {
+                RandQueue percents = new RandQueue();
+                // 20% - empty
+                percents.Push(0, 20);
+                // 70% - 1500 gold
+                percents.Push(1, 70);
+                // 10% - 1000 gold + art
+                percents.Push(2, 10);
+
+                int art = ArtifactKind.UNKNOWN;
+                int gold = 0;
+
+                // variant
+                switch (percents.Get()) {
+                    default:
+                        break; // empty
+                    case 1:
+                        gold = 1500;
+                        break;
+                    case 2:
+                        gold = 1000;
+                        art = Artifact.Rand(ArtifactLevel.ART_LEVEL1);
+                        break;
+                }
+
+                QuantitySetResource(ResourceKind.GOLD, gold);
+                QuantitySetArtifact(art);
+            }
+            break;
+
+            case Mp2Kind.OBJ_TREASURECHEST:
+                if (isWater()) {
+                    SetObject(Mp2Kind.OBJ_WATERCHEST);
+                    QuantityUpdate();
+                } else {
+                    UpdateTreasureChestSprite(this);
+
+                    RandQueue percents = new RandQueue();
+                    // 31% - 2000 gold or 1500 exp
+                    percents.Push(1, 31);
+                    // 32% - 1500 gold or 1000 exp
+                    percents.Push(2, 32);
+                    // 32% - 1000 gold or 500 exp
+                    percents.Push(3, 32);
+                    // 5% - art
+                    percents.Push(4, 5);
+
+                    int art = ArtifactKind.UNKNOWN;
+                    int gold = 0;
+
+                    // variant
+                    switch (percents.Get()) {
+                        case 1:
+                            gold = 2000;
+                            break;
+                        case 2:
+                            gold = 1500;
+                            break;
+                        case 3:
+                            gold = 1000;
+                            break;
+                        default:
+                            art = Artifact.Rand(ArtifactLevel.ART_LEVEL1);
+                            break;
+                    }
+
+                    QuantitySetResource(ResourceKind.GOLD, gold);
+                    QuantitySetArtifact(art);
+                }
+                break;
+
+            case Mp2Kind.OBJ_DERELICTSHIP:
+                QuantitySetResource(ResourceKind.GOLD, 5000);
+                break;
+
+            case Mp2Kind.OBJ_SHIPWRECK: {
+                RandQueue percents = new RandQueue();
+                // 40% - 10ghost(1000g)
+                percents.Push(1, 40);
+                // 30% - 15 ghost(2000g)
+                percents.Push(2, 30);
+                // 20% - 25ghost(5000g)
+                percents.Push(3, 20);
+                // 10% - 50ghost(2000g+art)
+                percents.Push(4, 10);
+
+                int cond = percents.Get();
+
+                QuantitySetVariant(cond);
+                QuantitySetArtifact(cond == 4 ? Artifact.Rand(ArtifactLevel.ART_LEVEL123) : ArtifactKind.UNKNOWN);
+            }
+            break;
+
+            case Mp2Kind.OBJ_GRAVEYARD:
+                // 1000 gold + art
+                QuantitySetResource(ResourceKind.GOLD, 1000);
+                QuantitySetArtifact(Artifact.Rand(ArtifactLevel.ART_LEVEL123));
+                break;
+
+            case Mp2Kind.OBJ_PYRAMID: {
+                // random spell level 5
+                Spell spell = Rand.GetBool() ? Spell.RandCombat(5) : Spell.RandAdventure(5);
+                QuantitySetSpell(spell.id);
+            }
+            break;
+
+            case Mp2Kind.OBJ_DAEMONCAVE: {
+                // 1000 exp or 1000 exp + 2500 gold or 1000 exp + art or (-2500 or remove hero)
+                int cond = Rand.Get(1, 4);
+                QuantitySetVariant(cond);
+                QuantitySetArtifact(cond == 3 ? Artifact.Rand(ArtifactLevel.ART_LEVEL123) : ArtifactKind.UNKNOWN);
+            }
+            break;
+
+            case Mp2Kind.OBJ_TREEKNOWLEDGE:
+                // variant: 10 gems, 2000 gold or free
+                switch (Rand.Get(1, 3)) {
+                    case 1:
+                        QuantitySetResource(ResourceKind.GEMS, 10);
+                        break;
+                    case 2:
+                        QuantitySetResource(ResourceKind.GOLD, 2000);
+                        break;
+                    default:
+                        break;
+                }
+                break;
+
+            case Mp2Kind.OBJ_BARRIER: {
+                var it = find_if_reverse(addons_level1._items,
+                        (TilesAddon ta) -> {
+                            return TilesAddon.ColorFromBarrierSprite(ta) != 0;
+                        });
+                if (it != null)
+                    QuantitySetColor(TilesAddon.ColorFromBarrierSprite(it));
+            }
+            break;
+
+            case Mp2Kind.OBJ_TRAVELLERTENT: {
+                var it = find_if_reverse(addons_level1._items,
+                        (TilesAddon ta) -> {
+                            return TilesAddon.ColorFromTravellerTentSprite(ta) != 0;
+                        });
+                if (it != null)
+                    QuantitySetColor(TilesAddon.ColorFromTravellerTentSprite(it));
+            }
+            break;
+
+            case Mp2Kind.OBJ_ALCHEMYLAB:
+                QuantitySetResource(ResourceKind.MERCURY, 1);
+                break;
+
+            case Mp2Kind.OBJ_SAWMILL:
+                QuantitySetResource(ResourceKind.WOOD, 2);
+                break;
+
+            case Mp2Kind.OBJ_MINES: {
+                TilesAddon addon = FindObject(Mp2Kind.OBJ_MINES);
+                if (addon != null)
+                    switch (addon.index) {
+                        case 0:
+                            QuantitySetResource(ResourceKind.ORE, 2);
+                            break;
+                        case 1:
+                            QuantitySetResource(ResourceKind.SULFUR, 1);
+                            break;
+                        case 2:
+                            QuantitySetResource(ResourceKind.CRYSTAL, 1);
+                            break;
+                        case 3:
+                            QuantitySetResource(ResourceKind.GEMS, 1);
+                            break;
+                        case 4:
+                            QuantitySetResource(ResourceKind.GOLD, 1000);
+                            break;
+                        default:
+                            break;
+                    }
+            }
+            break;
+
+            case Mp2Kind.OBJ_ABANDONEDMINE: {
+                CapturedObject object = world.GetCapturedObject(GetIndex());
+                //TODO: fix NPE
+                if (object == null) {
+                    break;
+                }
+                Troop troop = object.GetTroop();
+
+                // I checked in Heroes II: min 3 x 13, and max 3 x 15
+                troop.Set(MonsterKind.GHOST, 3 * Rand.Get(13, 15));
+
+                if (!Settings.Get().ExtWorldAbandonedMineRandom())
+                    QuantitySetResource(ResourceKind.GOLD, 1000);
+                else
+                    switch (Rand.Get(1, 5)) {
+                        case 1:
+                            QuantitySetResource(ResourceKind.ORE, 2);
+                            break;
+                        case 2:
+                            QuantitySetResource(ResourceKind.SULFUR, 1);
+                            break;
+                        case 3:
+                            QuantitySetResource(ResourceKind.CRYSTAL, 1);
+                            break;
+                        case 4:
+                            QuantitySetResource(ResourceKind.GEMS, 1);
+                            break;
+                        default:
+                            QuantitySetResource(ResourceKind.GOLD, 1000);
+                            break;
+                    }
+            }
+            break;
+
+            case Mp2Kind.OBJ_STONELIGHTS:
+                UpdateStoneLightsSprite(this);
+                break;
+
+            case Mp2Kind.OBJ_FOUNTAIN:
+                UpdateFountainSprite(this);
+                break;
+
+            case Mp2Kind.OBJ_EVENT: {
+                TilesAddon addon = FindObject(Mp2Kind.OBJ_EVENT);
+                // remove event sprite
+                if (addon != null) Remove(addon.uniq);
+            }
+            break;
+
+            case Mp2Kind.OBJ_BOAT: {
+                TilesAddon addon = FindObject(Mp2Kind.OBJ_BOAT);
+                // remove small sprite boat
+                if (addon != null) Remove(addon.uniq);
+            }
+            break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT:
+            case Mp2Kind.OBJ_RNDARTIFACT1:
+            case Mp2Kind.OBJ_RNDARTIFACT2:
+            case Mp2Kind.OBJ_RNDARTIFACT3:
+                // modify rnd artifact sprite
+                UpdateRNDArtifactSprite(this);
+                //TODO: infinite recursive call
+                //QuantityUpdate();
+                break;
+
+            case Mp2Kind.OBJ_RNDRESOURCE:
+                // modify rnd resource sprite
+                UpdateRNDResourceSprite(this);
+                //TODO: infinite recursive call
+                //QuantityUpdate();
+                break;
+
+            case Mp2Kind.OBJ_MONSTER:
+                if (world.CountWeek() > 1)
+                    UpdateMonsterPopulation(this);
+                else
+                    UpdateMonsterInfo(this);
+                break;
+
+            case Mp2Kind.OBJ_RNDMONSTER:
+            case Mp2Kind.OBJ_RNDMONSTER1:
+            case Mp2Kind.OBJ_RNDMONSTER2:
+            case Mp2Kind.OBJ_RNDMONSTER3:
+            case Mp2Kind.OBJ_RNDMONSTER4:
+                // modify rnd monster sprite
+                UpdateMonsterInfo(this);
+                break;
+
+            // join dwelling
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+                MonsterSetCount(QuantityMonster().GetRNDSize(true));
+                break;
+
+            case Mp2Kind.OBJ_WATCHTOWER:
+            case Mp2Kind.OBJ_EXCAVATION:
+            case Mp2Kind.OBJ_CAVE:
+            case Mp2Kind.OBJ_TREEHOUSE:
+            case Mp2Kind.OBJ_ARCHERHOUSE:
+            case Mp2Kind.OBJ_GOBLINHUT:
+            case Mp2Kind.OBJ_DWARFCOTT:
+            case Mp2Kind.OBJ_HALFLINGHOLE:
+            case Mp2Kind.OBJ_PEASANTHUT:
+            case Mp2Kind.OBJ_THATCHEDHUT:
+                // recruit dwelling
+            case Mp2Kind.OBJ_RUINS:
+            case Mp2Kind.OBJ_TREECITY:
+            case Mp2Kind.OBJ_WAGONCAMP:
+            case Mp2Kind.OBJ_DESERTTENT:
+            case Mp2Kind.OBJ_TROLLBRIDGE:
+            case Mp2Kind.OBJ_DRAGONCITY:
+            case Mp2Kind.OBJ_CITYDEAD:
+            case Mp2Kind.OBJ_WATERALTAR:
+            case Mp2Kind.OBJ_AIRALTAR:
+            case Mp2Kind.OBJ_FIREALTAR:
+            case Mp2Kind.OBJ_EARTHALTAR:
+                UpdateDwellingPopulation(this);
+                break;
+
+            case Mp2Kind.OBJ_BARROWMOUNDS:
+                if (!Settings.Get().ExtWorldDisableBarrowMounds())
+                    UpdateDwellingPopulation(this);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void UpdateRNDResourceSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void MonsterSetCount(int count) {
+        //TODO
+    }
+
+    private void UpdateStoneLightsSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateMonsterPopulation(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateFountainSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateTreasureChestSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateRNDArtifactSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateMonsterInfo(Tiles tiles) {
+        //TODO
+    }
+
+    private void QuantitySetExt(int value) {
+        //TODO
+    }
+
+    private void UpdateDwellingPopulation(Tiles tiles) {
+        //TODO
+    }
+
+    private void QuantitySetVariant(int value) {
+        //TODO
+    }
+
+    private void QuantitySetColor(int col) {
+
+        switch (GetObject(false)) {
+
+            case Mp2Kind.OBJ_BARRIER:
+            case Mp2Kind.OBJ_TRAVELLERTENT:
+                quantity1 = (byte) col;
+                break;
+
+            default:
+                World.Instance.CaptureObject(GetIndex(), col);
+                break;
+        }
+    }
+
+    private void QuantitySetSpell(int spell) {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_SHRINE1:
+            case Mp2Kind.OBJ_SHRINE2:
+            case Mp2Kind.OBJ_SHRINE3:
+            case Mp2Kind.OBJ_PYRAMID:
+                quantity1 = (byte) spell;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void QuantitySetResource(int res, int count) {
+        quantity1 = (byte) res;
+        quantity2 = (byte) (res == ResourceKind.GOLD ? count / 100 : count);
+    }
+
+    public void QuantityReset() {
+        quantity1 = 0;
+        quantity2 = 0;
+
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_SKELETON:
+            case Mp2Kind.OBJ_WAGON:
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_GRAVEYARD:
+            case Mp2Kind.OBJ_DAEMONCAVE:
+                QuantitySetArtifact(ArtifactKind.UNKNOWN);
+                break;
+
+            default:
+                break;
+        }
+
+        if (Mp2.isPickupObject(mp2_object))
+            SetObject(Mp2Kind.OBJ_ZERO);
+    }
+
+    public TilesAddon FindObject(int objs) {
+        TilesAddon it = null;
+        switch (objs) {
+            case Mp2Kind.OBJ_CAMPFIRE:
+                it = find_if(addons_level1._items, TilesAddon::isCampFire);
+                break;
+
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+            case Mp2Kind.OBJ_RESOURCE:
+                it = find_if(addons_level1._items, TilesAddon::isResource);
+                break;
+
+            case Mp2Kind.OBJ_RNDRESOURCE:
+                it = find_if(addons_level1._items, TilesAddon::isRandomResource);
+                break;
+
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_BOTTLE:
+                it = find_if(addons_level1._items, TilesAddon::isWaterResource);
+                break;
+
+            case Mp2Kind.OBJ_ARTIFACT:
+                it = find_if(addons_level1._items, TilesAddon::isArtifact);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT1:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact1);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT2:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact2);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT3:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact3);
+                break;
+
+            case Mp2Kind.OBJ_RNDULTIMATEARTIFACT:
+                it = find_if(addons_level1._items, TilesAddon::isUltimateArtifact);
+                break;
+
+            case Mp2Kind.OBJ_MONSTER:
+                it = find_if(addons_level1._items, TilesAddon::isMonster);
+                break;
+
+            case Mp2Kind.OBJ_WHIRLPOOL:
+                it = find_if(addons_level1._items, TilesAddon::isWhirlPool);
+                break;
+
+            case Mp2Kind.OBJ_STANDINGSTONES:
+                it = find_if(addons_level1._items, TilesAddon::isStandingStone);
+                break;
+
+            case Mp2Kind.OBJ_ARTESIANSPRING:
+                it = find_if(addons_level1._items, TilesAddon::isArtesianSpring);
+                break;
+
+            case Mp2Kind.OBJ_OASIS:
+                it = find_if(addons_level1._items, TilesAddon::isOasis);
+                break;
+
+            case Mp2Kind.OBJ_WATERINGHOLE:
+                it = find_if(addons_level1._items, TilesAddon::isWateringHole);
+                break;
+
+            case Mp2Kind.OBJ_MINES:
+                it = find_if(addons_level1._items, TilesAddon::isMine);
+                break;
+
+            case Mp2Kind.OBJ_JAIL:
+                it = find_if(addons_level1._items, TilesAddon::isJail);
+                break;
+
+            case Mp2Kind.OBJ_EVENT:
+                it = find_if(addons_level1._items, TilesAddon::isEvent);
+                break;
+
+            case Mp2Kind.OBJ_BOAT:
+                it = find_if(addons_level1._items, TilesAddon::isBoat);
+                break;
+
+            case Mp2Kind.OBJ_BARRIER:
+                it = find_if(addons_level1._items, TilesAddon::isBarrier);
+                break;
+
+            case Mp2Kind.OBJ_HEROES:
+                it = find_if(addons_level1._items, TilesAddon::isMiniHero);
+                break;
+
+            case Mp2Kind.OBJ_CASTLE:
+                it = find_if(addons_level1._items, TilesAddon::isCastle);
+                if (it == null) {
+                    it = find_if(addons_level2._items, TilesAddon::isCastle);
+                    return it;
+                }
+                break;
+
+            case Mp2Kind.OBJ_RNDCASTLE:
+                it = find_if(addons_level1._items, TilesAddon::isRandomCastle);
+                if (it == null) {
+                    it = find_if(addons_level2._items, TilesAddon::isRandomCastle);
+                    return it;
+                }
+                break;
+
+            case Mp2Kind.OBJ_RNDMONSTER:
+            case Mp2Kind.OBJ_RNDMONSTER1:
+            case Mp2Kind.OBJ_RNDMONSTER2:
+            case Mp2Kind.OBJ_RNDMONSTER3:
+            case Mp2Kind.OBJ_RNDMONSTER4:
+                it = find_if(addons_level1._items, TilesAddon::isRandomMonster);
+                break;
+
+            case Mp2Kind.OBJ_SKELETON:
+                it = find_if(addons_level1._items, TilesAddon::isSkeleton);
+                break;
+
+            default:
+                //FIXME for: " << Mp2Kind.StringObject(objs));
+                break;
+        }
+
+        return it;
+    }
+
+    void QuantitySetArtifact(int art) {
+        quantity1 = (byte) art;
+    }
+
+    public void CaptureFlags32(int obj, int color) {
+        //TODO
+    }
+
+    public TilesAddon FindAddonICN1(int icn) {
+        //TODO
+        return null;
+    }
+
+    public void Remove(int uniq) {
+        //TODO
+    }
+
+    public void UpdatePassable() {
+        //TODO
+    }
+
+    public boolean GoodForUltimateArtifact() {
+        //TODO
+        return false;
+    }
+
+    public boolean isObject(int obj) {
+        //TODO
+        return false;
+    }
+
+    public H2Point GetCenter() {
+        return new H2Point(maps_x, maps_y);
     }
 }

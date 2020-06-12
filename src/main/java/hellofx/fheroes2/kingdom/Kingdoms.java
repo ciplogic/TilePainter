@@ -1,5 +1,8 @@
 package hellofx.fheroes2.kingdom;
 
+import hellofx.fheroes2.castle.AllCastles;
+import hellofx.fheroes2.heroes.AllHeroes;
+
 import java.util.stream.IntStream;
 
 import static hellofx.fheroes2.game.GameConsts.KINGDOMMAX;
@@ -35,6 +38,22 @@ public class Kingdoms {
     }
 
     public void Init() {
+        //TODO
+    }
+
+    public void AddHeroes(AllHeroes vec_heroes) {
+        //TODO
+    }
+
+    public void AddCastles(AllCastles vec_castles) {
+        //TODO
+    }
+
+    public void ApplyPlayWithStartingHero() {
+        //TODO
+    }
+
+    public void AddCondLossHeroes(AllHeroes vec_heroes) {
         //TODO
     }
 }

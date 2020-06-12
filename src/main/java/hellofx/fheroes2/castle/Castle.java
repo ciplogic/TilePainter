@@ -299,4 +299,8 @@ public class Castle {
     public boolean isCastle() {
         return (building & BUILD_CASTLE) != 0;
     }
+
+    public void ChangeColor(int color) {
+        //TODO
+    }
 }

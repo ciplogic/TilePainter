@@ -10,7 +10,9 @@ import javafx.scene.paint.Color;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
 
@@ -73,5 +75,14 @@ public class Utilities {
         var file = new File(path);
         var result = file.toURI().toString();
         return result;
+    }
+
+
+    public static <T> T find_if(T[] addons, Predicate<T> isFound) {
+        return Arrays.stream(addons).filter(isFound::test).findFirst().orElse(null);
+    }
+
+    public static <T> T find_if(List<T> addons, Predicate<T> isFound) {
+        return addons.stream().filter(isFound::test).findFirst().orElse(null);
     }
 }

@@ -6,7 +6,7 @@ public class ByteVectorReader {
 
     @Override
     public String toString() {
-        var value = _pos < _fileContent.length ? get() : 0;
+        var value = _pos < _fileContent.length ? toByte(_fileContent[_pos]) : 0;
         return "ByteVectorReader{" +
                 "_pos=" + _pos +
                 ", currentValue: " + value +
