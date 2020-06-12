@@ -5,7 +5,13 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 public class CapturedObjects {
     public Int2ObjectOpenHashMap<CapturedObject> _items = new Int2ObjectOpenHashMap<>();
 
-    public void Set(int getIndexFromAbsPoint, int objCastle, int color) {
+    public void Set(int index, int obj, int col) {
+        CapturedObject co = Get(index);
+
+        if (co.GetColor() != col && co.guardians.IsValid())
+            co.guardians.Reset();
+
+        co.Set(obj, col);
     }
 
     public void SetColor(int index, int col) {

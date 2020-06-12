@@ -628,7 +628,7 @@ public class Tiles {
         for (int i = 0; i < sizeLoop; i++) {
             int it = elements[i];
             var tile = world.GetTiles(it);
-            dst_index = it;
+            dst_index = i;
 
             if (Mp2Kind.OBJ_HEROES != mp2_object ||
                     // skip bottom, bottom_right, bottom_left with ground objects
@@ -664,13 +664,15 @@ public class Tiles {
         } else {
 
             // draw first sprite
-            var sprite_first = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9);
+            int firstSpriteIndex = sprite_index * 9;
+            var sprite_first = Agg.GetICN(IcnKind.MINIMON, firstSpriteIndex);
             /*area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);*/
 
             // draw second sprite
 
-            var sprite_next = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9 + 1 +
-                    monster_animation_cicle[(Game.MapsAnimationFrame()) % monster_animation_cicle.length]);
+            int secondSpriteIndex = sprite_index * 9 + 1 +
+                    monster_animation_cicle[(Game.MapsAnimationFrame()) % monster_animation_cicle.length];
+            var sprite_next = Agg.GetICN(IcnKind.MINIMON, secondSpriteIndex);
 
             return new Sprite[]{sprite_first, sprite_next};
         }
