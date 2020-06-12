@@ -52,12 +52,16 @@ public class GameArea {
                 }
 
                 // ext object
-                if ((flag & LEVEL_OBJECTS) != 0)
-                    currentTile.RedrawObjects(dst);
+                if ((flag & LEVEL_OBJECTS) != 0) {
+                    var sprites = currentTile.RedrawObjects(dst);
+                    camera.drawSpritesOnTile(dst, sprites, ox, oy);
+                }
 
-                // top
-                if ((flag & LEVEL_TOP) != 0)
-                    currentTile.RedrawTop(dst);
+                // top0
+                if ((flag & LEVEL_TOP) != 0) {
+                    var sprites = currentTile.RedrawTop(dst);
+                    camera.drawSpriteOnTile(dst, sprites, ox, oy);
+                }
             }
         }
         // heroes

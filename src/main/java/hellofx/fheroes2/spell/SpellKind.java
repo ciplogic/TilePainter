@@ -1,6 +1,6 @@
 package hellofx.fheroes2.spell;
 
-public class SpellType {
+public class SpellKind {
     public static final int NONE = 0;
     public static final int FIREBALL = 1;
     public static final int FIREBLAST = 2;

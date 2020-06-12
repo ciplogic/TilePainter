@@ -6,6 +6,7 @@ import hellofx.fheroes2.agg.AggPaint;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.common.H2Rect;
+import hellofx.fheroes2.game.Game;
 import hellofx.fheroes2.gui.GameArea;
 import hellofx.fheroes2.gui.LevelKind;
 import hellofx.framework.EventNames;
@@ -38,7 +39,7 @@ public class Gameplay {
 
 
     PlayerList playerList;
-    double idx = -300;
+    double idx = 0;
     private Image heroesImg;
     private Image heroesImgSmooth;
 
@@ -73,6 +74,10 @@ public class Gameplay {
     }
 
     void onFrameUpdate() {
+        Game.nextFrame();
+        idx += 0.1;
+        gameArea.camera.left = (int) idx;
+        gameArea.camera.top = (int) idx / 2;
         var painter = canvasWrap.getPainter();
 
         painter.clear(Color.ROYALBLUE);

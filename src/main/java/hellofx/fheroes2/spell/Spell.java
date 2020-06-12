@@ -5,9 +5,9 @@ import hellofx.fheroes2.common.Rand;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hellofx.fheroes2.spell.SpellKind.*;
 import static hellofx.fheroes2.spell.SpellStats.SP_DISABLE;
 import static hellofx.fheroes2.spell.SpellStats.spells;
-import static hellofx.fheroes2.spell.SpellType.*;
 
 public class Spell {
     public int id;

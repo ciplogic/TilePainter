@@ -64,4 +64,13 @@ public class GameCamera {
         var screenY = tileYMap - top;
         dst.drawImage(tileSurface.renderedImage(getScaler()), screenX, screenY);
     }
+
+    public void drawSpritesOnTile(Painter dst, Sprite[] sprites, int tileX, int tileY) {
+        if (sprites == null) {
+            return;
+        }
+        for (var sprite : sprites) {
+            drawSpriteOnTile(dst, sprite, tileX, tileY);
+        }
+    }
 }

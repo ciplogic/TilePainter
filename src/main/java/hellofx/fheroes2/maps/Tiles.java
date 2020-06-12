@@ -10,6 +10,7 @@ import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.common.RandQueue;
 import hellofx.fheroes2.game.DifficultyEnum;
+import hellofx.fheroes2.game.Game;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.Secondary;
@@ -23,6 +24,7 @@ import hellofx.fheroes2.monster.MonsterKind;
 import hellofx.fheroes2.monster.MonsterLevel;
 import hellofx.fheroes2.resource.*;
 import hellofx.fheroes2.spell.Spell;
+import hellofx.fheroes2.spell.SpellKind;
 import hellofx.fheroes2.system.Settings;
 import hellofx.framework.controls.Painter;
 
@@ -47,6 +49,8 @@ public class Tiles {
     public byte quantity3 = 0;
     public int maps_x;
     public int maps_y;
+
+    private final static int[] monster_animation_cicle = new int[]{0, 1, 2, 1, 0, 3, 4, 5, 4, 3};
 
     public void FixedPreload() {
         var tile = this;
@@ -529,9 +533,6 @@ public class Tiles {
     }
 
     public Sprite[] RedrawObjects(Painter dst) {
-        if (maps_index == 1311) {
-            System.out.println("Here is a monster");
-        }
         var obj = GetObject();
         switch (obj) {
             // boat
@@ -617,10 +618,6 @@ public class Tiles {
     }
 
     private Sprite[] RedrawMonster(Painter dst) {
-
-        if (GetIndex() == 288) {
-            System.out.println("Care!");
-        }
         // scan hero around
         MapsIndexes v = new MapsIndexes();
         ScanAroundObject(GetIndex(), Mp2Kind.OBJ_HEROES, v);
@@ -668,18 +665,15 @@ public class Tiles {
 
             // draw first sprite
             var sprite_first = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9);
-            /*area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);
+            /*area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);*/
 
             // draw second sprite
-         var sprite_next = Agg.GetICNIcnKind.MINIMON, sprite_index * 9 + 1 +
-                monster_animation_cicle[
-                        (Game.MapsAnimationFrame() + mp.x * mp.y) %
-            ARRAY_COUNT(monster_animation_cicle)]);
-            area.BlitOnTile(dst, sprite_next, sprite_next.x() + 16, TILEWIDTH + sprite_next.y(), mp);
-*/
 
+            var sprite_next = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9 + 1 +
+                    monster_animation_cicle[(Game.MapsAnimationFrame()) % monster_animation_cicle.length]);
+
+            return new Sprite[]{sprite_first, sprite_next};
         }
-        return null;
     }
 
     private boolean isWater() {
@@ -693,8 +687,26 @@ public class Tiles {
 
     }
 
-    public void RedrawTop(Painter dst) {
+    public Sprite RedrawTop(Painter dst) {
+
+        var tileObject = GetObject();
+        // animate objects
+        if (Mp2Kind.OBJ_ABANDONEDMINE == tileObject) {
+            var anime_sprite = Agg.GetICN(IcnKind.OBJNHAUN, Game.MapsAnimationFrame() % 15);
+            return anime_sprite;
+        } else if (Mp2Kind.OBJ_MINES == GetObject()) {
+            var addon = FindObjectConst(Mp2Kind.OBJ_MINES);
+            if (addon != null && addon.tmp == SpellKind.HAUNT) {
+                var anime_sprite = Agg.GetICN(IcnKind.OBJNHAUN, Game.MapsAnimationFrame() % 15);
+                return anime_sprite;
+            } else if (addon != null && addon.tmp >= SpellKind.SETEGUARDIAN && addon.tmp <= SpellKind.SETWGUARDIAN) {
+                //return Agg.GetICN(IcnKind.MONS32, new Monster(new Spell(addon.tmp)).GetSpriteIndex());
+
+            }
+        }
+
         //TODO
+        return null;
     }
 
     public boolean isFog(int colors) {
@@ -1439,8 +1451,9 @@ public class Tiles {
         quantity3 = (byte) mod;
     }
 
-    private void QuantitySetExt(int value) {
-        //TODO
+    private void QuantitySetExt(int ext) {
+        quantity2 &= 0xf0;
+        quantity2 |= 0x0f & ext;
     }
 
     private void UpdateDwellingPopulation(Tiles tiles) {
@@ -1448,7 +1461,8 @@ public class Tiles {
     }
 
     private void QuantitySetVariant(int value) {
-        //TODO
+        quantity2 &= 0x0f;
+        quantity2 |= value << 4;
     }
 
     private void QuantitySetColor(int col) {
