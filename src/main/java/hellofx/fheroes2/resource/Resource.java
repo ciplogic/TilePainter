@@ -39,4 +39,17 @@ public class Resource {
         //TODO
         return 0;
     }
+
+    public static int GetIndexSprite(int resource) {
+        return switch (resource) {
+            case ResourceKind.WOOD -> 1;
+            case ResourceKind.MERCURY -> 3;
+            case ResourceKind.ORE -> 5;
+            case ResourceKind.SULFUR -> 7;
+            case ResourceKind.CRYSTAL -> 9;
+            case ResourceKind.GEMS -> 11;
+            case ResourceKind.GOLD -> 13;
+            default -> 0;
+        };
+    }
 }

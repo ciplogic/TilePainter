@@ -2,8 +2,6 @@ package hellofx;
 
 import hellofx.dialogs.atoms.ViewAtoms;
 import hellofx.fheroes2.agg.Agg;
-import hellofx.fheroes2.agg.AggPaint;
-import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.game.Game;
@@ -59,8 +57,8 @@ public class Gameplay {
         engine.loadTiles(agg);
         agg.imageScaler = gameArea.camera.getScaler();
 
-        this.heroesImg = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.doublePicture().toImage();
-        this.heroesImgSmooth = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
+        //this.heroesImg = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.doublePicture().toImage();
+        //this.heroesImgSmooth = AggPaint.RenderICNSprite(agg, IcnKind.HEROES, 0).first.bilinearScale(1920, 1080).toImage();
     }
 
     private void setupRandomLevel() {
@@ -82,8 +80,8 @@ public class Gameplay {
 
         painter.clear(Color.ROYALBLUE);
         //mapView.paintGround(engine, imageRepo, painter, tileX, 1, tileX % 1000);
-        painter.drawImage(heroesImgSmooth, 0, 0);
-        painter.drawImage(heroesImg, 0, 0);
+        //painter.drawImage(heroesImgSmooth, 0, 0);
+        //painter.drawImage(heroesImg, 0, 0);
 
         var rect = new H2Rect(0, 0, 109, 46);
 

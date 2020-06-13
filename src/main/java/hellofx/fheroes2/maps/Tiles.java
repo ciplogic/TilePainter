@@ -148,21 +148,17 @@ public class Tiles {
     public void AddonsPushLevel2(Mp2Addon mp2Addon) {
     }
 
+    static int PredicateSortRules(TilesAddon ta1, TilesAddon ta2) {
+        var level1 = ta1.level % 4;
+        var level2 = ta2.level % 4;
+        if (level1 == level2)
+            return 0;
+        return level1 > level2 ? -1 : 1;
+    }
+
     public void AddonsSort() {
-        addons_level1._items.sort((ta1, ta2) -> {
-            var level1 = ta1.level % 4;
-            var level2 = ta2.level % 4;
-            if (level1 == level2)
-                return 0;
-            return level1 > level2 ? 1 : -1;
-        });
-        addons_level2._items.sort((ta1, ta2) -> {
-            var level1 = ta1.level % 4;
-            var level2 = ta2.level % 4;
-            if (level1 == level2)
-                return 0;
-            return level1 > level2 ? -1 : 1;
-        });
+        addons_level1._items.sort((ta1, ta2) -> PredicateSortRules(ta1, ta2));
+        addons_level2._items.sort((ta1, ta2) -> -PredicateSortRules(ta1, ta2));
     }
 
     public int GetQuantity1() {
@@ -1213,15 +1209,13 @@ public class Tiles {
             case Mp2Kind.OBJ_RNDARTIFACT3:
                 // modify rnd artifact sprite
                 UpdateRNDArtifactSprite(this);
-                //TODO: infinite recursive call
-                //QuantityUpdate();
+                QuantityUpdate();
                 break;
 
             case Mp2Kind.OBJ_RNDRESOURCE:
                 // modify rnd resource sprite
                 UpdateRNDResourceSprite(this);
-                //TODO: infinite recursive call
-                //QuantityUpdate();
+                QuantityUpdate();
                 break;
 
             case Mp2Kind.OBJ_MONSTER:
@@ -1280,8 +1274,24 @@ public class Tiles {
         }
     }
 
-    private void UpdateRNDResourceSprite(Tiles tiles) {
-        //TODO
+    private void UpdateRNDResourceSprite(Tiles tile) {
+        var addon = tile.FindObject(Mp2Kind.OBJ_RNDRESOURCE);
+
+        if (addon == null) return;
+        addon.index = (byte) Resource.GetIndexSprite(Resource.Rand());
+        tile.SetObject(Mp2Kind.OBJ_RESOURCE);
+
+        var world = World.Instance;
+        H2Size wSize = new H2Size(world.w, world.h);
+        // replace shadow artifact
+        if (!isValidDirection(tile.GetIndex(), Direction.LEFT, wSize))
+            return;
+        var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
+        var shadow = left_tile.FindAddonLevel1(addon.uniq);
+
+        if (shadow != null) {
+            shadow.index = (byte) (addon.index - 1);
+        }
     }
 
     public int MonsterCount() {
@@ -1309,8 +1319,62 @@ public class Tiles {
         //TODO
     }
 
-    private void UpdateRNDArtifactSprite(Tiles tiles) {
+    private void UpdateRNDArtifactSprite(Tiles tile) {
+        var world = World.Instance;
         //TODO
+        TilesAddon addon = null;
+        var index = 0;
+        Artifact art = new Artifact();
+
+        switch (tile.GetObject()) {
+            case Mp2Kind.OBJ_RNDARTIFACT:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL123));
+                index = art.IndexSprite();
+                break;
+            case Mp2Kind.OBJ_RNDARTIFACT1:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT1);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL1));
+                index = art.IndexSprite();
+                break;
+            case Mp2Kind.OBJ_RNDARTIFACT2:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT2);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL2));
+                index = art.IndexSprite();
+                break;
+            case Mp2Kind.OBJ_RNDARTIFACT3:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT3);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL3));
+                index = art.IndexSprite();
+                break;
+            default:
+                return;
+        }
+
+        if (!art.IsValid()) {
+            return;
+        }
+        if (addon == null)
+            return;
+        addon.index = (byte) index;
+        tile.SetObject(Mp2Kind.OBJ_ARTIFACT);
+
+        H2Size wSize = new H2Size(world.w, world.h);
+        // replace shadow artifact
+        if (!isValidDirection(tile.GetIndex(), Direction.LEFT, wSize))
+            return;
+        var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
+        TilesAddon shadow = left_tile.FindAddonLevel1(addon.uniq);
+
+        if (shadow != null) shadow.index = (byte) (index - 1);
+    }
+
+    private TilesAddon FindAddonLevel1(int uniq) {
+        return find_if(addons_level1._items, (it) -> it.isUniq(uniq));
+    }
+
+    private TilesAddon FindAddonLevel2(int uniq) {
+        return find_if(addons_level2._items, (it) -> it.isUniq(uniq));
     }
 
     private void UpdateMonsterInfo(Tiles tile) {

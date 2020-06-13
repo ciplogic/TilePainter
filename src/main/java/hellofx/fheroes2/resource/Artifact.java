@@ -201,4 +201,16 @@ public class Artifact {
     public String GetName() {
         return ArtifactStats.artifacts[id].name;
     }
+
+    public void SetId(int artId) {
+        id = artId;
+    }
+
+    public int IndexSprite() {
+        return id < UNKNOWN ? id * 2 + 1 : 0;
+    }
+
+    public boolean IsValid() {
+        return id != UNKNOWN;
+    }
 }

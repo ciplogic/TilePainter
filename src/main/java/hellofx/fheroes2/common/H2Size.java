@@ -8,4 +8,9 @@ public class H2Size {
         w = (short) width;
         h = (short) height;
     }
+
+    @Override
+    public String toString() {
+        return "w=" + w + ", h=" + h;
+    }
 }

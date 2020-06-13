@@ -1,10 +1,10 @@
 package hellofx.fheroes2.agg;
 
-import hellofx.fheroes2.common.MutPoint;
+import hellofx.fheroes2.common.H2Point;
 
 public class IcnSprite {
     public Bitmap first;
-    public MutPoint offset;
+    public H2Point offset;
     public Bitmap second;
 
     public void SetSize(boolean isFirst, int width, int height, boolean b) {

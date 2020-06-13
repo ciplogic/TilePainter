@@ -1,7 +1,7 @@
 package hellofx.fheroes2.agg;
 
+import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.H2Size;
-import hellofx.fheroes2.common.MutPoint;
 import hellofx.fheroes2.icns.IcnHeader;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 
@@ -57,12 +57,12 @@ public class AggPaint {
         int bufPos = 6 + header1.offsetData;
         var max = bufPos + sizeData;
 
-        res.offset = new MutPoint(header1.offsetX, header1.offsetY);
+        res.offset = new H2Point(header1.offsetX, header1.offsetY);
         res.SetSize(true, sz.w, sz.h, false);
 
         var shadowCol = H2RgbaColor.FromArgb(0, 0, 0, 0x40);
 
-        var pt = new MutPoint();
+        var pt = new H2Point();
 
         while (true) {
             var cur = toByte(body[bufPos]);

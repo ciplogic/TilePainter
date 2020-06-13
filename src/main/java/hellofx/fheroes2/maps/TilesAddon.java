@@ -162,7 +162,7 @@ public class TilesAddon {
 
     static boolean isResource(TilesAddon ta) {
         // OBJNRSRC
-        return ((IcnKind.OBJNRSRC == Mp2Kind.GetICNObject(ta.object)) && (ta.index % 2 != 0)) ||
+        return ((IcnKind.OBJNRSRC == Mp2Kind.GetICNObject(ta.object)) && (toByte(ta.index) % 2 != 0)) ||
                 // TREASURE
                 IcnKind.TREASURE == Mp2Kind.GetICNObject(ta.object);
     }
@@ -199,14 +199,14 @@ public class TilesAddon {
 
     static boolean isUltimateArtifact(TilesAddon ta) {
         // OBJNARTI
-        return IcnKind.OBJNARTI == Mp2Kind.GetICNObject(ta.object) && 0xA4 == ta.index;
+        return IcnKind.OBJNARTI == Mp2Kind.GetICNObject(ta.object) && 0xA4 == toByte(ta.index);
     }
 
     static boolean isCampFire(TilesAddon ta) {
         // MTNDSRT
         return (IcnKind.OBJNDSRT == Mp2Kind.GetICNObject(ta.object) && 61 == ta.index) ||
                 // OBJNMULT
-                (IcnKind.OBJNMULT == Mp2Kind.GetICNObject(ta.object) && 131 == ta.index) ||
+                (IcnKind.OBJNMULT == Mp2Kind.GetICNObject(ta.object) && 131 == toByte(ta.index)) ||
                 // OBJNSNOW
                 (IcnKind.OBJNSNOW == Mp2Kind.GetICNObject(ta.object) && 4 == ta.index);
     }
@@ -232,7 +232,7 @@ public class TilesAddon {
 
     static boolean isWateringHole(TilesAddon ta) {
         return IcnKind.OBJNCRCK == Mp2Kind.GetICNObject(ta.object) &&
-                (ta.index >= 217 && ta.index <= 220);
+                (toByte(ta.index) >= 217 && toByte(ta.index) <= 220);
     }
 
     static boolean isJail(TilesAddon ta) {
@@ -241,7 +241,7 @@ public class TilesAddon {
 
     static boolean isEvent(TilesAddon ta) {
         // OBJNMUL2
-        return IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && 0xA3 == ta.index;
+        return IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && 0xA3 == toByte(ta.index);
     }
 
     static boolean isMine(TilesAddon ta) {
@@ -266,23 +266,23 @@ public class TilesAddon {
 
     static boolean isRandomCastle(TilesAddon ta) {
         // OBJNTWRD
-        return IcnKind.OBJNTWRD == Mp2Kind.GetICNObject(ta.object) && 32 > ta.index;
+        return IcnKind.OBJNTWRD == Mp2Kind.GetICNObject(ta.object) && 32 > toByte(ta.index);
     }
 
     static boolean isRandomMonster(TilesAddon ta) {
         // MONS32
         return IcnKind.MONS32 == Mp2Kind.GetICNObject(ta.object) &&
-                (0x41 < ta.index && 0x47 > ta.index);
+                (0x41 < toByte(ta.index) && 0x47 > toByte(ta.index));
     }
 
     static boolean isBarrier(TilesAddon ta) {
         return IcnKind.X_LOC3 == Mp2Kind.GetICNObject(ta.object) &&
-                60 <= ta.index && 102 >= ta.index && 0 == ta.index % 6;
+                60 <= toByte(ta.index) && 102 >= toByte(ta.index) && 0 == toByte(ta.index) % 6;
     }
 
     boolean isStream(TilesAddon ta) {
         return IcnKind.STREAM == Mp2Kind.GetICNObject(ta.object) ||
-                (IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && ta.index < 14);
+                (IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && toByte(ta.index) < 14);
     }
 
     boolean isRoad(TilesAddon ta) {

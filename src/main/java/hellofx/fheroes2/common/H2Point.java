@@ -34,9 +34,6 @@ public class H2Point {
 
     @Override
     public String toString() {
-        return "H2Point{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "x=" + x + ", y=" + y;
     }
 }

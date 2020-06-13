@@ -20,8 +20,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.io.File;
-
 /**
  * @author ciprian
  */
@@ -50,8 +48,8 @@ public class HelloFx extends Application {
         world.loadMapMp2("maps/BROKENA.MP2");
 
         var hero = new Heroes(HeroesKind.ARIEL, RaceKind.SORC);
-        var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();
-        heroBmp.saveToFile(new File("cursor.png"));
+        //var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();
+        //heroBmp.saveToFile(new File("cursor.png"));
         var timer = context.inject(PerFrameTimer.class);
         context.inject(GamePreferences.class);
         context.inject(ImageRepo.class);
