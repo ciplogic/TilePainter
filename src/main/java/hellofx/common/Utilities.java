@@ -82,6 +82,11 @@ public class Utilities {
         return Arrays.stream(addons).filter(isFound::test).findFirst().orElse(null);
     }
 
+    public static boolean containsValue(int[] values, int value) {
+        var found = Arrays.stream(values).filter(v -> v == value).findFirst().isPresent();
+        return found;
+    }
+
     public static <T> T find_if(List<T> addons, Predicate<T> isFound) {
         return addons.stream().filter(isFound::test).findFirst().orElse(null);
     }

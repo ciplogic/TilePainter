@@ -1,6 +1,7 @@
 package hellofx.fheroes2.maps;
 
 import hellofx.fheroes2.agg.icn.IcnKind;
+import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.system.Settings;
 
 public class Mp2 {
@@ -832,5 +833,60 @@ public class Mp2 {
         }
 
         return IcnKind.UNKNOWN;
+    }
+
+    public static boolean isActionObject(int obj, boolean water) {
+        if (water) return isWaterObject(obj);
+        return isGroundObject(obj);
+    }
+
+    private static boolean isWaterObject(int obj) {
+        switch (obj) {
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_DERELICTSHIP:
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_WHIRLPOOL:
+            case Mp2Kind.OBJ_BUOY:
+            case Mp2Kind.OBJ_BOTTLE:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_MAGELLANMAPS:
+            case Mp2Kind.OBJ_COAST:
+
+            case Mp2Kind.OBJ_MERMAID:
+            case Mp2Kind.OBJ_SIRENS:
+            case Mp2Kind.OBJ_BARRIER:
+
+                // hack (bug: #3142729)
+            case Mp2Kind.OBJ_MONSTER:
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_RESOURCE:
+
+                return true;
+
+            case Mp2Kind.OBJ_CASTLE:
+            case Mp2Kind.OBJ_BOAT:
+                return false;
+
+            default:
+                break;
+        }
+
+        // price loyalty: editor allow place other objects
+        return Settings.Get().PriceLoyaltyVersion() && isGroundObject(obj);
+    }
+
+    public static int GetObjectDirect(int obj) {
+
+        return switch (obj) {
+            case Mp2Kind.OBJ_JAIL, Mp2Kind.OBJ_BARRIER -> Direction.DIRECTION_ALL;
+            case Mp2Kind.OBJ_SHIPWRECK, Mp2Kind.OBJ_MAGELLANMAPS -> Direction.CENTER | Direction.LEFT | Direction.DIRECTION_BOTTOM_ROW;
+            case Mp2Kind.OBJ_DERELICTSHIP, Mp2Kind.OBJ_TROLLBRIDGE, Mp2Kind.OBJ_ARCHERHOUSE, Mp2Kind.OBJ_DOCTORHUT, Mp2Kind.OBJ_DWARFCOTT, Mp2Kind.OBJ_THATCHEDHUT, Mp2Kind.OBJ_FOUNTAIN, Mp2Kind.OBJ_IDOL, Mp2Kind.OBJ_LIGHTHOUSE, Mp2Kind.OBJ_OBELISK, Mp2Kind.OBJ_SIGN, Mp2Kind.OBJ_WATCHTOWER, Mp2Kind.OBJ_WITCHSHUT, Mp2Kind.OBJ_GAZEBO, Mp2Kind.OBJ_MAGICWELL, Mp2Kind.OBJ_OBSERVATIONTOWER, Mp2Kind.OBJ_PEASANTHUT, Mp2Kind.OBJ_STONELIGHTS, Mp2Kind.OBJ_STANDINGSTONES, Mp2Kind.OBJ_GOBLINHUT, Mp2Kind.OBJ_SHRINE1, Mp2Kind.OBJ_SHRINE2, Mp2Kind.OBJ_SHRINE3, Mp2Kind.OBJ_TREEHOUSE, Mp2Kind.OBJ_ARTESIANSPRING, Mp2Kind.OBJ_SKELETON, Mp2Kind.OBJ_TREEKNOWLEDGE, Mp2Kind.OBJ_ORACLE, Mp2Kind.OBJ_OASIS, Mp2Kind.OBJ_LEANTO, Mp2Kind.OBJ_MAGICGARDEN, Mp2Kind.OBJ_WAGON, Mp2Kind.OBJ_TRAVELLERTENT, Mp2Kind.OBJ_ALCHEMYTOWER, Mp2Kind.OBJ_HUTMAGI, Mp2Kind.OBJ_EYEMAGI, Mp2Kind.OBJ_MERCENARYCAMP, Mp2Kind.OBJ_WINDMILL, Mp2Kind.OBJ_WATERINGHOLE, Mp2Kind.OBJ_TRADINGPOST, Mp2Kind.OBJ_EXCAVATION, Mp2Kind.OBJ_DESERTTENT, Mp2Kind.OBJ_DAEMONCAVE, Mp2Kind.OBJ_PYRAMID, Mp2Kind.OBJ_FORT, Mp2Kind.OBJ_RUINS, Mp2Kind.OBJ_HILLFORT, Mp2Kind.OBJ_FREEMANFOUNDRY, Mp2Kind.OBJ_SAWMILL, Mp2Kind.OBJ_TREECITY, Mp2Kind.OBJ_SPHINX, Mp2Kind.OBJ_TEMPLE, Mp2Kind.OBJ_FAERIERING, Mp2Kind.OBJ_BARROWMOUNDS, Mp2Kind.OBJ_STABLES, Mp2Kind.OBJ_ABANDONEDMINE, Mp2Kind.OBJ_MINES, Mp2Kind.OBJ_ALCHEMYLAB, Mp2Kind.OBJ_CAVE, Mp2Kind.OBJ_CITYDEAD, Mp2Kind.OBJ_GRAVEYARD, Mp2Kind.OBJ_DRAGONCITY, Mp2Kind.OBJ_XANADU, Mp2Kind.OBJ_HALFLINGHOLE, Mp2Kind.OBJ_WAGONCAMP, Mp2Kind.OBJ_WATERALTAR, Mp2Kind.OBJ_AIRALTAR, Mp2Kind.OBJ_FIREALTAR, Mp2Kind.OBJ_EARTHALTAR, Mp2Kind.OBJ_ARENA, Mp2Kind.OBJ_SIRENS, Mp2Kind.OBJ_MERMAID -> Direction.DIRECTION_CENTER_ROW | Direction.DIRECTION_BOTTOM_ROW;
+            case Mp2Kind.OBJ_WATERWHEEL -> Direction.CENTER | Direction.RIGHT | Direction.DIRECTION_BOTTOM_ROW;
+            case Mp2Kind.OBJ_CASTLE -> Direction.CENTER | Direction.BOTTOM;
+            default -> Direction.DIRECTION_ALL;
+        };
+
+
     }
 }

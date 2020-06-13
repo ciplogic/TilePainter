@@ -33,7 +33,7 @@ public class GameArea {
                     tileSurface = Agg.GetTIL(TilKind.GROUND32, 320, 0);
                 } else
                     tileSurface = currentTile.RedrawTile();
-                //camera.drawImageOnTile(dst, tileSurface, ox, oy);
+                camera.drawImageOnTile(dst, tileSurface, ox, oy);
             }
         }
         for (int stepX = 0; stepX < rt.w; ++stepX) {
@@ -52,13 +52,13 @@ public class GameArea {
                     }
                 }
 
-/*
+
                 // ext object
                 if ((flag & LEVEL_OBJECTS) != 0) {
                     var sprites = currentTile.RedrawObjects(dst);
                     camera.drawSpritesOnTile(dst, sprites, ox, oy);
                 }
- */
+
                 // top0
                 if ((flag & LEVEL_TOP) != 0) {
                     var sprites = currentTile.RedrawTop(dst);

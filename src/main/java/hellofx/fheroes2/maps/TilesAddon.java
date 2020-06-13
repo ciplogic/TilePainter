@@ -132,6 +132,52 @@ public class TilesAddon {
         return 0;
     }
 
+    public static boolean isMounts(TilesAddon ta) {
+        switch (Mp2.GetICNObject(ta.object)) {
+            case IcnKind.MTNSNOW:
+            case IcnKind.MTNSWMP:
+            case IcnKind.MTNLAVA:
+            case IcnKind.MTNDSRT:
+            case IcnKind.MTNMULT:
+            case IcnKind.MTNGRAS:
+                return !ObjMnts1.isShadow(toByte(ta.index));
+
+            case IcnKind.MTNCRCK:
+            case IcnKind.MTNDIRT:
+                return !ObjMnts2.isShadow(toByte(ta.index));
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    public static boolean isRocs(TilesAddon ta) {
+        //TODO
+        return false;
+    }
+
+    public static boolean isForests(TilesAddon ta) {
+        //TODO
+        return false;
+    }
+
+    public static boolean isTrees(TilesAddon ta) {
+        //TODO
+        return false;
+    }
+
+    public static boolean isCactus(TilesAddon ta) {
+        //TODO
+        return false;
+    }
+
+    public static boolean isShadow(TilesAddon ta) {
+        //TODO
+        return false;
+    }
+
     @Override
     public String toString() {
         return "{" +
@@ -280,12 +326,12 @@ public class TilesAddon {
                 60 <= toByte(ta.index) && 102 >= toByte(ta.index) && 0 == toByte(ta.index) % 6;
     }
 
-    boolean isStream(TilesAddon ta) {
+    static boolean isStream(TilesAddon ta) {
         return IcnKind.STREAM == Mp2Kind.GetICNObject(ta.object) ||
                 (IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && toByte(ta.index) < 14);
     }
 
-    boolean isRoad(TilesAddon ta) {
+    static boolean isRoad(TilesAddon ta) {
         return IcnKind.ROAD == Mp2Kind.GetICNObject(ta.object);
     }
 
@@ -301,7 +347,7 @@ public class TilesAddon {
         return icn == Mp2.GetICNObject(object);
     }
 
-    public int GetPassable(TilesAddon ta) {
+    public static int GetPassable(TilesAddon ta) {
         var icn = Mp2.GetICNObject(ta.object);
 
         switch (icn) {

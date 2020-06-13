@@ -352,4 +352,8 @@ public class Heroes extends HeroBase {
     public int GetID() {
         return hid;
     }
+
+    public void Recruit(int cl, H2Point pt) {
+        //TODO
+    }
 }

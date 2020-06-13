@@ -20,6 +20,8 @@ import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.resource.UltimateArtifact;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.serialize.FileUtils;
+import hellofx.fheroes2.system.Players;
+import hellofx.fheroes2.system.Settings;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.ArrayList;
@@ -608,7 +610,7 @@ public class World {
                 hero.bitModes.SetModes(Heroes.NOTDISMISS | Heroes.NOTDEFAULTS);
             }
         }
-
+*/
         // update tile passable
         Arrays.stream(vec_tiles). forEach(tile -> {
             tile.UpdatePassable();
@@ -638,9 +640,9 @@ public class World {
                 }
             }
         }
-*/
+
         // set ultimate
-        var it = find_if(vec_tiles, (var tile) ->
+        var it = find_if(vec_tiles, (tile) ->
         {
             return tile.isObject(Mp2Kind.OBJ_RNDULTIMATEARTIFACT);
         });

@@ -117,6 +117,27 @@ public class Tiles {
             AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber2, mp2.objectName2, mp2.indexName2));
     }
 
+    static boolean isStream(TilesAddon ta) {
+        return IcnKind.STREAM == Mp2.GetICNObject(ta.object) ||
+                (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && ta.index < 14);
+    }
+
+    static boolean Exclude4LongObject(TilesAddon ta) {
+        return TilesAddon.isStream(ta) ||
+                TilesAddon.isRoad(ta) || TilesAddon.isShadow(ta);
+
+    }
+
+    static boolean isMountsRocs(TilesAddon ta) {
+
+        return TilesAddon.isMounts(ta) || TilesAddon.isRocs(ta);
+    }
+
+    static boolean isForestsTrees(TilesAddon ta) {
+        return TilesAddon.isForests(ta) || TilesAddon.isTrees(ta) ||
+                TilesAddon.isCactus(ta);
+    }
+
     private void SetIndex(int index) {
         maps_index = index;
         var point = GetPoint(index);
@@ -132,21 +153,6 @@ public class Tiles {
         return shape << 14 | 0x3FFF & index;
     }
 
-    public void AddonsPushLevel1(Mp2Addon ma) {
-        if (ma.objectNameN1 != 0 && toByte(ma.indexNameN1) < 0xFF)
-            AddonsPushLevel1(new TilesAddon(ma.quantityN, ma.uniqNumberN1, ma.objectNameN1, ma.indexNameN1));
-
-    }
-
-    private void AddonsPushLevel1(TilesAddon ta) {
-        if (TilesAddon.ForceLevel2(ta))
-            addons_level2._items.add(ta);
-        else
-            addons_level1._items.add(ta);
-    }
-
-    public void AddonsPushLevel2(Mp2Addon mp2Addon) {
-    }
 
     static int PredicateSortRules(TilesAddon ta1, TilesAddon ta2) {
         var level1 = ta1.level % 4;
@@ -199,10 +205,19 @@ public class Tiles {
         return maps_index;
     }
 
-    boolean isStream(TilesAddon ta) {
-        return IcnKind.STREAM == Mp2.GetICNObject(ta.object) ||
-                (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && ta.index < 14);
+    public void AddonsPushLevel1(Mp2Addon ma) {
+        if (ma.objectNameN1 != 0 && toByte(ma.indexNameN1) < 0xFF)
+            AddonsPushLevel1(new TilesAddon(ma.quantityN, ma.uniqNumberN1, ma.objectNameN1, ma.indexNameN1));
+
     }
+
+    private void AddonsPushLevel1(TilesAddon ta) {
+        if (TilesAddon.ForceLevel2(ta))
+            addons_level2._items.add(ta);
+        else
+            addons_level1._items.add(ta);
+    }
+
 
     boolean isRoad(TilesAddon ta) {
         return IcnKind.ROAD == Mp2.GetICNObject(ta.object);
@@ -359,12 +374,6 @@ public class Tiles {
         }
         return null;
     }
-
-/*
-    TilesAddon find_if(List<TilesAddon> addons, Predicate<TilesAddon> isFound) {
-        return addons.stream().filter(isFound::test).findFirst().orElse(null);
-    }
-*/
 
     public TilesAddon FindObjectConst(int objs) {
         TilesAddon it = null;
@@ -764,6 +773,469 @@ public class Tiles {
         }
     }
 
+    private void AddonsPushLevel2(TilesAddon ta) {
+        if (TilesAddon.ForceLevel1(ta))
+            addons_level1._items.add(ta);
+        else
+            addons_level2._items.add(ta);
+    }
+
+    private void UpdateRNDResourceSprite(Tiles tile) {
+        var addon = tile.FindObject(Mp2Kind.OBJ_RNDRESOURCE);
+
+        if (addon == null) return;
+        addon.index = (byte) Resource.GetIndexSprite(Resource.Rand());
+        tile.SetObject(Mp2Kind.OBJ_RESOURCE);
+
+        var world = World.Instance;
+        H2Size wSize = new H2Size(world.w, world.h);
+        // replace shadow artifact
+        if (!isValidDirection(tile.GetIndex(), Direction.LEFT, wSize))
+            return;
+        var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
+        var shadow = left_tile.FindAddonLevel1(addon.uniq);
+
+        if (shadow != null) {
+            shadow.index = (byte) (addon.index - 1);
+        }
+    }
+
+    public void AddonsPushLevel2(Mp2Addon ma) {
+        if (ma.objectNameN2 != 0 && toByte(ma.indexNameN2) < 0xFF) {
+            AddonsPushLevel2(new TilesAddon(ma.quantityN, ma.uniqNumberN2, ma.objectNameN2, ma.indexNameN2));
+        }
+
+    }
+
+    private void MonsterSetCount(int count) {
+        quantity1 = (byte) (count >> 8);
+        quantity2 = (byte) (0x00FF & count);
+    }
+
+    private void UpdateStoneLightsSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateMonsterPopulation(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateFountainSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateTreasureChestSprite(Tiles tiles) {
+        //TODO
+    }
+
+    private void UpdateRNDArtifactSprite(Tiles tile) {
+        var world = World.Instance;
+        //TODO
+        TilesAddon addon = null;
+        var index = 0;
+        Artifact art = new Artifact();
+
+        switch (tile.GetObject()) {
+            case Mp2Kind.OBJ_RNDARTIFACT:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL123));
+                index = art.IndexSprite();
+                break;
+            case Mp2Kind.OBJ_RNDARTIFACT1:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT1);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL1));
+                index = art.IndexSprite();
+                break;
+            case Mp2Kind.OBJ_RNDARTIFACT2:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT2);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL2));
+                index = art.IndexSprite();
+                break;
+            case Mp2Kind.OBJ_RNDARTIFACT3:
+                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT3);
+                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL3));
+                index = art.IndexSprite();
+                break;
+            default:
+                return;
+        }
+
+        if (!art.IsValid()) {
+            return;
+        }
+        if (addon == null)
+            return;
+        addon.index = (byte) index;
+        tile.SetObject(Mp2Kind.OBJ_ARTIFACT);
+
+        H2Size wSize = new H2Size(world.w, world.h);
+        // replace shadow artifact
+        if (!isValidDirection(tile.GetIndex(), Direction.LEFT, wSize))
+            return;
+        var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
+        TilesAddon shadow = left_tile.FindAddonLevel1(addon.uniq);
+
+        if (shadow != null) shadow.index = (byte) (index - 1);
+    }
+
+    private TilesAddon FindAddonLevel1(int uniq) {
+        return find_if(addons_level1._items, (it) -> it.isUniq(uniq));
+    }
+
+    private TilesAddon FindAddonLevel2(int uniq) {
+        return find_if(addons_level2._items, (it) -> it.isUniq(uniq));
+    }
+
+    private void UpdateMonsterInfo(Tiles tile) {
+        int mons = -1;
+
+        if (Mp2Kind.OBJ_MONSTER == tile.GetObject()) {
+            TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
+
+            if (addon != null)
+                mons = new Monster(addon.index + 1).id; // ICN.MONS32 start from PEASANT
+        } else {
+            TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_RNDMONSTER);
+
+            switch (tile.GetObject()) {
+                case Mp2Kind.OBJ_RNDMONSTER:
+                    mons = Monster.Rand(MonsterLevel.LEVEL0);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER1:
+                    mons = Monster.Rand(MonsterLevel.LEVEL1);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER2:
+                    mons = Monster.Rand(MonsterLevel.LEVEL2);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER3:
+                    mons = Monster.Rand(MonsterLevel.LEVEL3);
+                    break;
+                case Mp2Kind.OBJ_RNDMONSTER4:
+                    mons = Monster.Rand(MonsterLevel.LEVEL4);
+                    break;
+                default:
+                    break;
+            }
+
+            // fixed random sprite
+            tile.SetObject(Mp2Kind.OBJ_MONSTER);
+
+            if (addon != null)
+                addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
+        }
+
+        var count = 0;
+
+        // update count (mp2 format)
+        if (tile.quantity1 != 0 || tile.quantity2 != 0) {
+            count = tile.quantity2;
+            count <<= 8;
+            count |= tile.quantity1;
+            count >>= 3;
+        }
+
+        PlaceMonsterOnTile(tile, mons, count);
+
+    }
+
+    private void PlaceMonsterOnTile(Tiles tile, int mons, int count) {
+        var monster = new Monster(mons);
+        tile.SetObject(Mp2Kind.OBJ_MONSTER);
+        // monster type
+        tile.SetQuantity3(mons);
+
+        if (count != 0) {
+            tile.MonsterSetFixedCount();
+            tile.MonsterSetCount(count);
+        } else {
+            int mul = 4;
+
+            // set random count
+            switch (Settings.Get().GameDifficulty()) {
+                case DifficultyEnum.EASY:
+                    mul = 3;
+                    break;
+                case DifficultyEnum.NORMAL:
+                case DifficultyEnum.HARD:
+                    mul = 4;
+                    break;
+                case DifficultyEnum.EXPERT:
+                    mul = 5;
+                    break;
+                case DifficultyEnum.IMPOSSIBLE:
+                    mul = 6;
+                    break;
+                default:
+                    break;
+            }
+
+            tile.MonsterSetCount(mul * monster.GetRNDSize(true));
+        }
+
+        var world = World.Instance;
+        // skip join
+        if (mons == MonsterKind.GHOST || monster.isElemental())
+            tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_SKIP);
+        else
+            // fixed count: for money
+            if (tile.MonsterFixedCount() != 0 ||
+                    // month of monster
+                    (world.GetWeekType().GetType() == WeekKind.MONSTERS &&
+                            world.GetWeekType().GetMonster() == mons))
+                tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
+            else {
+                // 20% chance for join
+                if (3 > Rand.Get(1, 10))
+                    tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_FREE);
+                else
+                    tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
+            }
+
+        //
+        TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
+
+        if (addon == null) {
+            // add new sprite
+            tile.AddonsPushLevel1(new TilesAddon(TilesAddonLevel.UPPER, World.Instance.GetUniq(), 0x33, monster.GetSpriteIndex()));
+        } else if (toByte(addon.index) != mons - 1) {
+            // fixed sprite
+            addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
+        }
+    }
+
+    private int MonsterFixedCount() {
+        var addon = FindObjectConst(Mp2Kind.OBJ_MONSTER);
+        return addon != null ? addon.tmp & 0x80 : 0;
+    }
+
+    private void MonsterSetJoinCondition(int cond) {
+
+        TilesAddon addon = FindObject(Mp2Kind.OBJ_MONSTER);
+        if (addon == null)
+            return;
+        addon.tmp &= 0xFC;
+        addon.tmp |= cond & 0x03;
+    }
+
+    private void MonsterSetFixedCount() {
+        var addon = FindObject(Mp2Kind.OBJ_MONSTER);
+        if (addon != null) addon.tmp |= 0x80;
+    }
+
+    private void SetQuantity3(int mod) {
+        quantity3 = (byte) mod;
+    }
+
+    private void QuantitySetExt(int ext) {
+        quantity2 &= 0xf0;
+        quantity2 |= 0x0f & ext;
+    }
+
+    private void UpdateDwellingPopulation(Tiles tiles) {
+        //TODO
+    }
+
+    private void QuantitySetVariant(int value) {
+        quantity2 &= 0x0f;
+        quantity2 |= value << 4;
+    }
+
+    private void QuantitySetColor(int col) {
+
+        switch (GetObject(false)) {
+
+            case Mp2Kind.OBJ_BARRIER:
+            case Mp2Kind.OBJ_TRAVELLERTENT:
+                quantity1 = (byte) col;
+                break;
+
+            default:
+                World.Instance.CaptureObject(GetIndex(), col);
+                break;
+        }
+    }
+
+    private void QuantitySetSpell(int spell) {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_SHRINE1:
+            case Mp2Kind.OBJ_SHRINE2:
+            case Mp2Kind.OBJ_SHRINE3:
+            case Mp2Kind.OBJ_PYRAMID:
+                quantity1 = (byte) spell;
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void QuantitySetResource(int res, int count) {
+        quantity1 = (byte) res;
+        quantity2 = (byte) (res == ResourceKind.GOLD ? count / 100 : count);
+    }
+
+    public void QuantityReset() {
+        quantity1 = 0;
+        quantity2 = 0;
+
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_SKELETON:
+            case Mp2Kind.OBJ_WAGON:
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_GRAVEYARD:
+            case Mp2Kind.OBJ_DAEMONCAVE:
+                QuantitySetArtifact(ArtifactKind.UNKNOWN);
+                break;
+
+            default:
+                break;
+        }
+
+        if (Mp2.isPickupObject(mp2_object))
+            SetObject(Mp2Kind.OBJ_ZERO);
+    }
+
+    public TilesAddon FindObject(int objs) {
+        TilesAddon it = null;
+        switch (objs) {
+            case Mp2Kind.OBJ_CAMPFIRE:
+                it = find_if(addons_level1._items, TilesAddon::isCampFire);
+                break;
+
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_ANCIENTLAMP:
+            case Mp2Kind.OBJ_RESOURCE:
+                it = find_if(addons_level1._items, TilesAddon::isResource);
+                break;
+
+            case Mp2Kind.OBJ_RNDRESOURCE:
+                it = find_if(addons_level1._items, TilesAddon::isRandomResource);
+                break;
+
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_BOTTLE:
+                it = find_if(addons_level1._items, TilesAddon::isWaterResource);
+                break;
+
+            case Mp2Kind.OBJ_ARTIFACT:
+                it = find_if(addons_level1._items, TilesAddon::isArtifact);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT1:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact1);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT2:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact2);
+                break;
+
+            case Mp2Kind.OBJ_RNDARTIFACT3:
+                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact3);
+                break;
+
+            case Mp2Kind.OBJ_RNDULTIMATEARTIFACT:
+                it = find_if(addons_level1._items, TilesAddon::isUltimateArtifact);
+                break;
+
+            case Mp2Kind.OBJ_MONSTER:
+                it = find_if(addons_level1._items, TilesAddon::isMonster);
+                break;
+
+            case Mp2Kind.OBJ_WHIRLPOOL:
+                it = find_if(addons_level1._items, TilesAddon::isWhirlPool);
+                break;
+
+            case Mp2Kind.OBJ_STANDINGSTONES:
+                it = find_if(addons_level1._items, TilesAddon::isStandingStone);
+                break;
+
+            case Mp2Kind.OBJ_ARTESIANSPRING:
+                it = find_if(addons_level1._items, TilesAddon::isArtesianSpring);
+                break;
+
+            case Mp2Kind.OBJ_OASIS:
+                it = find_if(addons_level1._items, TilesAddon::isOasis);
+                break;
+
+            case Mp2Kind.OBJ_WATERINGHOLE:
+                it = find_if(addons_level1._items, TilesAddon::isWateringHole);
+                break;
+
+            case Mp2Kind.OBJ_MINES:
+                it = find_if(addons_level1._items, TilesAddon::isMine);
+                break;
+
+            case Mp2Kind.OBJ_JAIL:
+                it = find_if(addons_level1._items, TilesAddon::isJail);
+                break;
+
+            case Mp2Kind.OBJ_EVENT:
+                it = find_if(addons_level1._items, TilesAddon::isEvent);
+                break;
+
+            case Mp2Kind.OBJ_BOAT:
+                it = find_if(addons_level1._items, TilesAddon::isBoat);
+                break;
+
+            case Mp2Kind.OBJ_BARRIER:
+                it = find_if(addons_level1._items, TilesAddon::isBarrier);
+                break;
+
+            case Mp2Kind.OBJ_HEROES:
+                it = find_if(addons_level1._items, TilesAddon::isMiniHero);
+                break;
+
+            case Mp2Kind.OBJ_CASTLE:
+                it = find_if(addons_level1._items, TilesAddon::isCastle);
+                if (it == null) {
+                    it = find_if(addons_level2._items, TilesAddon::isCastle);
+                    return it;
+                }
+                break;
+
+            case Mp2Kind.OBJ_RNDCASTLE:
+                it = find_if(addons_level1._items, TilesAddon::isRandomCastle);
+                if (it == null) {
+                    it = find_if(addons_level2._items, TilesAddon::isRandomCastle);
+                    return it;
+                }
+                break;
+
+            case Mp2Kind.OBJ_RNDMONSTER:
+            case Mp2Kind.OBJ_RNDMONSTER1:
+            case Mp2Kind.OBJ_RNDMONSTER2:
+            case Mp2Kind.OBJ_RNDMONSTER3:
+            case Mp2Kind.OBJ_RNDMONSTER4:
+                it = find_if(addons_level1._items, TilesAddon::isRandomMonster);
+                break;
+
+            case Mp2Kind.OBJ_SKELETON:
+                it = find_if(addons_level1._items, TilesAddon::isSkeleton);
+                break;
+
+            default:
+                //FIXME for: " << Mp2Kind.StringObject(objs));
+                break;
+        }
+
+        return it;
+    }
+
+    void QuantitySetArtifact(int art) {
+        quantity1 = (byte) art;
+    }
+
     public void QuantityUpdate() {
         var world = World.Instance;
         switch (GetObject(false)) {
@@ -837,7 +1309,7 @@ public class Tiles {
                         if (art == ArtifactKind.SPELL_SCROLL) {
                             QuantitySetVariant(15);
                             // spell from origin mp2
-                            QuantitySetSpell(1 + (quantity2 * 256 + quantity1) / 8);
+                            QuantitySetSpell(1 + (toByte(quantity2) * 256 + toByte(quantity1)) / 8);
                         } else {
                             // 0: 70% none
                             // 1,2,3 - 2000g, 2500g+3res, 3000g+5res,
@@ -1274,459 +1746,8 @@ public class Tiles {
         }
     }
 
-    private void UpdateRNDResourceSprite(Tiles tile) {
-        var addon = tile.FindObject(Mp2Kind.OBJ_RNDRESOURCE);
-
-        if (addon == null) return;
-        addon.index = (byte) Resource.GetIndexSprite(Resource.Rand());
-        tile.SetObject(Mp2Kind.OBJ_RESOURCE);
-
-        var world = World.Instance;
-        H2Size wSize = new H2Size(world.w, world.h);
-        // replace shadow artifact
-        if (!isValidDirection(tile.GetIndex(), Direction.LEFT, wSize))
-            return;
-        var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
-        var shadow = left_tile.FindAddonLevel1(addon.uniq);
-
-        if (shadow != null) {
-            shadow.index = (byte) (addon.index - 1);
-        }
-    }
-
     public int MonsterCount() {
-        return toByte(quantity1) << 8 | quantity2;
-    }
-
-    private void MonsterSetCount(int count) {
-        quantity1 = (byte) (count >> 8);
-        quantity2 = (byte) (0x00FF & count);
-    }
-
-    private void UpdateStoneLightsSprite(Tiles tiles) {
-        //TODO
-    }
-
-    private void UpdateMonsterPopulation(Tiles tiles) {
-        //TODO
-    }
-
-    private void UpdateFountainSprite(Tiles tiles) {
-        //TODO
-    }
-
-    private void UpdateTreasureChestSprite(Tiles tiles) {
-        //TODO
-    }
-
-    private void UpdateRNDArtifactSprite(Tiles tile) {
-        var world = World.Instance;
-        //TODO
-        TilesAddon addon = null;
-        var index = 0;
-        Artifact art = new Artifact();
-
-        switch (tile.GetObject()) {
-            case Mp2Kind.OBJ_RNDARTIFACT:
-                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT);
-                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL123));
-                index = art.IndexSprite();
-                break;
-            case Mp2Kind.OBJ_RNDARTIFACT1:
-                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT1);
-                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL1));
-                index = art.IndexSprite();
-                break;
-            case Mp2Kind.OBJ_RNDARTIFACT2:
-                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT2);
-                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL2));
-                index = art.IndexSprite();
-                break;
-            case Mp2Kind.OBJ_RNDARTIFACT3:
-                addon = tile.FindObject(Mp2Kind.OBJ_RNDARTIFACT3);
-                art.SetId(Artifact.Rand(ArtifactLevel.ART_LEVEL3));
-                index = art.IndexSprite();
-                break;
-            default:
-                return;
-        }
-
-        if (!art.IsValid()) {
-            return;
-        }
-        if (addon == null)
-            return;
-        addon.index = (byte) index;
-        tile.SetObject(Mp2Kind.OBJ_ARTIFACT);
-
-        H2Size wSize = new H2Size(world.w, world.h);
-        // replace shadow artifact
-        if (!isValidDirection(tile.GetIndex(), Direction.LEFT, wSize))
-            return;
-        var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
-        TilesAddon shadow = left_tile.FindAddonLevel1(addon.uniq);
-
-        if (shadow != null) shadow.index = (byte) (index - 1);
-    }
-
-    private TilesAddon FindAddonLevel1(int uniq) {
-        return find_if(addons_level1._items, (it) -> it.isUniq(uniq));
-    }
-
-    private TilesAddon FindAddonLevel2(int uniq) {
-        return find_if(addons_level2._items, (it) -> it.isUniq(uniq));
-    }
-
-    private void UpdateMonsterInfo(Tiles tile) {
-        int mons = -1;
-
-        if (Mp2Kind.OBJ_MONSTER == tile.GetObject()) {
-            TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
-
-            if (addon != null)
-                mons = new Monster(addon.index + 1).id; // ICN.MONS32 start from PEASANT
-        } else {
-            TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_RNDMONSTER);
-
-            switch (tile.GetObject()) {
-                case Mp2Kind.OBJ_RNDMONSTER:
-                    mons = Monster.Rand(MonsterLevel.LEVEL0);
-                    break;
-                case Mp2Kind.OBJ_RNDMONSTER1:
-                    mons = Monster.Rand(MonsterLevel.LEVEL1);
-                    break;
-                case Mp2Kind.OBJ_RNDMONSTER2:
-                    mons = Monster.Rand(MonsterLevel.LEVEL2);
-                    break;
-                case Mp2Kind.OBJ_RNDMONSTER3:
-                    mons = Monster.Rand(MonsterLevel.LEVEL3);
-                    break;
-                case Mp2Kind.OBJ_RNDMONSTER4:
-                    mons = Monster.Rand(MonsterLevel.LEVEL4);
-                    break;
-                default:
-                    break;
-            }
-
-            // fixed random sprite
-            tile.SetObject(Mp2Kind.OBJ_MONSTER);
-
-            if (addon != null)
-                addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
-        }
-
-        var count = 0;
-
-        // update count (mp2 format)
-        if (tile.quantity1 != 0 || tile.quantity2 != 0) {
-            count = tile.quantity2;
-            count <<= 8;
-            count |= tile.quantity1;
-            count >>= 3;
-        }
-
-        PlaceMonsterOnTile(tile, mons, count);
-
-    }
-
-    private void PlaceMonsterOnTile(Tiles tile, int mons, int count) {
-        var monster = new Monster(mons);
-        tile.SetObject(Mp2Kind.OBJ_MONSTER);
-        // monster type
-        tile.SetQuantity3(mons);
-
-        if (count != 0) {
-            tile.MonsterSetFixedCount();
-            tile.MonsterSetCount(count);
-        } else {
-            int mul = 4;
-
-            // set random count
-            switch (Settings.Get().GameDifficulty()) {
-                case DifficultyEnum.EASY:
-                    mul = 3;
-                    break;
-                case DifficultyEnum.NORMAL:
-                    mul = 4;
-                    break;
-                case DifficultyEnum.HARD:
-                    mul = 4;
-                    break;
-                case DifficultyEnum.EXPERT:
-                    mul = 5;
-                    break;
-                case DifficultyEnum.IMPOSSIBLE:
-                    mul = 6;
-                    break;
-                default:
-                    break;
-            }
-
-            tile.MonsterSetCount(mul * monster.GetRNDSize(true));
-        }
-
-        var world = World.Instance;
-        // skip join
-        if (mons == MonsterKind.GHOST || monster.isElemental())
-            tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_SKIP);
-        else
-            // fixed count: for money
-            if (tile.MonsterFixedCount() != 0 ||
-                    // month of monster
-                    (world.GetWeekType().GetType() == WeekKind.MONSTERS &&
-                            world.GetWeekType().GetMonster() == mons))
-                tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
-            else {
-                // 20% chance for join
-                if (3 > Rand.Get(1, 10))
-                    tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_FREE);
-                else
-                    tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
-            }
-
-        //
-        TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
-
-        if (addon == null) {
-            // add new sprite
-            tile.AddonsPushLevel1(new TilesAddon(TilesAddonLevel.UPPER, World.Instance.GetUniq(), 0x33, monster.GetSpriteIndex()));
-        } else if (toByte(addon.index) != mons - 1) {
-            // fixed sprite
-            addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
-        }
-    }
-
-    private int MonsterFixedCount() {
-        var addon = FindObjectConst(Mp2Kind.OBJ_MONSTER);
-        return addon != null ? addon.tmp & 0x80 : 0;
-    }
-
-    private void MonsterSetJoinCondition(int cond) {
-
-        TilesAddon addon = FindObject(Mp2Kind.OBJ_MONSTER);
-        if (addon == null)
-            return;
-        addon.tmp &= 0xFC;
-        addon.tmp |= cond & 0x03;
-    }
-
-    private void MonsterSetFixedCount() {
-        var addon = FindObject(Mp2Kind.OBJ_MONSTER);
-        if (addon != null) addon.tmp |= 0x80;
-    }
-
-    private void SetQuantity3(int mod) {
-        quantity3 = (byte) mod;
-    }
-
-    private void QuantitySetExt(int ext) {
-        quantity2 &= 0xf0;
-        quantity2 |= 0x0f & ext;
-    }
-
-    private void UpdateDwellingPopulation(Tiles tiles) {
-        //TODO
-    }
-
-    private void QuantitySetVariant(int value) {
-        quantity2 &= 0x0f;
-        quantity2 |= value << 4;
-    }
-
-    private void QuantitySetColor(int col) {
-
-        switch (GetObject(false)) {
-
-            case Mp2Kind.OBJ_BARRIER:
-            case Mp2Kind.OBJ_TRAVELLERTENT:
-                quantity1 = (byte) col;
-                break;
-
-            default:
-                World.Instance.CaptureObject(GetIndex(), col);
-                break;
-        }
-    }
-
-    private void QuantitySetSpell(int spell) {
-        switch (GetObject(false)) {
-            case Mp2Kind.OBJ_ARTIFACT:
-            case Mp2Kind.OBJ_SHRINE1:
-            case Mp2Kind.OBJ_SHRINE2:
-            case Mp2Kind.OBJ_SHRINE3:
-            case Mp2Kind.OBJ_PYRAMID:
-                quantity1 = (byte) spell;
-                break;
-
-            default:
-                break;
-        }
-    }
-
-    private void QuantitySetResource(int res, int count) {
-        quantity1 = (byte) res;
-        quantity2 = (byte) (res == ResourceKind.GOLD ? count / 100 : count);
-    }
-
-    public void QuantityReset() {
-        quantity1 = 0;
-        quantity2 = 0;
-
-        switch (GetObject(false)) {
-            case Mp2Kind.OBJ_SKELETON:
-            case Mp2Kind.OBJ_WAGON:
-            case Mp2Kind.OBJ_ARTIFACT:
-            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
-            case Mp2Kind.OBJ_WATERCHEST:
-            case Mp2Kind.OBJ_TREASURECHEST:
-            case Mp2Kind.OBJ_SHIPWRECK:
-            case Mp2Kind.OBJ_GRAVEYARD:
-            case Mp2Kind.OBJ_DAEMONCAVE:
-                QuantitySetArtifact(ArtifactKind.UNKNOWN);
-                break;
-
-            default:
-                break;
-        }
-
-        if (Mp2.isPickupObject(mp2_object))
-            SetObject(Mp2Kind.OBJ_ZERO);
-    }
-
-    public TilesAddon FindObject(int objs) {
-        TilesAddon it = null;
-        switch (objs) {
-            case Mp2Kind.OBJ_CAMPFIRE:
-                it = find_if(addons_level1._items, TilesAddon::isCampFire);
-                break;
-
-            case Mp2Kind.OBJ_TREASURECHEST:
-            case Mp2Kind.OBJ_ANCIENTLAMP:
-            case Mp2Kind.OBJ_RESOURCE:
-                it = find_if(addons_level1._items, TilesAddon::isResource);
-                break;
-
-            case Mp2Kind.OBJ_RNDRESOURCE:
-                it = find_if(addons_level1._items, TilesAddon::isRandomResource);
-                break;
-
-            case Mp2Kind.OBJ_FLOTSAM:
-            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
-            case Mp2Kind.OBJ_WATERCHEST:
-            case Mp2Kind.OBJ_BOTTLE:
-                it = find_if(addons_level1._items, TilesAddon::isWaterResource);
-                break;
-
-            case Mp2Kind.OBJ_ARTIFACT:
-                it = find_if(addons_level1._items, TilesAddon::isArtifact);
-                break;
-
-            case Mp2Kind.OBJ_RNDARTIFACT:
-                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact);
-                break;
-
-            case Mp2Kind.OBJ_RNDARTIFACT1:
-                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact1);
-                break;
-
-            case Mp2Kind.OBJ_RNDARTIFACT2:
-                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact2);
-                break;
-
-            case Mp2Kind.OBJ_RNDARTIFACT3:
-                it = find_if(addons_level1._items, TilesAddon::isRandomArtifact3);
-                break;
-
-            case Mp2Kind.OBJ_RNDULTIMATEARTIFACT:
-                it = find_if(addons_level1._items, TilesAddon::isUltimateArtifact);
-                break;
-
-            case Mp2Kind.OBJ_MONSTER:
-                it = find_if(addons_level1._items, TilesAddon::isMonster);
-                break;
-
-            case Mp2Kind.OBJ_WHIRLPOOL:
-                it = find_if(addons_level1._items, TilesAddon::isWhirlPool);
-                break;
-
-            case Mp2Kind.OBJ_STANDINGSTONES:
-                it = find_if(addons_level1._items, TilesAddon::isStandingStone);
-                break;
-
-            case Mp2Kind.OBJ_ARTESIANSPRING:
-                it = find_if(addons_level1._items, TilesAddon::isArtesianSpring);
-                break;
-
-            case Mp2Kind.OBJ_OASIS:
-                it = find_if(addons_level1._items, TilesAddon::isOasis);
-                break;
-
-            case Mp2Kind.OBJ_WATERINGHOLE:
-                it = find_if(addons_level1._items, TilesAddon::isWateringHole);
-                break;
-
-            case Mp2Kind.OBJ_MINES:
-                it = find_if(addons_level1._items, TilesAddon::isMine);
-                break;
-
-            case Mp2Kind.OBJ_JAIL:
-                it = find_if(addons_level1._items, TilesAddon::isJail);
-                break;
-
-            case Mp2Kind.OBJ_EVENT:
-                it = find_if(addons_level1._items, TilesAddon::isEvent);
-                break;
-
-            case Mp2Kind.OBJ_BOAT:
-                it = find_if(addons_level1._items, TilesAddon::isBoat);
-                break;
-
-            case Mp2Kind.OBJ_BARRIER:
-                it = find_if(addons_level1._items, TilesAddon::isBarrier);
-                break;
-
-            case Mp2Kind.OBJ_HEROES:
-                it = find_if(addons_level1._items, TilesAddon::isMiniHero);
-                break;
-
-            case Mp2Kind.OBJ_CASTLE:
-                it = find_if(addons_level1._items, TilesAddon::isCastle);
-                if (it == null) {
-                    it = find_if(addons_level2._items, TilesAddon::isCastle);
-                    return it;
-                }
-                break;
-
-            case Mp2Kind.OBJ_RNDCASTLE:
-                it = find_if(addons_level1._items, TilesAddon::isRandomCastle);
-                if (it == null) {
-                    it = find_if(addons_level2._items, TilesAddon::isRandomCastle);
-                    return it;
-                }
-                break;
-
-            case Mp2Kind.OBJ_RNDMONSTER:
-            case Mp2Kind.OBJ_RNDMONSTER1:
-            case Mp2Kind.OBJ_RNDMONSTER2:
-            case Mp2Kind.OBJ_RNDMONSTER3:
-            case Mp2Kind.OBJ_RNDMONSTER4:
-                it = find_if(addons_level1._items, TilesAddon::isRandomMonster);
-                break;
-
-            case Mp2Kind.OBJ_SKELETON:
-                it = find_if(addons_level1._items, TilesAddon::isSkeleton);
-                break;
-
-            default:
-                //FIXME for: " << Mp2Kind.StringObject(objs));
-                break;
-        }
-
-        return it;
-    }
-
-    void QuantitySetArtifact(int art) {
-        quantity1 = (byte) art;
+        return toByte(quantity1) << 8 | toByte(quantity2);
     }
 
     public void CaptureFlags32(int obj, int col) {
@@ -1759,6 +1780,9 @@ public class Tiles {
 
         switch (obj) {
             case Mp2Kind.OBJ_WINDMILL:
+            case Mp2Kind.OBJ_MAGICGARDEN:
+                //case Mp2Kind.OBJ_DRAGONCITY:	index += 35; CorrectFlags32(index); break; unused
+            case Mp2Kind.OBJ_LIGHTHOUSE:
                 index += 42;
                 CorrectFlags32(index, false);
                 break;
@@ -1766,19 +1790,10 @@ public class Tiles {
                 index += 14;
                 CorrectFlags32(index, false);
                 break;
-            case Mp2Kind.OBJ_MAGICGARDEN:
-                index += 42;
-                CorrectFlags32(index, false);
-                break;
 
             case Mp2Kind.OBJ_MINES:
                 index += 14;
                 CorrectFlags32(index, true);
-                break;
-            //case Mp2Kind.OBJ_DRAGONCITY:	index += 35; CorrectFlags32(index); break; unused
-            case Mp2Kind.OBJ_LIGHTHOUSE:
-                index += 42;
-                CorrectFlags32(index, false);
                 break;
 
             case Mp2Kind.OBJ_ALCHEMYLAB: {
@@ -1873,9 +1888,134 @@ public class Tiles {
         return find_if(addons_level2._items, (ta) -> ta.isICN(icn));
     }
 
-
     public void UpdatePassable() {
-        //TODO
+
+        tile_passable = Direction.DIRECTION_ALL;
+
+        var obj = GetObject(false);
+        var emptyobj = Mp2Kind.OBJ_ZERO == obj || Mp2Kind.OBJ_COAST == obj || Mp2Kind.OBJ_EVENT == obj;
+
+        if (Mp2.isActionObject(obj, isWater())) {
+            tile_passable = (short) Mp2.GetObjectDirect(obj);
+            return;
+        }
+        var world = World.Instance;
+
+        var wSize = new H2Size(world.w, world.h);
+        // on ground
+        if (Mp2Kind.OBJ_HEROES != toByte(mp2_object) && !isWater()) {
+            var mounts1 = null != find_if(addons_level1._items, Tiles::isMountsRocs);
+            var mounts2 = null != find_if(addons_level2._items, Tiles::isMountsRocs);
+            var trees1 = null != find_if(addons_level1._items, Tiles::isForestsTrees);
+            var trees2 = null != find_if(addons_level2._items, Tiles::isForestsTrees);
+/*
+//TODO
+            // fix coast passable
+            if (tile_passable &&
+                    //! MP2.isActionObject(obj, false) &&
+                    !emptyobj &&
+                    TileIsCoast(GetIndex(), Direction.TOP | Direction.BOTTOM | Direction.LEFT | Direction.RIGHT) &&
+                    addons_level1._items.size() != (count_if(
+                            addons_level1._items.begin(), addons_level1._items.end(),
+                            []( TilesAddon& it)
+            {
+                return TilesAddon.isShadow(it);
+            })))
+            {
+                tile_passable = 0;
+            }
+*/
+            // fix mountain layer
+            if (tile_passable != 0 &&
+                    (Mp2Kind.OBJ_MOUNTS == obj || Mp2Kind.OBJ_TREES == obj) &&
+                    mounts1 && (mounts2 || trees2)) {
+                tile_passable = 0;
+            }
+
+            // fix trees layer
+            if (tile_passable != 0 &&
+                    (Mp2Kind.OBJ_MOUNTS == obj || Mp2Kind.OBJ_TREES == obj) &&
+                    trees1 && (mounts2 || trees2)) {
+                tile_passable = 0;
+            }
+
+            // town twba
+            if (tile_passable != 0 && null != FindAddonICN1(IcnKind.OBJNTWBA) && (mounts2 || trees2)) {
+                tile_passable = 0;
+            }
+
+            if (isValidDirection(GetIndex(), Direction.TOP, wSize)) {
+                var top = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.TOP));
+                // fix: rocs on water
+                if (top.isWater() &&
+                        top.tile_passable != 0 &&
+                        (Direction.TOP & top.tile_passable) == 0) {
+                    top.tile_passable = 0;
+                }
+            }
+        }
+
+        // fix bottom border: disable passable for all no action objects
+
+        if (tile_passable != 0 &&
+                !isValidDirection(GetIndex(), Direction.BOTTOM, wSize) &&
+                !emptyobj &&
+                !Mp2.isActionObject(obj, isWater())) {
+            tile_passable = 0;
+        }
+        // check all sprite (level 1)
+        for (var it : addons_level1._items) {
+            if (tile_passable != 0) {
+                tile_passable &= TilesAddon.GetPassable(it);
+            }
+        }
+
+        // fix top passable
+        if (isValidDirection(GetIndex(), Direction.TOP, wSize)) {
+            var top = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.TOP));
+/*
+//TODO
+
+            if (isWater() == top.isWater() &&
+                    top.addons_level1._items.end() !=
+                            find_if(top.addons_level1._items.begin(), top.addons_level1._items.end(), TopObjectDisable) &&
+                    !MP2.isActionObject(top.GetObject(false), isWater()) &&
+            (tile_passable && !(tile_passable & DIRECTION_TOP_ROW)) &&
+                    !(top.tile_passable & DIRECTION_TOP_ROW))
+            {
+                top.tile_passable = 0;
+            }
+ */
+        }
+
+        // fix corners
+        if (isValidDirection(GetIndex(), Direction.LEFT, wSize)) {
+            var left = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.LEFT));
+/*
+//TODO
+
+            // left corner
+            if (left.tile_passable &&
+                    isLongObject(Direction.TOP) &&
+                    !((Direction.TOP | Direction.TOP_LEFT) & tile_passable) &&
+                    Direction.TOP_RIGHT & left.tile_passable)
+            {
+                left.tile_passable &= ~Direction.TOP_RIGHT;
+            }
+            else
+                // right corner
+                if (tile_passable &&
+                        left.isLongObject(Direction.TOP) &&
+                        !((Direction.TOP | Direction.TOP_RIGHT) & left.tile_passable) &&
+                        Direction.TOP_LEFT & tile_passable)
+                {
+                    tile_passable &= ~Direction.TOP_LEFT;
+                }
+
+ */
+        }
+
+
     }
 
     public boolean GoodForUltimateArtifact() {
