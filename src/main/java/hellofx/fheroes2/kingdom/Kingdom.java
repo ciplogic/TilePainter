@@ -27,7 +27,7 @@ public class Kingdom {
     Puzzle puzzle_maps = new Puzzle();
     int visited_tents_colors;
 
-    KingdomHeroes heroes_cond_loss;
+    KingdomHeroes heroes_cond_loss = new KingdomHeroes();
 
     public boolean AllowRecruitHero(boolean check_payment, int level) {
         //TODO
@@ -57,5 +57,13 @@ public class Kingdom {
 
     public KingdomCastles GetCastles() {
         return castles;
+    }
+
+    public void clear() {
+        //TODO
+    }
+
+    public void Init(int color) {
+
     }
 }

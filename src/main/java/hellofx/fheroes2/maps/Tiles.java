@@ -7,6 +7,7 @@ import hellofx.fheroes2.agg.TilKind;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
+import hellofx.fheroes2.common.H2Size;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.common.RandQueue;
 import hellofx.fheroes2.game.DifficultyEnum;
@@ -33,6 +34,7 @@ import java.util.function.Predicate;
 
 import static hellofx.common.Utilities.find_if;
 import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
+import static hellofx.fheroes2.maps.objects.Maps.GetDirectionIndex;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
 
@@ -1663,18 +1665,150 @@ public class Tiles {
         quantity1 = (byte) art;
     }
 
-    public void CaptureFlags32(int obj, int color) {
-        //TODO
+    public void CaptureFlags32(int obj, int col) {
+        var index = 0;
+        var world = World.Instance;
+
+        switch (col) {
+            case H2Color.BLUE:
+                index = 0;
+                break;
+            case H2Color.GREEN:
+                index = 1;
+                break;
+            case H2Color.RED:
+                index = 2;
+                break;
+            case H2Color.YELLOW:
+                index = 3;
+                break;
+            case H2Color.ORANGE:
+                index = 4;
+                break;
+            case H2Color.PURPLE:
+                index = 5;
+                break;
+            default:
+                index = 6;
+                break;
+        }
+
+        switch (obj) {
+            case Mp2Kind.OBJ_WINDMILL:
+                index += 42;
+                CorrectFlags32(index, false);
+                break;
+            case Mp2Kind.OBJ_WATERWHEEL:
+                index += 14;
+                CorrectFlags32(index, false);
+                break;
+            case Mp2Kind.OBJ_MAGICGARDEN:
+                index += 42;
+                CorrectFlags32(index, false);
+                break;
+
+            case Mp2Kind.OBJ_MINES:
+                index += 14;
+                CorrectFlags32(index, true);
+                break;
+            //case Mp2Kind.OBJ_DRAGONCITY:	index += 35; CorrectFlags32(index); break; unused
+            case Mp2Kind.OBJ_LIGHTHOUSE:
+                index += 42;
+                CorrectFlags32(index, false);
+                break;
+
+            case Mp2Kind.OBJ_ALCHEMYLAB: {
+                H2Size wSize = new H2Size(world.w, world.h);
+                index += 21;
+                if (isValidDirection(GetIndex(), Direction.TOP, wSize)) {
+                    var tile = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.TOP));
+                    tile.CorrectFlags32(index, true);
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_SAWMILL: {
+                index += 28;
+                H2Size wSize = new H2Size(world.w, world.h);
+                if (isValidDirection(GetIndex(), Direction.TOP_RIGHT, wSize)) {
+                    var tile = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.TOP_RIGHT));
+                    tile.CorrectFlags32(index, true);
+                }
+            }
+            break;
+
+            case Mp2Kind.OBJ_CASTLE: {
+                index *= 2;
+
+                H2Size wSize = new H2Size(world.w, world.h);
+                if (isValidDirection(GetIndex(), Direction.LEFT, wSize)) {
+                    var tile = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.LEFT));
+                    tile.CorrectFlags32(index, true);
+                }
+
+                index += 1;
+                if (isValidDirection(GetIndex(), Direction.RIGHT, wSize)) {
+                    var tile = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.RIGHT));
+                    tile.CorrectFlags32(index, true);
+                }
+            }
+            break;
+
+            default:
+                break;
+        }
+    }
+
+    private boolean isValidDirection(int from, int vector, H2Size world) {
+        return switch (vector) {
+            case Direction.TOP -> from >= world.w;
+            case Direction.RIGHT -> from % world.w < world.w - 1;
+            case Direction.BOTTOM -> from < world.w * (world.h - 1);
+            case Direction.LEFT -> from % world.w != 0;
+            case Direction.TOP_RIGHT -> from >= world.w && from % world.w < world.w - 1;
+            case Direction.BOTTOM_RIGHT -> from < world.w * (world.h - 1) && from % world.w < world.w - 1;
+            case Direction.BOTTOM_LEFT -> from < world.w * (world.h - 1) && from % world.w != 0;
+            case Direction.TOP_LEFT -> from >= world.w && from % world.w != 0;
+            default -> false;
+        };
+    }
+
+    private void CorrectFlags32(int index, boolean up) {
+        TilesAddon taddon = FindFlags();
+
+        var world = World.Instance;
+        // replace flag
+        if (taddon != null)
+            taddon.index = (byte) index;
+        else if (up)
+            // or new flag
+            addons_level2._items.add(new TilesAddon(TilesAddonLevel.UPPER, world.GetUniq(), 0x38, index));
+        else
+            // or new flag
+            addons_level1._items.add(new TilesAddon(TilesAddonLevel.UPPER, world.GetUniq(), 0x38, index));
+    }
+
+
+    boolean isFlag32(TilesAddon ta) {
+        return IcnKind.FLAG32 == Mp2.GetICNObject(ta.object);
+    }
+
+    private TilesAddon FindFlags() {
+        var it = find_if(addons_level1._items, this::isFlag32);
+        if (it == null) {
+            it = find_if(addons_level2._items, this::isFlag32);
+        }
+        return it;
     }
 
     public TilesAddon FindAddonICN1(int icn) {
-        //TODO
-        return null;
+        return find_if(addons_level1._items, (ta) -> ta.isICN(icn));
     }
 
-    public void Remove(int uniq) {
-        //TODO
+    public TilesAddon FindAddonICN2(int icn) {
+        return find_if(addons_level2._items, (ta) -> ta.isICN(icn));
     }
+
 
     public void UpdatePassable() {
         //TODO
@@ -1686,11 +1820,19 @@ public class Tiles {
     }
 
     public boolean isObject(int obj) {
-        //TODO
-        return false;
+        return obj == mp2_object;
     }
 
     public H2Point GetCenter() {
         return new H2Point(maps_x, maps_y);
+    }
+
+    public void Remove(int uniq) {
+        if (addons_level1._items.size() != 0) {
+            addons_level1.Remove(uniq);
+        }
+        if (addons_level2._items.size() != 0) {
+            addons_level2.Remove(uniq);
+        }
     }
 }

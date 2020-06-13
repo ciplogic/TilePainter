@@ -16,3 +16,4 @@ public class H2Color {
         return 0;
     }
 }
+

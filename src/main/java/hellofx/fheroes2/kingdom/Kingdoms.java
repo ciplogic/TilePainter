@@ -2,6 +2,7 @@ package hellofx.fheroes2.kingdom;
 
 import hellofx.fheroes2.castle.AllCastles;
 import hellofx.fheroes2.heroes.AllHeroes;
+import hellofx.fheroes2.system.Settings;
 
 import java.util.stream.IntStream;
 
@@ -38,7 +39,21 @@ public class Kingdoms {
     }
 
     public void Init() {
-        //TODO
+        H2Colors colors = new H2Colors(Settings.Get().GetPlayers().GetColors());
+
+        clear();
+
+        for (int color : colors._items)
+            GetKingdom(color).Init(color);
+    }
+
+    private void clear() {
+        for (var ii = 0; ii < size(); ++ii)
+            kingdoms[ii].clear();
+    }
+
+    public int size() {
+        return KINGDOMMAX + 1;
     }
 
     public void AddHeroes(AllHeroes vec_heroes) {

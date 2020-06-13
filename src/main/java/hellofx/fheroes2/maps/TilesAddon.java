@@ -2,8 +2,10 @@ package hellofx.fheroes2.maps;
 
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.H2IntPair;
+import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.objects.*;
 
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
@@ -291,4 +293,89 @@ public class TilesAddon {
         return IcnKind.OBJNDSRT == Mp2Kind.GetICNObject(ta.object) && ta.index == 83;
     }
 
+    boolean isUniq(int id) {
+        return uniq == id;
+    }
+
+    boolean isICN(int icn) {
+        return icn == Mp2.GetICNObject(object);
+    }
+
+    public int GetPassable(TilesAddon ta) {
+        var icn = Mp2.GetICNObject(ta.object);
+
+        switch (icn) {
+            case IcnKind.MTNSNOW:
+            case IcnKind.MTNSWMP:
+            case IcnKind.MTNLAVA:
+            case IcnKind.MTNDSRT:
+            case IcnKind.MTNMULT:
+            case IcnKind.MTNGRAS:
+                return ObjMnts1.GetPassable(icn, toByte(ta.index));
+
+            case IcnKind.MTNCRCK:
+            case IcnKind.MTNDIRT:
+                return ObjMnts2.GetPassable(icn, ta.index);
+
+            case IcnKind.TREJNGL:
+            case IcnKind.TREEVIL:
+            case IcnKind.TRESNOW:
+            case IcnKind.TREFIR:
+            case IcnKind.TREFALL:
+            case IcnKind.TREDECI:
+                return ObjTree.GetPassable(ta.index);
+            case IcnKind.OBJNSNOW:
+                return ObjSnow.GetPassable(ta.index);
+            case IcnKind.OBJNSWMP:
+                return ObjSwmp.GetPassable(ta.index);
+            case IcnKind.OBJNGRAS:
+                return ObjGras.GetPassable(ta.index);
+            case IcnKind.OBJNGRA2:
+                return ObjGra2.GetPassable(ta.index);
+            case IcnKind.OBJNCRCK:
+                return ObjCrck.GetPassable(ta.index);
+            case IcnKind.OBJNDIRT:
+                return ObjDirt.GetPassable(ta.index);
+            case IcnKind.OBJNDSRT:
+                return ObjDsrt.GetPassable(ta.index);
+            case IcnKind.OBJNMUL2:
+                return ObjMul2.GetPassable(ta.index);
+            case IcnKind.OBJNMULT:
+                return ObjMult.GetPassable(ta.index);
+            case IcnKind.OBJNLAVA:
+                return ObjLava.GetPassable(ta.index);
+            case IcnKind.OBJNLAV3:
+                return ObjLav3.GetPassable(ta.index);
+            case IcnKind.OBJNLAV2:
+                return ObjLav2.GetPassable(ta.index);
+            case IcnKind.OBJNWAT2:
+                return ObjWat2.GetPassable(ta.index);
+            case IcnKind.OBJNWATR:
+                return ObjWatr.GetPassable(ta.index);
+
+            case IcnKind.OBJNTWBA:
+                return ObjTwba.GetPassable(ta.index);
+            case IcnKind.OBJNTOWN:
+                return ObjTown.GetPassable(ta.index);
+
+            case IcnKind.X_LOC1:
+                return ObjXlc1.GetPassable(ta.index);
+            case IcnKind.X_LOC2:
+                return ObjXlc2.GetPassable(ta.index);
+            case IcnKind.X_LOC3:
+                return ObjXlc3.GetPassable(ta.index);
+
+            // MANUAL.ICN
+            case IcnKind.TELEPORT1:
+            case IcnKind.TELEPORT2:
+            case IcnKind.TELEPORT3:
+            case IcnKind.FOUNTAIN:
+                return 0;
+
+            default:
+                break;
+        }
+
+        return Direction.DIRECTION_ALL;
+    }
 }

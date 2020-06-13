@@ -13,5 +13,14 @@ public class Addons {
         return "Addons[" + joined + ']';
     }
 
+    public void Remove(int uniq) {
+        Addons clean = new Addons();
+        for (var addon : _items) {
+            if (!addon.isUniq(uniq))
+                clean._items.add(addon);
+        }
+        _items = clean._items;
+    }
+
     public List<TilesAddon> _items = new ArrayList<>();
 }

@@ -15,4 +15,13 @@ public class Players {
         //TODO
         return 0;
     }
+
+    public int GetColors() {
+        return GetColors(0xFF, false);
+    }
+
+    public int GetColors(int control, boolean strong) {
+        //TODO
+        return 0;
+    }
 }
