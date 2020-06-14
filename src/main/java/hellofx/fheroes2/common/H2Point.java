@@ -36,4 +36,9 @@ public class H2Point {
     public String toString() {
         return "x=" + x + ", y=" + y;
     }
+
+    public void add(int ax, int ay) {
+        x += ax;
+        y += ay;
+    }
 }

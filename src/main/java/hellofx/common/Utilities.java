@@ -57,10 +57,11 @@ public class Utilities {
     }
 
     public static void timeIt(String message, Runnable action) {
-        var start = System.currentTimeMillis();
+        var start = System.nanoTime();
         action.run();
-        var end = System.currentTimeMillis();
-        System.out.println("Time to do " + message + " is in ms: " + (end - start));
+        var end = System.nanoTime();
+        var delta = (end - start) / 1000.0;
+        System.out.println("Time to do " + message + " is in ms: " + delta);
     }
 
     public static <T> void resizeList(List<T> list, int newSize, Supplier<T> creator) {

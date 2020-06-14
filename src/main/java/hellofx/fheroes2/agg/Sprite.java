@@ -6,4 +6,8 @@ public class Sprite extends SpritePos {
     public Sprite(Bitmap bitmap, int x, int y) {
         super(bitmap, new H2Point(x, y));
     }
+
+    public Sprite clone() {
+        return new Sprite(this, pos.x, pos.y);
+    }
 }

@@ -21,7 +21,6 @@ public class Painter {
     }
 
     public void drawImage(Image image, int x, int y) {
-        System.out.println("Paint: (" + x + "," + y + "): pic(" + (int) image.getWidth() + "," + (int) image.getHeight() + ")");
         gc.drawImage(image, x, y);
     }
 

@@ -672,14 +672,16 @@ public class Tiles {
 
             // draw first sprite
             int firstSpriteIndex = sprite_index * 9;
-            var sprite_first = Agg.GetICN(IcnKind.MINIMON, firstSpriteIndex);
+            var sprite_first = Agg.GetICN(IcnKind.MINIMON, firstSpriteIndex).clone();
+            sprite_first.pos.add(16, 16);
             /*area.BlitOnTile(dst, sprite_first, sprite_first.x() + 16, TILEWIDTH + sprite_first.y(), mp);*/
 
             // draw second sprite
 
             int secondSpriteIndex = sprite_index * 9 + 1 +
                     monster_animation_cicle[(Game.MapsAnimationFrame()) % monster_animation_cicle.length];
-            var sprite_next = Agg.GetICN(IcnKind.MINIMON, secondSpriteIndex);
+            var sprite_next = Agg.GetICN(IcnKind.MINIMON, secondSpriteIndex).clone();
+            sprite_next.pos.add(16, 16);
 
             return new Sprite[]{sprite_first, sprite_next};
         }

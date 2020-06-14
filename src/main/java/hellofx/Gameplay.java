@@ -22,6 +22,8 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
+import static hellofx.common.Utilities.timeIt;
+
 public class Gameplay {
     public MainContext ctx;
     public CanvasWrap canvasWrap;
@@ -74,8 +76,8 @@ public class Gameplay {
     void onFrameUpdate() {
         Game.nextFrame();
         idx += 1;
-        //gameArea.camera.left = (int) idx/ 2;
-        //gameArea.camera.top = (int) idx ;
+        gameArea.camera.left = (int) idx / 2;
+        gameArea.camera.top = (int) idx;
         var painter = canvasWrap.getPainter();
 
         painter.clear(Color.ROYALBLUE);
@@ -85,6 +87,8 @@ public class Gameplay {
 
         var rect = new H2Rect(0, 0, 109, 46);
 
-        gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
+        timeIt("frame painting", () -> {
+            gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
+        });
     }
 }

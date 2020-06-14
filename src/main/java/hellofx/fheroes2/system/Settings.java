@@ -23,7 +23,7 @@ public class Settings {
     BitModes opt_addons = new BitModes();
 
     int debug;
-    H2Size video_mode = new H2Size(1920, 1080);
+    H2Size video_mode = new H2Size(1680, 1050);
     boolean fullScreen;
     int game_difficulty;
 
