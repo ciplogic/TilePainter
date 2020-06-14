@@ -111,15 +111,8 @@ public class World {
         // width
         var mapHeight = fs.getLE32();
         switch (mapHeight) {
-            case MapSizeConsts.SMALL:
-            case MapSizeConsts.MEDIUM:
-            case MapSizeConsts.LARGE:
-            case MapSizeConsts.XLARGE:
-                this.h = (short) mapWidth;
-                break;
-            default:
-                this.h = 0;
-                break;
+            case MapSizeConsts.SMALL, MapSizeConsts.MEDIUM, MapSizeConsts.LARGE, MapSizeConsts.XLARGE -> this.h = (short) mapWidth;
+            default -> this.h = 0;
         }
         if (w == 0 || h == 0 || w != h)
             return false;
@@ -127,11 +120,7 @@ public class World {
         var addonCount = fs.getLE32();
         var vec_mp2addons = new ArrayList<Mp2Addon>(addonCount);
         IntStream.range(0, addonCount).forEach(
-                i -> {
-                    var addon = new Mp2Addon();
-                    addon.loadFromMp2Stream(fs);
-                    vec_mp2addons.add(addon);
-                }
+                i -> vec_mp2addons.add(Mp2Addon.loadFromMp2Stream(fs))
         );
         var endof_addons = fs.tell();
         fs.seek(MP2OFFSETDATA);
@@ -165,11 +154,6 @@ public class World {
                     }
 
                     var tile = vec_tiles[index];
-
-                    if (index == 1311) {
-                        //here
-                        int m = 5;
-                    }
 
                     tile.Init(index, mp2tile);
 
@@ -721,6 +705,7 @@ public class World {
         vec_rumors.add(
                 tr("You can load the newest version of game from a site:\n http://sf.net/projects/fheroes2"));
         vec_rumors.add(tr("This game is now in beta development version. ;)"));
+        WorldDump.toFile("world.txt", vec_tiles);
     }
 
     private void Defaults() {

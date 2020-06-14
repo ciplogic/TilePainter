@@ -14,15 +14,17 @@ public class Mp2Addon {
     public int uniqNumberN1; // level 1.N
     public int uniqNumberN2; // level 2.N
 
-    public void loadFromMp2Stream(ByteVectorReader fs) {
-        indexAddon = (short) fs.getLE16();
-        objectNameN1 = (byte) (fs.get() * 2);
-        indexNameN1 = (byte) fs.get();
-        quantityN = (byte) fs.get();
-        objectNameN2 = (byte) fs.get();
-        indexNameN2 = (byte) fs.get();
-        uniqNumberN1 = fs.getLE32();
-        uniqNumberN2 = fs.getLE32();
+    public static Mp2Addon loadFromMp2Stream(ByteVectorReader fs) {
+        var res = new Mp2Addon();
+        res.indexAddon = (short) fs.getLE16();
+        res.objectNameN1 = (byte) (fs.get() * 2);
+        res.indexNameN1 = (byte) fs.get();
+        res.quantityN = (byte) fs.get();
+        res.objectNameN2 = (byte) fs.get();
+        res.indexNameN2 = (byte) fs.get();
+        res.uniqNumberN1 = fs.getLE32();
+        res.uniqNumberN2 = fs.getLE32();
+        return res;
     }
 
     @Override
