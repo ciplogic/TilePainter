@@ -5,6 +5,7 @@ import hellofx.fheroes2.common.H2Size;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.maps.MapsIndexes;
+import hellofx.fheroes2.maps.Mp2Kind;
 
 public class Maps {
 
@@ -109,7 +110,32 @@ public class Maps {
         return index > 0 && (index < (world.w * world.h));
     }
 
-    public static void MinimizeAreaForCastle(H2Point getCenter) {
+    public static void MinimizeAreaForCastle(H2Point center) {
+        var world = World.Instance;
+        // reset castle ID
+        for (var yy = -3; yy < 2; ++yy)
+            for (var xx = -2; xx < 3; ++xx) {
+                var tile = world.GetTiles(center.x + xx, center.y + yy);
+
+                if (Mp2Kind.OBJN_RNDCASTLE == tile.GetObject() ||
+                        Mp2Kind.OBJN_RNDTOWN == tile.GetObject() ||
+                        Mp2Kind.OBJN_CASTLE == tile.GetObject())
+                    tile.SetObject(Mp2Kind.OBJ_ZERO);
+            }
+
+        // set minimum area castle ID
+        for (var yy = -1; yy < 1; ++yy)
+            for (var xx = -2; xx < 3; ++xx) {
+                var tile = world.GetTiles(center.x + xx, center.y + yy);
+
+                // skip angle
+                if (yy == -1 && (xx == -2 || xx == 2)) continue;
+
+                tile.SetObject(Mp2Kind.OBJN_CASTLE);
+            }
+
+        // restore center ID
+        world.GetTiles(center.x, center.y).SetObject(Mp2Kind.OBJ_CASTLE);
     }
 
     public static void UpdateRNDSpriteForCastle(H2Point center, int race, boolean isCastle) {

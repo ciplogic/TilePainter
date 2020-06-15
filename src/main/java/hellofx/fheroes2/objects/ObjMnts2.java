@@ -16,7 +16,7 @@ public class ObjMnts2 {
             68, 72, 75, 79, 82, 85, 89, 92, 95, 98, 101, 104, 105, 109, 110
     };
 
-    public static int GetPassable(int icn, byte index) {
+    public static int GetPassable(int icn, int index) {
 
         if (isShadow(index)) return Direction.DIRECTION_ALL;
         // fix: disable passable: invalid top sprite

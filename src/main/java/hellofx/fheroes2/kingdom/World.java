@@ -133,7 +133,6 @@ public class World {
         IntStream.range(0, w * h)
                 .forEach(index -> {
                     var mp2tile = new Mp2Tile();
-
                     // offset first addon
                     var offsetAddonsBlock = mp2tile.loadFromMp2Stream(fs);
 
@@ -155,7 +154,11 @@ public class World {
 
                     var tile = vec_tiles[index];
 
+                    if (index == 1502) {
+                        System.out.println("Here");
+                    }
                     tile.Init(index, mp2tile);
+
 
                     // load all addon for current tile
                     while (offsetAddonsBlock != 0) {
@@ -471,6 +474,7 @@ public class World {
             else {
             }
         }
+
         WorldDump.toFile("b4out.json", vec_tiles);
         PostLoad();
         WorldDump.toFile("out.json", vec_tiles);
@@ -708,7 +712,6 @@ public class World {
         vec_rumors.add(
                 tr("You can load the newest version of game from a site:\n http://sf.net/projects/fheroes2"));
         vec_rumors.add(tr("This game is now in beta development version. ;)"));
-        WorldDump.toFile("world.txt", vec_tiles);
     }
 
     private void Defaults() {

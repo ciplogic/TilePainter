@@ -150,8 +150,32 @@ public class Tiles {
     }
 
     static boolean isStream(TilesAddon ta) {
-        return IcnKind.STREAM == Mp2.GetICNObject(ta.object) ||
-                (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && ta.index < 14);
+        return IcnKind.STREAM == Mp2.GetICNObject(ta.getObject()) ||
+                (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() < 14);
+    }
+
+    boolean isLongObject(int direction) {
+        var world = World.Instance;
+        var wSize = new H2Size(world.w, world.h);
+        if (!isValidDirection(GetIndex(), direction, wSize)) {
+            return false;
+        }
+        var tile = world.GetTiles(GetDirectionIndex(GetIndex(), direction));
+
+        for (var it : addons_level1._items) {
+            if (!Exclude4LongObject(it) &&
+                    (HaveLongObjectUniq(tile.addons_level1, it.uniq) ||
+                            (!TilesAddon.isTrees(it) && HaveLongObjectUniq(tile.addons_level2, it.uniq)))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    boolean HaveLongObjectUniq(Addons level, int uid) {
+        for (var it : level._items)
+            if (!Exclude4LongObject(it) && it.isUniq(uid)) return true;
+        return false;
     }
 
     static boolean Exclude4LongObject(TilesAddon ta) {
@@ -191,7 +215,7 @@ public class Tiles {
     }
 
     public void AddonsSort() {
-        addons_level1._items.sort((ta1, ta2) -> PredicateSortRules(ta1, ta2));
+        addons_level1._items.sort(Tiles::PredicateSortRules);
         addons_level2._items.sort((ta1, ta2) -> -PredicateSortRules(ta1, ta2));
     }
 
@@ -248,150 +272,150 @@ public class Tiles {
 
 
     boolean isRoad(TilesAddon ta) {
-        return IcnKind.ROAD == Mp2.GetICNObject(ta.object);
+        return IcnKind.ROAD == Mp2.GetICNObject(ta.getObject());
     }
 
     boolean isWaterResource(TilesAddon ta) {
-        return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.object) &&
-                (0 == ta.index || // buttle
-                        19 == ta.index || // chest
-                        45 == ta.index || // flotsam
-                        111 == ta.index) // surviror
+        return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.getObject()) &&
+                (0 == ta.getIndex() || // buttle
+                        19 == ta.getIndex() || // chest
+                        45 == ta.getIndex() || // flotsam
+                        111 == ta.getIndex()) // surviror
                 ;
     }
 
     boolean isWhirlPool(TilesAddon ta) {
-        return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.object) &&
-                (toByte(ta.index) >= 202 && toByte(ta.index) <= 225);
+        return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.getObject()) &&
+                (ta.getIndex() >= 202 && ta.getIndex() <= 225);
     }
 
     boolean isStandingStone(TilesAddon ta) {
-        return IcnKind.OBJNMULT == Mp2.GetICNObject(ta.object) &&
-                (ta.index == 84 || ta.index == 85);
+        return IcnKind.OBJNMULT == Mp2.GetICNObject(ta.getObject()) &&
+                (ta.getIndex() == 84 || ta.getIndex() == 85);
     }
 
     boolean isResource(TilesAddon ta) {
         // OBJNRSRC
-        return (IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.object) && ((ta.index % 2) != 0)) ||
+        return (IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.getObject()) && ((ta.getIndex() % 2) != 0)) ||
                 // TREASURE
-                IcnKind.TREASURE == Mp2.GetICNObject(ta.object);
+                IcnKind.TREASURE == Mp2.GetICNObject(ta.getObject());
     }
 
     boolean isRandomResource(TilesAddon ta) {
         // OBJNRSRC
-        return IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.object) && 17 == ta.index;
+        return IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.getObject()) && 17 == ta.getIndex();
     }
 
     boolean isArtifact(TilesAddon ta) {
         // OBJNARTI (skip ultimate)
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && ta.index > 0x10 && ((ta.index % 2) != 0);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() > 0x10 && ((ta.getIndex() % 2) != 0);
     }
 
     boolean isRandomArtifact(TilesAddon ta) {
         // OBJNARTI
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA3 == toByte(ta.index);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && 0xA3 == ta.getIndex();
     }
 
     boolean isRandomArtifact1(TilesAddon ta) {
         // OBJNARTI
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA7 == toByte(ta.index);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && 0xA7 == ta.getIndex();
     }
 
     boolean isRandomArtifact2(TilesAddon ta) {
         // OBJNARTI
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA9 == toByte(ta.index);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && 0xA9 == ta.getIndex();
     }
 
     boolean isRandomArtifact3(TilesAddon ta) {
         // OBJNARTI
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xAB == toByte(ta.index);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && 0xAB == ta.getIndex();
     }
 
     boolean isUltimateArtifact(TilesAddon ta) {
         // OBJNARTI
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.object) && 0xA4 == toByte(ta.index);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && 0xA4 == ta.getIndex();
     }
 
     boolean isCampFire(TilesAddon ta) {
         // MTNDSRT
-        return (IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) && 61 == ta.index) ||
+        return (IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.getObject()) && 61 == ta.getIndex()) ||
                 // OBJNMULT
-                (IcnKind.OBJNMULT == Mp2.GetICNObject(ta.object) && 131 == toByte(ta.index)) ||
+                (IcnKind.OBJNMULT == Mp2.GetICNObject(ta.getObject()) && 131 == ta.getIndex()) ||
                 // OBJNSNOW
-                (IcnKind.OBJNSNOW == Mp2.GetICNObject(ta.object) && 4 == ta.index);
+                (IcnKind.OBJNSNOW == Mp2.GetICNObject(ta.getObject()) && 4 == ta.getIndex());
     }
 
     boolean isMonster(TilesAddon ta) {
         // MONS32
-        return IcnKind.MONS32 == Mp2.GetICNObject(ta.object);
+        return IcnKind.MONS32 == Mp2.GetICNObject(ta.getObject());
     }
 
     boolean isArtesianSpring(TilesAddon ta) {
-        return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.object) &&
-                (ta.index == 3 || ta.index == 4);
+        return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.getObject()) &&
+                (ta.getIndex() == 3 || ta.getIndex() == 4);
     }
 
     boolean isSkeleton(TilesAddon ta) {
-        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) && ta.index == 84;
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() == 84;
     }
 
     boolean isSkeletonFix(TilesAddon ta) {
-        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) && ta.index == 83;
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() == 83;
     }
 
     boolean isOasis(TilesAddon ta) {
-        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.object) &&
-                (ta.index == 108 || ta.index == 109);
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.getObject()) &&
+                (ta.getIndex() == 108 || ta.getIndex() == 109);
     }
 
     boolean isWateringHole(TilesAddon ta) {
-        return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.object) &&
-                (toByte(ta.index) >= 217 && toByte(ta.index) <= 220);
+        return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.getObject()) &&
+                (ta.getIndex() >= 217 && ta.getIndex() <= 220);
     }
 
     boolean isJail(TilesAddon ta) {
-        return IcnKind.X_LOC2 == Mp2.GetICNObject(ta.object) && 0x09 == ta.index;
+        return IcnKind.X_LOC2 == Mp2.GetICNObject(ta.getObject()) && 0x09 == ta.getIndex();
     }
 
     boolean isEvent(TilesAddon ta) {
         // OBJNMUL2
-        return IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && 0xA3 == toByte(ta.index);
+        return IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.getObject()) && 0xA3 == ta.getIndex();
     }
 
     boolean isMine(TilesAddon ta) {
         // EXTRAOVR
-        return IcnKind.EXTRAOVR == Mp2.GetICNObject(ta.object);
+        return IcnKind.EXTRAOVR == Mp2.GetICNObject(ta.getObject());
     }
 
     boolean isBoat(TilesAddon ta) {
         // OBJNWAT2
-        return IcnKind.OBJNWAT2 == Mp2.GetICNObject(ta.object) && 0x17 == ta.index;
+        return IcnKind.OBJNWAT2 == Mp2.GetICNObject(ta.getObject()) && 0x17 == ta.getIndex();
     }
 
     boolean isMiniHero(TilesAddon ta) {
         // MINIHERO
-        return IcnKind.MINIHERO == Mp2.GetICNObject(ta.object);
+        return IcnKind.MINIHERO == Mp2.GetICNObject(ta.getObject());
     }
 
     boolean isCastle(TilesAddon ta) {
         // OBJNTOWN
-        return IcnKind.OBJNTOWN == Mp2.GetICNObject(ta.object);
+        return IcnKind.OBJNTOWN == Mp2.GetICNObject(ta.getObject());
     }
 
     boolean isRandomCastle(TilesAddon ta) {
         // OBJNTWRD
-        return IcnKind.OBJNTWRD == Mp2.GetICNObject(ta.object) && 32 > toByte(ta.index);
+        return IcnKind.OBJNTWRD == Mp2.GetICNObject(ta.getObject()) && 32 > ta.getIndex();
     }
 
     boolean isRandomMonster(TilesAddon ta) {
         // MONS32
-        return IcnKind.MONS32 == Mp2.GetICNObject(ta.object) &&
-                (0x41 < toByte(ta.index) && 0x47 > toByte(ta.index));
+        return IcnKind.MONS32 == Mp2.GetICNObject(ta.getObject()) &&
+                (0x41 < ta.getIndex() && 0x47 > ta.getIndex());
     }
 
     boolean isBarrier(TilesAddon ta) {
-        return IcnKind.X_LOC3 == Mp2.GetICNObject(ta.object) &&
-                60 <= ta.index && 102 >= ta.index && 0 == toByte(ta.index) % 6;
+        return IcnKind.X_LOC3 == Mp2.GetICNObject(ta.getObject()) &&
+                60 <= ta.getIndex() && 102 >= ta.getIndex() && 0 == ta.getIndex() % 6;
     }
 
     TilesAddon find_if_reverse(List<TilesAddon> addons, Predicate<TilesAddon> isFound) {
@@ -543,8 +567,8 @@ public class Tiles {
                     FindObjectConst(GetObject()) == it)
                 continue;
 
-            var object = toByte(it.object);
-            var index = toByte(it.index);
+            var object = it.getObject();
+            var index = it.getIndex();
             var icn = Mp2.GetICNObject(object);
 
             if (IcnKind.UNKNOWN == icn || IcnKind.MINIHERO == icn || IcnKind.MONS32 == icn)
@@ -814,7 +838,7 @@ public class Tiles {
         var addon = tile.FindObject(Mp2Kind.OBJ_RNDRESOURCE);
 
         if (addon == null) return;
-        addon.index = (byte) Resource.GetIndexSprite(Resource.Rand());
+        addon.setIndex(Resource.GetIndexSprite(Resource.Rand()));
         tile.SetObject(Mp2Kind.OBJ_RESOURCE);
 
         var world = World.Instance;
@@ -826,7 +850,7 @@ public class Tiles {
         var shadow = left_tile.FindAddonLevel1(addon.uniq);
 
         if (shadow != null) {
-            shadow.index = (byte) (addon.index - 1);
+            shadow.setIndex((byte) (addon.getIndex() - 1));
         }
     }
 
@@ -895,7 +919,7 @@ public class Tiles {
         }
         if (addon == null)
             return;
-        addon.index = (byte) index;
+        addon.setIndex(index);
         tile.SetObject(Mp2Kind.OBJ_ARTIFACT);
 
         H2Size wSize = new H2Size(world.w, world.h);
@@ -905,7 +929,7 @@ public class Tiles {
         var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
         TilesAddon shadow = left_tile.FindAddonLevel1(addon.uniq);
 
-        if (shadow != null) shadow.index = (byte) (index - 1);
+        if (shadow != null) shadow.setIndex((byte) (index - 1));
     }
 
     private TilesAddon FindAddonLevel1(int uniq) {
@@ -923,7 +947,7 @@ public class Tiles {
             TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_MONSTER);
 
             if (addon != null)
-                mons = new Monster(addon.index + 1).id; // ICN.MONS32 start from PEASANT
+                mons = new Monster(addon.getIndex() + 1).id; // ICN.MONS32 start from PEASANT
         } else {
             TilesAddon addon = tile.FindObject(Mp2Kind.OBJ_RNDMONSTER);
 
@@ -951,7 +975,7 @@ public class Tiles {
             tile.SetObject(Mp2Kind.OBJ_MONSTER);
 
             if (addon != null)
-                addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
+                addon.setIndex((byte) (mons - 1)); // ICN.MONS32 start from PEASANT
         }
 
         var count = 0;
@@ -1027,9 +1051,9 @@ public class Tiles {
         if (addon == null) {
             // add new sprite
             tile.AddonsPushLevel1(new TilesAddon(TilesAddonLevel.UPPER, World.Instance.GetUniq(), 0x33, monster.GetSpriteIndex()));
-        } else if (toByte(addon.index) != mons - 1) {
+        } else if (addon.getIndex() != mons - 1) {
             // fixed sprite
-            addon.index = (byte) (mons - 1); // ICN.MONS32 start from PEASANT
+            addon.setIndex(mons - 1); // ICN.MONS32 start from PEASANT
         }
     }
 
@@ -1333,7 +1357,7 @@ public class Tiles {
             case Mp2Kind.OBJ_ARTIFACT: {
                 TilesAddon addon = FindObject(Mp2Kind.OBJ_ARTIFACT);
                 if (addon != null) {
-                    int art = Artifact.FromMP2IndexSprite(addon.index).GetID();
+                    int art = Artifact.FromMP2IndexSprite(addon.getIndex()).GetID();
 
                     if (ArtifactKind.UNKNOWN != art) {
                         if (art == ArtifactKind.SPELL_SCROLL) {
@@ -1366,7 +1390,7 @@ public class Tiles {
             case Mp2Kind.OBJ_RESOURCE: {
                 TilesAddon addon = FindObject(Mp2Kind.OBJ_RESOURCE);
                 if (addon != null) {
-                    int res = Resource.FromIndexSprite(addon.index);
+                    int res = Resource.FromIndexSprite(addon.getIndex());
                     var count = 0;
 
                     switch (res) {
@@ -1627,7 +1651,7 @@ public class Tiles {
             case Mp2Kind.OBJ_MINES: {
                 TilesAddon addon = FindObject(Mp2Kind.OBJ_MINES);
                 if (addon != null)
-                    switch (addon.index) {
+                    switch (addon.getIndex()) {
                         case 0:
                             QuantitySetResource(ResourceKind.ORE, 2);
                             break;
@@ -1888,7 +1912,7 @@ public class Tiles {
         var world = World.Instance;
         // replace flag
         if (taddon != null)
-            taddon.index = (byte) index;
+            taddon.setIndex(index);
         else if (up)
             // or new flag
             addons_level2._items.add(new TilesAddon(TilesAddonLevel.UPPER, world.GetUniq(), 0x38, index));
@@ -1899,7 +1923,7 @@ public class Tiles {
 
 
     boolean isFlag32(TilesAddon ta) {
-        return IcnKind.FLAG32 == Mp2.GetICNObject(ta.object);
+        return IcnKind.FLAG32 == Mp2.GetICNObject(ta.getObject());
     }
 
     private TilesAddon FindFlags() {
@@ -2021,28 +2045,22 @@ public class Tiles {
         // fix corners
         if (isValidDirection(GetIndex(), Direction.LEFT, wSize)) {
             var left = world.GetTiles(GetDirectionIndex(GetIndex(), Direction.LEFT));
-/*
-//TODO
 
             // left corner
-            if (left.tile_passable &&
+            if (left.tile_passable != 0 &&
                     isLongObject(Direction.TOP) &&
-                    !((Direction.TOP | Direction.TOP_LEFT) & tile_passable) &&
-                    Direction.TOP_RIGHT & left.tile_passable)
-            {
+                    (((Direction.TOP | Direction.TOP_LEFT) & tile_passable) != 0) &&
+                    ((Direction.TOP_RIGHT & left.tile_passable) != 0)) {
                 left.tile_passable &= ~Direction.TOP_RIGHT;
-            }
-            else
+            } else
                 // right corner
-                if (tile_passable &&
+                if (tile_passable != 0 &&
                         left.isLongObject(Direction.TOP) &&
-                        !((Direction.TOP | Direction.TOP_RIGHT) & left.tile_passable) &&
-                        Direction.TOP_LEFT & tile_passable)
-                {
+                        (((Direction.TOP | Direction.TOP_RIGHT) & left.tile_passable) != 0) &&
+                        ((Direction.TOP_LEFT & tile_passable) != 0)) {
                     tile_passable &= ~Direction.TOP_LEFT;
                 }
 
- */
         }
 
 

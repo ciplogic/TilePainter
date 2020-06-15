@@ -21,7 +21,7 @@ public class Resource {
         return Rand(false);
     }
 
-    public static int FromIndexSprite(byte index) {
+    public static int FromIndexSprite(int index) {
         return switch (index) {
             case 1 -> ResourceKind.WOOD;
             case 3 -> ResourceKind.MERCURY;

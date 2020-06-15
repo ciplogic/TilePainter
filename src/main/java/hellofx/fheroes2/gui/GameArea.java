@@ -37,9 +37,9 @@ public class GameArea {
             }
         }
         for (int stepX = 0; stepX < rt.w; ++stepX) {
-            var ox = rt.x + rectMaps.x + stepX;
+            var ox = tileX + stepX;
             for (int stepY = 0; stepY < rt.h; ++stepY) {
-                var oy = rt.y + rectMaps.y + stepY;
+                var oy = tileY + stepY;
                 var currentTile = world.GetTiles(ox, oy);
                 if (currentTile == null)
                     continue;

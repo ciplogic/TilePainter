@@ -4,7 +4,13 @@ import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.system.Settings;
 
+import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+
 public class Mp2 {
+    public static int GetICNObject(byte type) {
+        return GetICNObject(toByte(type));
+    }
+
     public static int GetICNObject(int type) {
         switch (type) {
             // reserverd
