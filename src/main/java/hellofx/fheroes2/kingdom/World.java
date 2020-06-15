@@ -157,14 +157,15 @@ public class World {
 
                     tile.Init(index, mp2tile);
 
-                    // load all addon for current tils
+                    // load all addon for current tile
                     while (offsetAddonsBlock != 0) {
                         if (vec_mp2addons.size() <= offsetAddonsBlock) {
                             break;
                         }
-                        tile.AddonsPushLevel1(vec_mp2addons.get(offsetAddonsBlock));
-                        tile.AddonsPushLevel2(vec_mp2addons.get(offsetAddonsBlock));
-                        offsetAddonsBlock = vec_mp2addons.get(offsetAddonsBlock).indexAddon;
+                        Mp2Addon mp2Addon = vec_mp2addons.get(offsetAddonsBlock);
+                        tile.AddonsPushLevel1(mp2Addon);
+                        tile.AddonsPushLevel2(mp2Addon);
+                        offsetAddonsBlock = mp2Addon.indexAddon;
                     }
 
                     tile.AddonsSort();
@@ -470,7 +471,9 @@ public class World {
             else {
             }
         }
+        WorldDump.toFile("b4out.json", vec_tiles);
         PostLoad();
+        WorldDump.toFile("out.json", vec_tiles);
         return true;
     }
 

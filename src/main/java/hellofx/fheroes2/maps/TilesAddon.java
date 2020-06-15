@@ -7,6 +7,8 @@ import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.objects.*;
 
+import static hellofx.fheroes2.kingdom.WorldDump.writeField;
+import static hellofx.fheroes2.kingdom.WorldDump.writeFieldBare;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class TilesAddon {
@@ -423,5 +425,17 @@ public class TilesAddon {
         }
 
         return Direction.DIRECTION_ALL;
+    }
+
+    public String toJsonRow() {
+        var sb = new StringBuilder();
+        sb.append("{");
+        writeField(sb, "uniq", uniq);
+        writeField(sb, "level", toByte(level));
+        writeField(sb, "object", toByte(object));
+        writeFieldBare(sb, "index", toByte(index));
+
+        sb.append("}");
+        return sb.toString();
     }
 }

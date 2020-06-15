@@ -29,14 +29,18 @@ import hellofx.fheroes2.spell.SpellKind;
 import hellofx.fheroes2.system.Settings;
 import hellofx.framework.controls.Painter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static hellofx.common.Utilities.find_if;
 import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
+import static hellofx.fheroes2.kingdom.WorldDump.writeField;
+import static hellofx.fheroes2.kingdom.WorldDump.writeFieldBare;
 import static hellofx.fheroes2.maps.objects.Maps.GetDirectionIndex;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
+
 
 public class Tiles {
     public Addons addons_level1 = new Addons();
@@ -53,6 +57,30 @@ public class Tiles {
     public int maps_y;
 
     private final static int[] monster_animation_cicle = new int[]{0, 1, 2, 1, 0, 3, 4, 5, 4, 3};
+
+    static int PredicateSortRules(TilesAddon ta1, TilesAddon ta2) {
+        var level1 = toByte(ta1.level) % 4;
+        var level2 = toByte(ta2.level) % 4;
+        if (level1 == level2)
+            return 0;
+        return level1 > level2 ? -1 : 1;
+    }
+
+    public String toJsonRow() {
+        var sb = new StringBuilder();
+        sb.append("{");
+        writeField(sb, "maps_index", maps_index);
+        writeField(sb, "quantity1", toByte(quantity1));
+        writeField(sb, "quantity2", toByte(quantity2));
+        writeField(sb, "quantity3", toByte(quantity3));
+        writeField(sb, "pack_sprite_index", toUShort(pack_sprite_index));
+
+        writeAddons(sb, "addons_level1", addons_level1);
+        writeAddons(sb, "addons_level2", addons_level2);
+        writeFieldBare(sb, "mp2_object", toByte(mp2_object));
+        sb.append("}");
+        return sb.toString();
+    }
 
     public void FixedPreload() {
         var tile = this;
@@ -112,9 +140,13 @@ public class Tiles {
             AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber1, mp2.objectName1, mp2.indexName1));
     }
 
-    private void AddonsPushLevel2(Mp2Tile mp2) {
-        if (mp2.objectName2 != 0 && toByte(mp2.indexName2) < 0xFF)
-            AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber2, mp2.objectName2, mp2.indexName2));
+    private void writeAddons(StringBuilder sb, String name, Addons addons) {
+        var strings = new ArrayList<String>();
+        for (var a : addons._items) {
+            strings.add(a.toJsonRow());
+        }
+        String builtArray = "[" + String.join(",", strings) + "]";
+        writeField(sb, name, builtArray);
     }
 
     static boolean isStream(TilesAddon ta) {
@@ -153,13 +185,9 @@ public class Tiles {
         return shape << 14 | 0x3FFF & index;
     }
 
-
-    static int PredicateSortRules(TilesAddon ta1, TilesAddon ta2) {
-        var level1 = ta1.level % 4;
-        var level2 = ta2.level % 4;
-        if (level1 == level2)
-            return 0;
-        return level1 > level2 ? -1 : 1;
+    private void AddonsPushLevel2(Mp2Tile mp2) {
+        if (mp2.objectName2 != 0 && toByte(mp2.indexName2) < 0xFF)
+            AddonsPushLevel2(new TilesAddon(0, mp2.uniqNumber2, mp2.objectName2, mp2.indexName2));
     }
 
     public void AddonsSort() {

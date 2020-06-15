@@ -8,6 +8,7 @@ public class Sprite extends SpritePos {
     }
 
     public Sprite clone() {
-        return new Sprite(this, pos.x, pos.y);
+        Sprite res = new Sprite(this, pos.x, pos.y);
+        return res;
     }
 }

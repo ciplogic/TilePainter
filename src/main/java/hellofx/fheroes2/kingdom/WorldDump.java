@@ -8,14 +8,24 @@ public class WorldDump {
         var sb = new StringBuilder();
         sb.append("[");
         for (var tile : vec_tiles) {
-            String tileAsText = vecToRow(tile);
+            String tileAsText = tile.toJsonRow();
             sb.append(tileAsText).append(",\n");
         }
+        sb.append("]");
 
         FileUtils.writeFile(fileName, sb.toString().getBytes());
     }
 
-    private static String vecToRow(Tiles tile) {
-        return tile.toString();
+    public static void writeField(StringBuilder sb, String field, String value) {
+        sb.append("\"").append(field).append("\": ").append(value).append(",");
+    }
+
+    public static void writeField(StringBuilder sb, String field, int value) {
+        writeFieldBare(sb, field, value);
+        sb.append(",");
+    }
+
+    public static void writeFieldBare(StringBuilder sb, String field, int value) {
+        sb.append("\"").append(field).append("\": ").append(value);
     }
 }

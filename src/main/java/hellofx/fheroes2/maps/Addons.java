@@ -14,12 +14,13 @@ public class Addons {
     }
 
     public void Remove(int uniq) {
-        Addons clean = new Addons();
+        var clean = new ArrayList<TilesAddon>();
         for (var addon : _items) {
             if (!addon.isUniq(uniq))
-                clean._items.add(addon);
+                clean.add(addon);
         }
-        _items = clean._items;
+        clean.trimToSize();
+        _items = clean;
     }
 
     public List<TilesAddon> _items = new ArrayList<>();
