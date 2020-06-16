@@ -5,6 +5,7 @@ import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
+import hellofx.fheroes2.heroes.HeroBase;
 import hellofx.fheroes2.heroes.HeroType;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.RaceKind;
@@ -287,7 +288,33 @@ public class Castle {
     }
 
     private void EducateHeroes() {
+        // for learns new spells need 1 day
+        if (GetLevelMageGuild() == 0)
+            return;
+        var world = World.Instance;
+        CastleHeroes heroes = world.GetHeroes(this);
+
+        if (heroes.FullHouse()) {
+            MageGuildEducateHero(heroes.Guest());
+            MageGuildEducateHero(heroes.Guard());
+        } else if (heroes.IsValid())
+            MageGuildEducateHero(heroes.GuestFirst());
+
+        // captain
+        if (captain.isValid()) MageGuildEducateHero(captain);
+    }
+
+    private void MageGuildEducateHero(HeroBase hero) {
         //TODO
+    }
+
+    private int GetLevelMageGuild() {
+        if ((building & BuildingKind.BUILD_MAGEGUILD5) != 0) return 5;
+        if ((building & BuildingKind.BUILD_MAGEGUILD4) != 0) return 4;
+        if ((building & BuildingKind.BUILD_MAGEGUILD3) != 0) return 3;
+        if ((building & BuildingKind.BUILD_MAGEGUILD2) != 0) return 2;
+        if ((building & BuildingKind.BUILD_MAGEGUILD1) != 0) return 1;
+        return 0;
     }
 
     private void SetColor(int col) {
@@ -303,11 +330,15 @@ public class Castle {
     }
 
     public boolean isCastle() {
-        return (building & BUILD_CASTLE) != 0;
+        return (building & BuildingKind.BUILD_CASTLE) != 0;
     }
 
     public void ChangeColor(int cl) {
         SetColor(cl);
         army.SetColor(cl);
+    }
+
+    public boolean isBuild(int buildToCheck) {
+        return (building & buildToCheck) != 0;
     }
 }

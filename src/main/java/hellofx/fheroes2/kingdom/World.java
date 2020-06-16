@@ -3,6 +3,7 @@ package hellofx.fheroes2.kingdom;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.castle.AllCastles;
 import hellofx.fheroes2.castle.Castle;
+import hellofx.fheroes2.castle.CastleHeroes;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.GameStatic;
@@ -385,5 +386,10 @@ public class World {
 
     public Week GetWeekType() {
         return week_current;
+    }
+
+    public CastleHeroes GetHeroes(Castle castle) {
+        //TODO
+        return new CastleHeroes();
     }
 }

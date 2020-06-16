@@ -21,4 +21,8 @@ public class Captain extends HeroBase {
     public int GetRace() {
         return home.GetRace();
     }
+
+    public boolean isValid() {
+        return home.isBuild(BuildingKind.BUILD_CAPTAIN);
+    }
 }
