@@ -8,6 +8,9 @@ import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.maps.FileInfo;
+import hellofx.fheroes2.system.Players;
+import hellofx.fheroes2.system.Settings;
 import hellofx.framework.GamePreferences;
 import hellofx.framework.MainContext;
 import hellofx.framework.controls.CanvasWrap;
@@ -43,6 +46,12 @@ public class HelloFx extends Application {
         context.inject(GameArea.class);
 
         var engine = context.inject(Engine.class);
+        var conf = Settings.Get();
+        Players players = conf.GetPlayers();
+        var fileInfo = new FileInfo();
+        fileInfo.ReadMP2("MAPS/BROKENA.MP2");
+        players.Init(fileInfo);
+        players.SetStartGame();
 
         var world = World.Instance;
         world.loadMapMp2("MAPS/BROKENA.MP2");

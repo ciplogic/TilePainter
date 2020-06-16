@@ -56,6 +56,10 @@ public class Utilities {
         root.setBackground(new Background(new BackgroundFill(color, null, null)));
     }
 
+    public static void writeTodo(String message) {
+        System.out.println("TODO: " + message);
+    }
+
     public static void timeIt(String message, Runnable action) {
         var start = System.nanoTime();
         action.run();

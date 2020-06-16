@@ -3,7 +3,7 @@ package hellofx.fheroes2.kingdom;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 public class H2Colors {
-    IntArrayList _items = new IntArrayList();
+    public IntArrayList _items = new IntArrayList();
 
     public H2Colors(int colors) {
 

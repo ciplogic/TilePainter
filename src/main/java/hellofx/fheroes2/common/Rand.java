@@ -4,12 +4,21 @@ import hellofx.fheroes2.spell.Spell;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Rand {
+    static int vrand = 0;
     public static int Get(int min, int max) {
+        if (min > max)
+            return Get(max, min);
+        //TODO: fix to lock the seed
+        ++vrand;
+        int delta = max - min + 1;
+
+        return vrand % delta;
+        /*
         int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
         return randomNum;
+         */
     }
 
     public static boolean GetBool() {

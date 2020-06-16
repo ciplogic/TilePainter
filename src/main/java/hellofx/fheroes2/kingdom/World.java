@@ -475,9 +475,10 @@ public class World {
             }
         }
 
-        WorldDump.toFile("b4out.json", vec_tiles);
+        WorldDump.toFile("tiles_java_b4.json", vec_tiles);
         PostLoad();
-        WorldDump.toFile("out.json", vec_tiles);
+        WorldDump.toFile("tiles_java.json", vec_tiles);
+        //System.exit(0);
         return true;
     }
 

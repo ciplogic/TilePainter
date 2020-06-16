@@ -123,4 +123,8 @@ public class Settings {
     public Players GetPlayers() {
         return players;
     }
+
+    public boolean GameType(int f) {
+        return (game_type & f) != 0;
+    }
 }
