@@ -85,14 +85,16 @@ public class World {
     }
 
     void PostLoad() {
+
         // modify other objects
-        for (var ii = 0; ii < vec_tiles.length; ++ii) {
-            var tile = vec_tiles[ii];
+        for (Tiles tile : vec_tiles) {
+            tile.Refresh();
 
             tile.FixedPreload();
 
             //
-            switch (tile.GetObject()) {
+            int tileObject = tile.GetObject();
+            switch (tileObject) {
                 case Mp2Kind.OBJ_WITCHSHUT:
                 case Mp2Kind.OBJ_SHRINE1:
                 case Mp2Kind.OBJ_SHRINE2:

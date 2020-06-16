@@ -78,6 +78,7 @@ public class WorldLoad {
             _this.vec_tiles[i] = new Tiles();
         });
 
+        var importantAddon = _this.vec_tiles[421];
         IntStream.range(0, _this.w * _this.h)
                 .forEach(index -> {
                     var mp2tile = new Mp2Tile();
@@ -125,7 +126,6 @@ public class WorldLoad {
 
         // after addons
         fs.seek(endof_addons);
-
         // cood castles
         // 72 x 3 byte (cx, cy, id)
         for (int ii = 0; ii < 72; ++ii) {
@@ -265,6 +265,10 @@ public class WorldLoad {
             }
 
             if (0 <= findobject) {
+
+                if (findobject == 421) {
+                    int f = 0;
+                }
                 var tile = _this.vec_tiles[findobject];
                 TilesAddon addon;
 
@@ -419,11 +423,10 @@ public class WorldLoad {
             else {
             }
         }
+        WorldDump.toFile("tiles_b4.json", _this.vec_tiles);
 
-        WorldDump.toFile("tiles_java_b4.json", _this.vec_tiles);
         _this.PostLoad();
-        WorldDump.toFile("tiles_java.json", _this.vec_tiles);
-        //System.exit(0);
+        WorldDump.toFile("tiles.json", _this.vec_tiles);
         return true;
     }
 }

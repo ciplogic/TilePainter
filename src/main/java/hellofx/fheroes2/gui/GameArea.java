@@ -2,6 +2,7 @@ package hellofx.fheroes2.gui;
 
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.Bitmap;
+import hellofx.fheroes2.agg.Sprite;
 import hellofx.fheroes2.agg.TilKind;
 import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.heroes.Heroes;
@@ -10,6 +11,8 @@ import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.maps.Tiles;
 import hellofx.fheroes2.system.Players;
 import hellofx.framework.controls.Painter;
+
+import java.util.ArrayList;
 
 import static hellofx.fheroes2.game.GameConsts.TILEWIDTH;
 import static hellofx.fheroes2.gui.LevelKind.*;
@@ -36,6 +39,7 @@ public class GameArea {
                 camera.drawImageOnTile(dst, tileSurface, ox, oy);
             }
         }
+        var spritesToPaint = new ArrayList<Sprite>();
         for (int stepX = 0; stepX < rt.w; ++stepX) {
             var ox = tileX + stepX;
             for (int stepY = 0; stepY < rt.h; ++stepY) {
@@ -43,13 +47,15 @@ public class GameArea {
                 var currentTile = world.GetTiles(ox, oy);
                 if (currentTile == null)
                     continue;
-
+                if (currentTile.maps_index == 33) {
+                    int t = 6;
+                }
                 // bottom
                 if ((flag & LEVEL_BOTTOM) != 0) {
-                    var tileSurface = currentTile.RedrawBottom(dst, (flag & LEVEL_OBJECTS) == 0, agg);
-                    if (tileSurface != null) {
-                        camera.drawSpriteOnTile(dst, tileSurface, ox, oy);
-                    }
+                    currentTile.RedrawBottom((flag & LEVEL_OBJECTS) == 0, spritesToPaint);
+                    spritesToPaint.forEach(sprite -> {
+                        camera.drawSpriteOnTile(dst, sprite, ox, oy);
+                    });
                 }
 
 
@@ -61,8 +67,11 @@ public class GameArea {
 
                 // top0
                 if ((flag & LEVEL_TOP) != 0) {
-                    var sprites = currentTile.RedrawTop(dst);
-                    camera.drawSpriteOnTile(dst, sprites, ox, oy);
+                    currentTile.RedrawTop(dst, spritesToPaint);
+                    spritesToPaint.forEach(sprite -> {
+                        camera.drawSpriteOnTile(dst, sprite, ox, oy);
+                    });
+
                 }
             }
         }

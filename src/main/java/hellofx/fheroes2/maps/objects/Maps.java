@@ -3,9 +3,13 @@ package hellofx.fheroes2.maps.objects;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.H2Size;
 import hellofx.fheroes2.heroes.Direction;
+import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.maps.MapsIndexes;
 import hellofx.fheroes2.maps.Mp2Kind;
+import hellofx.fheroes2.maps.TilesAddon;
+
+import static hellofx.fheroes2.serialize.ByteVectorReader.addToByte;
 
 public class Maps {
 
@@ -35,8 +39,8 @@ public class Maps {
         return res;
     }
 
-    void GetAroundIndexes(int center, MapsIndexes result) {
-        result.values.clear();
+    public static void GetAroundIndexes(int center, MapsIndexes result) {
+        result.clear();
         if (!isValidAbsIndex(center)) {
             return;
         }
@@ -45,7 +49,7 @@ public class Maps {
         var wSize = new H2Size(world.w, world.h);
         for (int direction : directions) {
             if (isValidDirection(center, direction, wSize))
-                result.values.add(GetDirectionIndex(center, direction));
+                result.add(GetDirectionIndex(center, direction));
         }
     }
 
@@ -75,7 +79,7 @@ public class Maps {
         return -1;
     }
 
-    private boolean isValidDirection(int from, int vector, H2Size world) {
+    private static boolean isValidDirection(int from, int vector, H2Size world) {
         switch (vector) {
             case Direction.TOP:
                 return from >= world.w;
@@ -107,7 +111,7 @@ public class Maps {
 
     public static boolean isValidAbsIndex(int index) {
         var world = World.Instance;
-        return index > 0 && (index < (world.w * world.h));
+        return index >= 0 && (index < world.vec_tiles.length);
     }
 
     public static void MinimizeAreaForCastle(H2Point center) {
@@ -138,7 +142,101 @@ public class Maps {
         world.GetTiles(center.x, center.y).SetObject(Mp2Kind.OBJ_CASTLE);
     }
 
-    public static void UpdateRNDSpriteForCastle(H2Point center, int race, boolean isCastle) {
-        //TODO
+    public static void UpdateRNDSpriteForCastle(H2Point center, int race, boolean castle) {
+        MapsIndexes coords = new MapsIndexes();
+
+        // T0
+        if (castle) coords.add(GetIndexFromAbsPoint(center.x, center.y - 3));
+        // T1
+        coords.add(GetIndexFromAbsPoint(center.x - 2, center.y - 2));
+        coords.add(GetIndexFromAbsPoint(center.x - 1, center.y - 2));
+        coords.add(GetIndexFromAbsPoint(center.x, center.y - 2));
+        coords.add(GetIndexFromAbsPoint(center.x + 1, center.y - 2));
+        coords.add(GetIndexFromAbsPoint(center.x + 2, center.y - 2));
+        // T2
+        coords.add(GetIndexFromAbsPoint(center.x - 2, center.y - 1));
+        coords.add(GetIndexFromAbsPoint(center.x - 1, center.y - 1));
+        coords.add(GetIndexFromAbsPoint(center.x, center.y - 1));
+        coords.add(GetIndexFromAbsPoint(center.x + 1, center.y - 1));
+        coords.add(GetIndexFromAbsPoint(center.x + 2, center.y - 1));
+        // B1
+        coords.add(GetIndexFromAbsPoint(center.x - 2, center.y));
+        coords.add(GetIndexFromAbsPoint(center.x - 1, center.y));
+        coords.add(GetIndexFromAbsPoint(center.x, center.y));
+        coords.add(GetIndexFromAbsPoint(center.x + 1, center.y));
+        coords.add(GetIndexFromAbsPoint(center.x + 2, center.y));
+        // B2
+        coords.add(GetIndexFromAbsPoint(center.x - 2, center.y + 1));
+        coords.add(GetIndexFromAbsPoint(center.x - 1, center.y + 1));
+        coords.add(GetIndexFromAbsPoint(center.x, center.y + 1));
+        coords.add(GetIndexFromAbsPoint(center.x + 1, center.y + 1));
+        coords.add(GetIndexFromAbsPoint(center.x + 2, center.y + 1));
+
+        var world = World.Instance;
+        var tile_center = world.GetTiles(center.x, center.y);
+
+        // correct only RND town and castle
+        switch (tile_center.GetObject()) {
+            case Mp2Kind.OBJ_RNDTOWN:
+            case Mp2Kind.OBJ_RNDCASTLE:
+                break;
+
+            default:
+                return;
+        }
+
+        // modify all rnd sprites
+        for (var it : coords) {
+            if (!isValidAbsIndex(it))
+                continue;
+            TilesAddon addon = world.GetTiles(it).FindObject(Mp2Kind.OBJ_RNDCASTLE);
+            if (addon == null)
+                continue;
+            addon.object = addToByte(addon.object, -12);
+
+            switch (race) {
+                case RaceKind.KNGT:
+                    addon.index = addToByte(addon.index, 0);
+                    break;
+                case RaceKind.BARB:
+                    addon.index = addToByte(addon.index, 32);
+                    break;
+                case RaceKind.SORC:
+                    addon.index = addToByte(addon.index, 64);
+                    break;
+                case RaceKind.WRLK:
+                    addon.index = addToByte(addon.index, 96);
+                    break;
+                case RaceKind.WZRD:
+                    addon.index = addToByte(addon.index, 128);
+                    break;
+                case RaceKind.NECR:
+                    addon.index = addToByte(addon.index, 160);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    static boolean TileIsObject(World world, int index, int obj) {
+        return obj == world.GetTiles(index).GetObject();
+    }
+
+    static boolean TileIsObject(int index, int obj) {
+        return TileIsObject(World.Instance, index, obj);
+    }
+
+    public static void MapsIndexesFilteredObject(MapsIndexes indexes, int obj) {
+        MapsIndexes result = new MapsIndexes();
+        var world = World.Instance;
+        for (var tile : indexes) {
+            int iTile = tile;
+            if (TileIsObject(world, tile, obj)) {
+                result.add(iTile);
+            }
+        }
+        indexes.clear();
+        indexes.addAll(result);
     }
 }

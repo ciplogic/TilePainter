@@ -21,6 +21,10 @@ public class ByteVectorReader {
         return x & 0xFF;
     }
 
+    public static byte addToByte(byte x, int addTo) {
+        return (byte) (toByte(x) + addTo);
+    }
+
     public static int toUShort(short x) {
         return x & 0xFFFF;
     }

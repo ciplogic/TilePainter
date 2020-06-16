@@ -19,6 +19,7 @@ import hellofx.fheroes2.kingdom.CapturedObject;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.WeekKind;
 import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.monster.MonsterJoin;
 import hellofx.fheroes2.monster.MonsterKind;
@@ -559,7 +560,9 @@ public class Tiles {
     }
 
 
-    public Sprite RedrawBottom(Painter dst, boolean skip_objs, Agg agg) {
+    public void RedrawBottom(boolean skip_objs, ArrayList<Sprite> toPaint) {
+
+        toPaint.clear();
         for (var it : addons_level1._items) {
             // skip
             if (skip_objs &&
@@ -574,7 +577,7 @@ public class Tiles {
             if (IcnKind.UNKNOWN == icn || IcnKind.MINIHERO == icn || IcnKind.MONS32 == icn)
                 continue;
             var sprite = Agg.GetICN(icn, index);
-            return sprite;
+            toPaint.add(sprite);
         /*
             area.BlitOnTile(dst, sprite, mp);
 
@@ -588,7 +591,7 @@ public class Tiles {
          */
         }
         //TODO
-        return null;
+
     }
 
     public Sprite[] RedrawObjects(Painter dst) {
@@ -743,33 +746,31 @@ public class Tiles {
         return 30 > TileSpriteIndex();
     }
 
-    private void ScanAroundObject(int getIndex, int objHeroes, MapsIndexes v) {
+    private void ScanAroundObject(int center, int obj, MapsIndexes resultsScan) {
+        Maps.GetAroundIndexes(center, resultsScan);
+        Maps.MapsIndexesFilteredObject(resultsScan, obj);
     }
 
     private void RedrawBoat(Painter dst) {
 
     }
 
-    public Sprite RedrawTop(Painter dst) {
-
+    public void RedrawTop(Painter dst, ArrayList<Sprite> spritesToPaint) {
+        spritesToPaint.clear();
         var tileObject = GetObject();
         // animate objects
         if (Mp2Kind.OBJ_ABANDONEDMINE == tileObject) {
             var anime_sprite = Agg.GetICN(IcnKind.OBJNHAUN, Game.MapsAnimationFrame() % 15);
-            return anime_sprite;
+            spritesToPaint.add(anime_sprite);
         } else if (Mp2Kind.OBJ_MINES == GetObject()) {
             var addon = FindObjectConst(Mp2Kind.OBJ_MINES);
             if (addon != null && addon.tmp == SpellKind.HAUNT) {
                 var anime_sprite = Agg.GetICN(IcnKind.OBJNHAUN, Game.MapsAnimationFrame() % 15);
-                return anime_sprite;
+                spritesToPaint.add(anime_sprite);
             } else if (addon != null && addon.tmp >= SpellKind.SETEGUARDIAN && addon.tmp <= SpellKind.SETWGUARDIAN) {
-                return Agg.GetICN(IcnKind.MONS32, new Monster(new Spell(addon.tmp)).GetSpriteIndex());
-
+                spritesToPaint.add(Agg.GetICN(IcnKind.MONS32, new Monster(new Spell(addon.tmp)).GetSpriteIndex()));
             }
         }
-
-        //TODO
-        return null;
     }
 
     public boolean isFog(int colors) {
@@ -838,7 +839,8 @@ public class Tiles {
         var addon = tile.FindObject(Mp2Kind.OBJ_RNDRESOURCE);
 
         if (addon == null) return;
-        addon.setIndex(Resource.GetIndexSprite(Resource.Rand()));
+        var resourceId = Resource.Rand();
+        addon.setIndex(Resource.GetIndexSprite(resourceId));
         tile.SetObject(Mp2Kind.OBJ_RESOURCE);
 
         var world = World.Instance;
@@ -2086,5 +2088,11 @@ public class Tiles {
         if (addons_level2._items.size() != 0) {
             addons_level2.Remove(uniq);
         }
+    }
+
+    public void Refresh() {
+        //works on copies, so a reference will not corrupt the other addon
+        addons_level1.Refresh();
+        addons_level2.Refresh();
     }
 }

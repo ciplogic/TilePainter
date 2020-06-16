@@ -23,5 +23,14 @@ public class Addons {
         _items = clean;
     }
 
+    public void Refresh() {
+        var clones = new ArrayList<TilesAddon>(_items.size());
+        for (var it : _items) {
+            clones.add(it.clone());
+        }
+        _items.clear();
+        _items.addAll(clones);
+    }
+
     public List<TilesAddon> _items = new ArrayList<>();
 }

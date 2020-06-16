@@ -7,9 +7,12 @@ import hellofx.fheroes2.serialize.ByteVectorReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hellofx.common.Utilities.writeTodo;
+
 public class MapSphinx extends MapObjectSimple {
     public void LoadFromMP2(int findobject, ByteVectorReader bvr) {
         //TODO
+        writeTodo("MapSphinx");
     }
 
     public Funds resources = new Funds();

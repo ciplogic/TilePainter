@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static hellofx.common.Utilities.writeTodo;
+
 public class Agg {
     private static final Agg StaticInstance = new Agg();
     private final AggFile mainAgg = new AggFile();
@@ -59,6 +61,9 @@ public class Agg {
             var count = bvr.getLE16();
             v.sprites = new Sprite[count];
             v.reflect = new Sprite[count];
+        }
+        if (v.sprites.length <= index) {
+            writeTodo("Shoud fix me!");
         }
 
         var icnBmp = reflect ? v.reflect[index] : v.sprites[index];

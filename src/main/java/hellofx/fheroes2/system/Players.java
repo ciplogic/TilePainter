@@ -10,7 +10,6 @@ import hellofx.player.PlayerControl;
 import java.util.ArrayList;
 import java.util.List;
 
-import static hellofx.common.Utilities.writeTodo;
 import static hellofx.fheroes2.game.GameConsts.KINGDOMMAX;
 
 public class Players {
@@ -51,9 +50,9 @@ public class Players {
     }
 
     public static int HumanColors() {
-        //TODO
-        writeTodo("HumanColors");
-        return 0;
+        if (0 == human_colors)
+            human_colors = Settings.Get().GetPlayers().GetColors(PlayerControl.CONTROL_HUMAN, true);
+        return human_colors;
     }
 
     public int GetColors() {

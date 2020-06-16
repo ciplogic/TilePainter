@@ -15,9 +15,19 @@ public class TilesAddon {
 
     public int uniq;
     public byte level;
-    private byte object;
-    private byte index;
+    public byte object;
+    public byte index;
     public byte tmp;
+
+    public TilesAddon clone() {
+        TilesAddon res = new TilesAddon();
+        res.uniq = uniq;
+        res.level = level;
+        res.object = object;
+        res.index = index;
+        res.tmp = tmp;
+        return res;
+    }
 
     public static H2IntPair ColorRaceFromHeroSprite(TilesAddon ta) {
         H2IntPair res = new H2IntPair();
@@ -416,7 +426,7 @@ public class TilesAddon {
     }
 
     public void setObject(int object) {
-        if (uniq == 142) {
+        if (uniq == 2074) {
             System.out.println("Here");
         }
         this.object = (byte) object;
