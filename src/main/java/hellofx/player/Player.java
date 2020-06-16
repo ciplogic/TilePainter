@@ -62,4 +62,8 @@ public class Player {
     public int GetColor() {
         return color;
     }
+
+    public int GetFriends() {
+        return friends;
+    }
 }

@@ -8,7 +8,7 @@ import hellofx.fheroes2.system.BitModes;
 
 import static hellofx.fheroes2.agg.icn.IcnKind.*;
 
-public class HeroBase {
+public abstract class HeroBase {
     public BitModes bitModes = new BitModes();
     public MapPosition mapPosition = new MapPosition();
     public ColorBase color = new ColorBase();
@@ -106,4 +106,13 @@ public class HeroBase {
             default -> UNKNOWN;
         };
     }
+
+    public abstract int GetType();
+
+    public abstract int GetRace();
+
+    public boolean isHeroes() {
+        return GetType() == HeroType.HEROES;
+    }
+
 }

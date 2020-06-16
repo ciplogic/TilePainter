@@ -11,4 +11,14 @@ public class Captain extends HeroBase {
         home = castle;
     }
 
+
+    @Override
+    public int GetType() {
+        return HeroType.CAPTAIN;
+    }
+
+    @Override
+    public int GetRace() {
+        return home.GetRace();
+    }
 }

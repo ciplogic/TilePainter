@@ -13,8 +13,9 @@ public class Rand {
         //TODO: fix to lock the seed
         ++vrand;
         int delta = max - min + 1;
+        var randValue = vrand;
 
-        return vrand % delta;
+        return randValue % delta;
         /*
         int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
         return randomNum;

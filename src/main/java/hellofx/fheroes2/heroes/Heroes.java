@@ -41,7 +41,7 @@ public class Heroes extends HeroBase {
 
     public SecSkills secondary_skills = new SecSkills();
 
-    public Army army = new Army();
+    public Army army;
 
     public int hid; /* hero id */
     public int portrait; /* hero id */
@@ -88,6 +88,8 @@ public class Heroes extends HeroBase {
 
     public Heroes(int heroid, int rc) {
         super(HeroType.HEROES, rc);
+        army = new Army(this);
+        army.Reset(true);
         hid = heroid;
         portrait = heroid;
 
@@ -112,10 +114,6 @@ public class Heroes extends HeroBase {
 
     public int GetMapsObject() {
         return save_maps_object;
-    }
-
-    public int GetRace() {
-        return race;
     }
 
     public void LoadFromMP2(int map_index, int cl, int rc, ByteVectorReader st) {
@@ -355,5 +353,16 @@ public class Heroes extends HeroBase {
 
     public void Recruit(int cl, H2Point pt) {
         //TODO
+    }
+
+
+    @Override
+    public int GetType() {
+        return HeroType.HEROES;
+    }
+
+    @Override
+    public int GetRace() {
+        return race;
     }
 }

@@ -1,5 +1,7 @@
 package hellofx.fheroes2.army;
 
+import hellofx.fheroes2.monster.Monster;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,4 +27,13 @@ public class Troops {
         _items.addAll(Arrays.asList(troops));
     }
 
+    public void Clean() {
+        for (var it : _items) {
+            it.Reset();
+        }
+    }
+
+    public void JoinTroop(Monster mons1, int count) {
+        _items.add(new Troop(mons1, count));
+    }
 }

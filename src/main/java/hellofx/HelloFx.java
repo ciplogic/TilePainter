@@ -8,6 +8,7 @@ import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.kingdom.WorldLoad;
 import hellofx.fheroes2.maps.FileInfo;
 import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
@@ -54,7 +55,7 @@ public class HelloFx extends Application {
         players.SetStartGame();
 
         var world = World.Instance;
-        world.loadMapMp2("MAPS/BROKENA.MP2");
+        WorldLoad.loadMapMp2("MAPS/BROKENA.MP2");
 
         var hero = new Heroes(HeroesKind.ARIEL, RaceKind.SORC);
         //var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();

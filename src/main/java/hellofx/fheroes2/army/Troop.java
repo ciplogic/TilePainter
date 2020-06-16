@@ -10,6 +10,11 @@ public class Troop {
     public Troop() {
     }
 
+    public Troop(Monster monster, int count) {
+        SetMonster(monster);
+        this.count = count;
+    }
+
     public void SetMonster(Monster monster) {
         _monster.id = monster.id;
     }

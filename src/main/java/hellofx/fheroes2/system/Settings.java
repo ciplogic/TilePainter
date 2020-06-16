@@ -127,4 +127,9 @@ public class Settings {
     public boolean GameType(int f) {
         return (game_type & f) != 0;
     }
+
+    public boolean ExtWorldBanWeekOf() {
+        //TODO
+        return false;
+    }
 }

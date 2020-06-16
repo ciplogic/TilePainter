@@ -33,9 +33,21 @@ public class Players {
     }
 
     public static int FriendColors() {
-        //TODO
-        writeTodo("FriendColors");
-        return 0;
+        int colors = 0;
+        var players = Settings.Get().GetPlayers();
+
+        if (0 != (players.current_color & HumanColors())) {
+            var player = players.GetCurrent();
+            if (player != null)
+                colors = player.GetFriends();
+        } else
+            colors = HumanColors();
+
+        return colors;
+    }
+
+    private Player GetCurrent() {
+        return Get(current_color);
     }
 
     public static int HumanColors() {
