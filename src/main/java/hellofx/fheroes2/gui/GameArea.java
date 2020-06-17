@@ -61,13 +61,15 @@ public class GameArea {
 
                 // ext object
                 if ((flag & LEVEL_OBJECTS) != 0) {
-                    var sprites = currentTile.RedrawObjects(dst);
-                    camera.drawSpritesOnTile(dst, sprites, ox, oy);
+                    currentTile.RedrawObjects(spritesToPaint);
+                    spritesToPaint.forEach(sprite -> {
+                        camera.drawSpriteOnTile(dst, sprite, ox, oy);
+                    });
                 }
 
                 // top0
                 if ((flag & LEVEL_TOP) != 0) {
-                    currentTile.RedrawTop(dst, spritesToPaint);
+                    currentTile.RedrawTop(dst, spritesToPaint, null);
                     spritesToPaint.forEach(sprite -> {
                         camera.drawSpriteOnTile(dst, sprite, ox, oy);
                     });

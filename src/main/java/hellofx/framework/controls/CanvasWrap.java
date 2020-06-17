@@ -23,6 +23,18 @@ public class CanvasWrap {
             ctxt.notify(EventNames.onMouse, mouseEvent);
         });
 
+        canvas.setOnMousePressed(mouseEvent -> {
+            ctxt.notify(EventNames.onMousePressed, mouseEvent);
+        });
+        canvas.setOnMouseReleased(mouseEvent -> {
+            ctxt.notify(EventNames.onMouseReleased, mouseEvent);
+        });
+        canvas.setOnMouseMoved(mouseEvent -> {
+            ctxt.notify(EventNames.onMouseMoved, mouseEvent);
+        });
+        canvas.setOnMouseDragged(mouseEvent -> {
+            ctxt.notify(EventNames.onMouseMoved, mouseEvent);
+        });
     }
 
     public void drawShapes(GraphicsContext gc) {

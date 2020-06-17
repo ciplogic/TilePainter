@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.function.Predicate;
 
 import static hellofx.common.Utilities.find_if;
+import static hellofx.common.Utilities.writeTodo;
 import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
 import static hellofx.fheroes2.kingdom.WorldDump.writeField;
 import static hellofx.fheroes2.kingdom.WorldDump.writeFieldBare;
@@ -578,39 +579,33 @@ public class Tiles {
                 continue;
             var sprite = Agg.GetICN(icn, index);
             toPaint.add(sprite);
-        /*
-            area.BlitOnTile(dst, sprite, mp);
+
 
             // possible anime
-            var anime_index = IcnKind.AnimationFrame(icn, index, Game.MapsAnimationFrame(), quantity2);
+            var anime_index = IcnKind.AnimationFrame(icn, index, Game.MapsAnimationFrame(), quantity2 != 0);
             if (anime_index == 0)
                 continue;
-        var anime_sprite = agg.GetICN(icn, anime_index);
-            area.BlitOnTile(dst, anime_sprite, mp);
-
-         */
+            var anime_sprite = Agg.GetICN(icn, anime_index);
+            toPaint.add(anime_sprite);
         }
-        //TODO
 
     }
 
-    public Sprite[] RedrawObjects(Painter dst) {
+    public void RedrawObjects(ArrayList<Sprite> toPaint) {
         var obj = GetObject();
         switch (obj) {
             // boat
             case Mp2Kind.OBJ_BOAT:
-                RedrawBoat(dst);
+                RedrawBoat(toPaint);
                 break;
             // monster
             case Mp2Kind.OBJ_MONSTER:
-                return RedrawMonster(dst);
+                RedrawMonster(toPaint);
 
             //
             default:
                 break;
         }
-        //TODO
-        return null;
     }
 
     Monster QuantityMonster() {
@@ -679,7 +674,8 @@ public class Tiles {
                 : new Monster(MonsterKind.UNKNOWN);
     }
 
-    private Sprite[] RedrawMonster(Painter dst) {
+    private void RedrawMonster(ArrayList<Sprite> toPaint) {
+        toPaint.clear();
         // scan hero around
         MapsIndexes v = new MapsIndexes();
         ScanAroundObject(GetIndex(), Mp2Kind.OBJ_HEROES, v);
@@ -721,7 +717,7 @@ public class Tiles {
             }
 
             var sprite_first = Agg.GetICN(IcnKind.MINIMON, sprite_index * 9 + (revert ? 8 : 7));
-            return new Sprite[]{sprite_first};
+            toPaint.add(sprite_first);
 
         } else {
 
@@ -737,8 +733,8 @@ public class Tiles {
                     monster_animation_cicle[(Game.MapsAnimationFrame()) % monster_animation_cicle.length];
             var sprite_next = Agg.GetICN(IcnKind.MINIMON, secondSpriteIndex).clone();
             sprite_next.pos.add(16, 16);
-
-            return new Sprite[]{sprite_first, sprite_next};
+            toPaint.add(sprite_first);
+            toPaint.add(sprite_next);
         }
     }
 
@@ -751,11 +747,11 @@ public class Tiles {
         Maps.MapsIndexesFilteredObject(resultsScan, obj);
     }
 
-    private void RedrawBoat(Painter dst) {
+    private void RedrawBoat(ArrayList<Sprite> dst) {
 
     }
 
-    public void RedrawTop(Painter dst, ArrayList<Sprite> spritesToPaint) {
+    public void RedrawTop(Painter dst, ArrayList<Sprite> spritesToPaint, TilesAddon skip) {
         spritesToPaint.clear();
         var tileObject = GetObject();
         // animate objects
@@ -769,6 +765,32 @@ public class Tiles {
                 spritesToPaint.add(anime_sprite);
             } else if (addon != null && addon.tmp >= SpellKind.SETEGUARDIAN && addon.tmp <= SpellKind.SETWGUARDIAN) {
                 spritesToPaint.add(Agg.GetICN(IcnKind.MONS32, new Monster(new Spell(addon.tmp)).GetSpriteIndex()));
+            }
+        }
+
+        for (var it : addons_level2._items) {
+            if (skip != null && skip == it) continue;
+
+            var object = toByte(it.object);
+            var index = toByte(it.index);
+            var icn = Mp2.GetICNObject(object);
+
+            if (IcnKind.UNKNOWN != icn && IcnKind.MINIHERO != icn && IcnKind.MONS32 != icn) {
+                Sprite sprite = null;
+                try {
+                    sprite = Agg.GetICN(icn, index);
+                    spritesToPaint.add(sprite);
+                } catch (Exception ex) {
+                    writeTodo("out of bounds" + ex);
+                    continue;
+                }
+
+                var anime_index = IcnKind.AnimationFrame(icn, index, Game.MapsAnimationFrame(), false);
+                // possible anime
+                if (anime_index != 0) {
+                    var anime_sprite = Agg.GetICN(icn, anime_index);
+                    spritesToPaint.add(anime_sprite);
+                }
             }
         }
     }

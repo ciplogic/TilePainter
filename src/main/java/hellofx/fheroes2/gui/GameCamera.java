@@ -2,6 +2,7 @@ package hellofx.fheroes2.gui;
 
 import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.agg.Sprite;
+import hellofx.fheroes2.common.H2Point;
 import hellofx.framework.controls.Painter;
 
 public class GameCamera {
@@ -72,5 +73,10 @@ public class GameCamera {
         for (var sprite : sprites) {
             drawSpriteOnTile(dst, sprite, tileX, tileY);
         }
+    }
+
+    public void moveCameraByPoint(H2Point delta) {
+        left += delta.x;
+        top += delta.y;
     }
 }

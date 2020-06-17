@@ -20,6 +20,14 @@ public class MainContext {
 
 
     public void notify(String eventName, Object obj) {
+        switch (eventName) {
+            case EventNames.onFrame:
+                break;
+            default:
+                System.out.println("Calling: " + eventName + " with obj: " + obj);
+                break;
+        }
+
         router.call(eventName, obj);
     }
 

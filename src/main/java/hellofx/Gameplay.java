@@ -3,6 +3,7 @@ package hellofx;
 import hellofx.dialogs.atoms.ViewAtoms;
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
+import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.game.Game;
 import hellofx.fheroes2.gui.GameArea;
@@ -22,8 +23,6 @@ import javafx.scene.paint.Color;
 
 import java.util.Random;
 
-import static hellofx.common.Utilities.timeIt;
-
 public class Gameplay {
     public MainContext ctx;
     public CanvasWrap canvasWrap;
@@ -42,6 +41,7 @@ public class Gameplay {
     double idx = 0;
     private Image heroesImg;
     private Image heroesImgSmooth;
+    private H2Point startPressPosition;
 
     public void setup() {
         setupRandomLevel();
@@ -50,6 +50,22 @@ public class Gameplay {
             onFrameUpdate();
         });
         ctx.listen(EventNames.onMouse, (MouseEvent mEvent) -> {
+
+        });
+        ctx.listen(EventNames.onMousePressed, (MouseEvent mEvent) -> {
+            this.startPressPosition = new H2Point((int) mEvent.getX(), (int) mEvent.getY());
+        });
+        ctx.listen(EventNames.onMouseMoved, (MouseEvent mEvent) -> {
+            if (this.startPressPosition == null)
+                return;
+            var currPoint = new H2Point((int) mEvent.getX(), (int) mEvent.getY());
+            var delta = currPoint.vectorFrom(this.startPressPosition).invert();
+            this.gameArea.camera.moveCameraByPoint(delta);
+            this.startPressPosition = currPoint;
+
+        });
+        ctx.listen(EventNames.onMouseReleased, (MouseEvent evnt) -> {
+            this.startPressPosition = null;
         });
         stackPane = ctx.getObj(ObjectNames.mainStack);
 
@@ -76,8 +92,8 @@ public class Gameplay {
     void onFrameUpdate() {
         Game.nextFrame();
         idx += 1;
-        gameArea.camera.left = (int) idx / 5;
-        gameArea.camera.top = (int) idx / 4;
+        //gameArea.camera.left = (int) idx / 5;
+        //gameArea.camera.top = (int) (idx / 1.3);
         var painter = canvasWrap.getPainter();
 
         painter.clear(Color.ROYALBLUE);
@@ -87,8 +103,7 @@ public class Gameplay {
 
         var rect = new H2Rect(0, 0, 109, 46);
 
-        timeIt("frame painting", () -> {
-            gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
-        });
+        gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
+
     }
 }

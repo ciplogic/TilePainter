@@ -6,6 +6,7 @@ public class RandQueue extends ArrayList<H2IntPair> {
 
     public void Push(int k, int v) {
         var item = new H2IntPair(k, v);
+        add(item);
     }
 
     public int Get() {

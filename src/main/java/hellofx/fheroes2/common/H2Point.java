@@ -41,4 +41,12 @@ public class H2Point {
         x += ax;
         y += ay;
     }
+
+    public H2Point vectorFrom(H2Point point) {
+        return new H2Point(x - point.x, y - point.y);
+    }
+
+    public H2Point invert() {
+        return new H2Point(-x, -y);
+    }
 }
