@@ -1,5 +1,6 @@
 package hellofx;
 
+import hellofx.dialogs.DownloadDialog;
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.gui.GameArea;
@@ -10,6 +11,7 @@ import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.kingdom.WorldLoad;
 import hellofx.fheroes2.maps.FileInfo;
+import hellofx.fheroes2.serialize.ResourceDownloader;
 import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
 import hellofx.framework.GamePreferences;
@@ -35,6 +37,10 @@ public class HelloFx extends Application {
 
     @Override
     public void start(Stage stage) {
+
+        var downloadDialog = new DownloadDialog();
+        downloadDialog.BuildView();
+        //ResourceDownloader.downloadAllPacks(".");
         var context = new MainContext();
 
         var agg = Agg.Get();

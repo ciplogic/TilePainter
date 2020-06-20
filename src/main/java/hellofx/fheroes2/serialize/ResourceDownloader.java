@@ -1,5 +1,7 @@
 package hellofx.fheroes2.serialize;
 
+import hellofx.dialogs.DownloadDialog;
+
 import java.io.IOException;
 
 public class ResourceDownloader {
@@ -11,6 +13,10 @@ public class ResourceDownloader {
             };
 
     public static boolean downloadAllPacks(String destDir) {
+        return downloadMaps(destDir);
+    }
+
+    private static boolean downloadMaps(String destDir) {
         for (var pack : Packs) {
             var url = FullUrlToPacks + pack;
             System.out.println("Downloading: " + pack);

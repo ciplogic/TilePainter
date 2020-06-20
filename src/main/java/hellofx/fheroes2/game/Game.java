@@ -4,7 +4,7 @@ public class Game {
     private static int animationFrame;
 
     public static int MapsAnimationFrame() {
-        return animationFrame / 10;
+        return animationFrame;
     }
 
     public static void nextFrame() {
