@@ -1,4 +1,4 @@
-module FxStart {
+module JHeroes2X {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;

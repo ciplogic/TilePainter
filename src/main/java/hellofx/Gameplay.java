@@ -101,7 +101,7 @@ public class Gameplay {
         //painter.drawImage(heroesImgSmooth, 0, 0);
         //painter.drawImage(heroesImg, 0, 0);
 
-        var rect = new H2Rect(0, 0, 109, 46);
+        var rect = new H2Rect(0, 0, 3440 / gameArea.camera.tileSize + 2, 1440 / gameArea.camera.tileSize + 2);
 
         gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
 

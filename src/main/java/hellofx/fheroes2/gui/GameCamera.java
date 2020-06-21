@@ -8,8 +8,9 @@ import hellofx.framework.controls.Painter;
 public class GameCamera {
     public int left;
     public int top;
-    public int originalTileSize = 32;
-    public int tileSize = 32;
+    public static final int originalTileSize = 32;
+    public int tileSize = 128;
+    int scaleBy = scaleByRatio();
 
     public int coordinateOfTile(int countTiles) {
         return countTiles * tileSize;
@@ -50,29 +51,30 @@ public class GameCamera {
 
     public ImageScaler getScaler() {
         return (bmp) -> {
-            var scaleFactor = tileSize / originalTileSize;
-            return bmp.bilinearScale(bmp.Width * scaleFactor, bmp.Height * scaleFactor).toImage();
+            //return bmp.bilinearScale(bmp.Width * scaleBy, bmp.Height * scaleBy).toImage();
+            var start = originalTileSize;
+            var scaledBmp = bmp;
+            while (start != tileSize) {
+                scaledBmp = scaledBmp.doublePicture();
+                start *= 2;
+            }
+            return scaledBmp.toImage();
         };
+    }
+
+    int scaleByRatio() {
+        return tileSize / originalTileSize;
     }
 
     public void drawSpriteOnTile(Painter dst, Sprite tileSurface, int tileX, int tileY) {
         if (tileSurface == null) {
             return;
         }
-        var tileXMap = coordinateOfTile(tileX) + tileSurface.pos.x;
-        var tileYMap = coordinateOfTile(tileY) + tileSurface.pos.y;
+        var tileXMap = coordinateOfTile(tileX) + tileSurface.pos.x * scaleBy;
+        var tileYMap = coordinateOfTile(tileY) + tileSurface.pos.y * scaleBy;
         var screenX = tileXMap - left;
         var screenY = tileYMap - top;
         dst.drawImage(tileSurface.renderedImage(getScaler()), screenX, screenY);
-    }
-
-    public void drawSpritesOnTile(Painter dst, Sprite[] sprites, int tileX, int tileY) {
-        if (sprites == null) {
-            return;
-        }
-        for (var sprite : sprites) {
-            drawSpriteOnTile(dst, sprite, tileX, tileY);
-        }
     }
 
     public void moveCameraByPoint(H2Point delta) {

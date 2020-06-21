@@ -103,9 +103,6 @@ public class WorldLoad {
 
                     var tile = _this.vec_tiles[index];
 
-                    if (index == 1502) {
-                        System.out.println("Here");
-                    }
                     tile.Init(index, mp2tile);
 
 

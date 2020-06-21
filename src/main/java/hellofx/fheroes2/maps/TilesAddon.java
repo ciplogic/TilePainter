@@ -426,9 +426,6 @@ public class TilesAddon {
     }
 
     public void setObject(int object) {
-        if (uniq == 2074) {
-            System.out.println("Here");
-        }
         this.object = (byte) object;
     }
 

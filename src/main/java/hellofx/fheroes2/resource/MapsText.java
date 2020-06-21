@@ -40,7 +40,7 @@ public class MapsText {
             tr("A gold cache!"),
             tr("A gold chunk!"),
             tr("A gold nugget!"),
-            tr("A great Black dragon stands before you. It speaks in a suprisingly soft voice, saying, \"The elves believe they have sent another hero to reclaim their prize. I believe they have sent me another meal.\""),
+            tr("A great Black dragon stands before you. It speaks in a surprisingly soft voice, saying, \"The elves believe they have sent another hero to reclaim their prize. I believe they have sent me another meal.\""),
             tr("A group of peasant farmers approaches you, \"We are in dire need of your assistance.  Our castle to the north has been overrun and our Lord killed.  Please help us regain our homes!  There are still women and children there!  Take what we have to help!\""),
             tr("A group of peasant farmers approach you, \"We are in dire need of your assistance.  Our castle to the east has been overrun and our Lord killed.  Please help us regain our homes!  There are still women and children there!  Take what we have to help!\""),
             tr("A group of peasant farmers approach you, \"We are in dire need of your assistance. Our castle to the east has been overrun and our Lord killed. Please help us regain our homes! There are still women and children there! Take what we have to help!\""),

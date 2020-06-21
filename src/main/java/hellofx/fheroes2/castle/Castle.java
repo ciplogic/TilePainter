@@ -49,7 +49,7 @@ public class Castle {
     }
 
     public boolean isPosition(H2Point center) {
-        H2Point mp = mapPosition.GetCenter();
+        var mp = mapPosition.GetCenter();
         return mp.equals(center);
     }
 
@@ -81,7 +81,7 @@ public class Castle {
         // custom building
         if (st.get() != 0) {
             // building
-            int build = st.getLE16();
+            var build = st.getLE16();
             if ((0x0002 & build) != 0) building |= BUILD_THIEVESGUILD;
             if ((0x0004 & build) != 0) building |= BUILD_TAVERN;
             if ((0x0008 & build) != 0) building |= BUILD_SHIPYARD;
@@ -95,7 +95,7 @@ public class Castle {
             if ((0x2000 & build) != 0) building |= BUILD_SPEC;
 
             // dwelling
-            int dwell = st.getLE16();
+            var dwell = st.getLE16();
             if ((0x0008 & dwell) != 0) building |= DWELLING_MONSTER1;
             if ((0x0010 & dwell) != 0) building |= DWELLING_MONSTER2;
             if ((0x0020 & dwell) != 0) building |= DWELLING_MONSTER3;
@@ -109,7 +109,7 @@ public class Castle {
             if ((0x2000 & dwell) != 0) building |= DWELLING_UPGRADE6 | DWELLING_MONSTER6;
 
             // magic tower
-            int level = st.get();
+            var level = st.get();
             if (0 < level) building |= BUILD_MAGEGUILD1;
             if (1 < level) building |= BUILD_MAGEGUILD2;
             if (2 < level) building |= BUILD_MAGEGUILD3;
@@ -280,7 +280,33 @@ public class Castle {
     }
 
     private void JoinRNDArmy() {
-        //TODO
+        var mon1 = new Monster(race, DWELLING_MONSTER1);
+        var mon2 = new Monster(race, DWELLING_MONSTER2);
+        var mon3 = new Monster(race, DWELLING_MONSTER3);
+
+        switch (Rand.Get(1, 4)) {
+            case 1:
+                army.m_troops.JoinTroop(mon1, mon1.GetRNDSize(false) * 3);
+                army.m_troops.JoinTroop(mon2, mon2.GetRNDSize(false));
+                break;
+
+            case 2:
+                army.m_troops.JoinTroop(mon1, mon1.GetRNDSize(false) * 2);
+                army.m_troops.JoinTroop(mon2, mon2.GetRNDSize(false) * 2);
+                break;
+
+            case 3:
+
+                army.m_troops.JoinTroop(mon1, mon1.GetRNDSize(false) * 2);
+                army.m_troops.JoinTroop(mon2, mon2.GetRNDSize(false));
+                army.m_troops.JoinTroop(mon3, mon3.GetRNDSize(false) * 2 / 3);
+                break;
+
+            default:
+                army.m_troops.JoinTroop(mon1, mon1.GetRNDSize(false));
+                army.m_troops.JoinTroop(mon3, mon3.GetRNDSize(false));
+                break;
+        }
     }
 
     private boolean HaveLibraryCapability() {
@@ -292,7 +318,7 @@ public class Castle {
         if (GetLevelMageGuild() == 0)
             return;
         var world = World.Instance;
-        CastleHeroes heroes = world.GetHeroes(this);
+        var heroes = world.GetHeroes(this);
 
         if (heroes.FullHouse()) {
             MageGuildEducateHero(heroes.Guest());
