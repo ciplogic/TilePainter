@@ -3,7 +3,8 @@ package hellofx.fheroes2.objects;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.heroes.Direction;
 
-import static hellofx.common.Utilities.containsValue;
+import static hellofx.common.Utilities.contains;
+
 
 public class ObjMnts1 {
     static final int[] disabled2 = {6, 7, 8, 9, 14, 15, 16, 28, 29, 30, 31, 33, 34, 35, 47, 48, 56, 57, 64, 67, 68, 69, 82};
@@ -18,12 +19,12 @@ public class ObjMnts1 {
                 (25 == index || 43 == index || 44 == index || 53 == index || 54 == index || 78 == index))
             return 0;
 
-        return containsValue(disabled2, index)
+        return contains(disabled2, index)
                 ? 0
                 : Direction.DIRECTION_CENTER_ROW | Direction.DIRECTION_BOTTOM_ROW;
     }
 
     public static boolean isShadow(int index) {
-        return containsValue(shadows1, index);
+        return contains(shadows1, index);
     }
 }

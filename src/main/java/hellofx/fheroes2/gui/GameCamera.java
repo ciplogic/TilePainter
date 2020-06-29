@@ -9,7 +9,7 @@ public class GameCamera {
     public int left;
     public int top;
     public static final int originalTileSize = 32;
-    public int tileSize = 128;
+    public int tileSize = 32;
     int scaleBy = scaleByRatio();
 
     public int coordinateOfTile(int countTiles) {

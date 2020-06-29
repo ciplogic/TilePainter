@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.IntStream;
@@ -84,13 +85,17 @@ public class Utilities {
 
 
     public static <T> T find_if(T[] addons, Predicate<T> isFound) {
-        return Arrays.stream(addons).filter(isFound::test).findFirst().orElse(null);
+        return Arrays.stream(addons).filter(isFound).findFirst().orElse(null);
     }
 
-    public static boolean containsValue(int[] values, int value) {
-        var found = Arrays.stream(values).filter(v -> v == value).findFirst().isPresent();
-        return found;
+    public static boolean contains(int[] addons, IntPredicate isFound) {
+        return Arrays.stream(addons).filter(isFound).findFirst().isPresent();
     }
+
+    public static boolean contains(int[] addons, int value) {
+        return contains(addons, i -> i == value);
+    }
+
 
     public static <T> T find_if(List<T> addons, Predicate<T> isFound) {
         return addons.stream().filter(isFound::test).findFirst().orElse(null);

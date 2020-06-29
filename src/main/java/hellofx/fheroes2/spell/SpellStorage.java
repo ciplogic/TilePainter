@@ -57,4 +57,9 @@ public class SpellStorage {
         spellStorage._items
                 .forEach(this::Append);
     }
+
+    public boolean isPresentSpell(Spell spell) {
+        return _items.stream()
+                .anyMatch(it -> it.id == spell.id);
+    }
 }

@@ -420,10 +420,7 @@ public class WorldLoad {
             else {
             }
         }
-        WorldDump.toFile("tiles_b4.json", _this.vec_tiles);
-
         _this.PostLoad();
-        WorldDump.toFile("tiles.json", _this.vec_tiles);
         return true;
     }
 }

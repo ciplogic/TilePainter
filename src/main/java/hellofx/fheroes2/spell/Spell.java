@@ -1,6 +1,7 @@
 package hellofx.fheroes2.spell;
 
 import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.kingdom.RaceKind;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -162,4 +163,23 @@ public class Spell {
         return true;
     }
 
+    public boolean isRaceCompatible(int race) {
+        switch (id) {
+            case MASSCURE:
+            case MASSBLESS:
+            case HOLYSHOUT:
+            case HOLYWORD:
+            case BLESS:
+            case CURE:
+                if (RaceKind.NECR == race) return false;
+                break;
+
+            case DEATHWAVE:
+            case DEATHRIPPLE:
+            case ANIMATEDEAD:
+                if (RaceKind.NECR != race) return false;
+                break;
+        }
+        return true;
+    }
 }
