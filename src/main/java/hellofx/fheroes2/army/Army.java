@@ -1,7 +1,7 @@
 package hellofx.fheroes2.army;
 
-import hellofx.fheroes2.castle.BuildingKind;
 import hellofx.fheroes2.castle.Captain;
+import hellofx.fheroes2.castle.building_t;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.heroes.HeroBase;
@@ -40,10 +40,10 @@ public class Army {
 
         if (commander == null || !commander.isHeroes())
             return;
-        Monster mons1 = new Monster(commander.GetRace(), BuildingKind.DWELLING_MONSTER1);
+        Monster mons1 = new Monster(commander.GetRace(), building_t.DWELLING_MONSTER1);
 
         if (soft) {
-            Monster mons2 = new Monster(commander.GetRace(), BuildingKind.DWELLING_MONSTER2);
+            Monster mons2 = new Monster(commander.GetRace(), building_t.DWELLING_MONSTER2);
 
             switch (Rand.Get(1, 3)) {
                 case 1:
@@ -63,5 +63,6 @@ public class Army {
     }
 
     public void SetCommander(Captain captain) {
+        //TODO
     }
 }

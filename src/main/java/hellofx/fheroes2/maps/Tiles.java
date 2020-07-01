@@ -84,6 +84,99 @@ public class Tiles {
         return sb.toString();
     }
 
+    public boolean QuantityIsValid() {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_RESOURCE:
+            case Mp2Kind.OBJ_CAMPFIRE:
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_ABANDONEDMINE:
+                return true;
+
+            case Mp2Kind.OBJ_PYRAMID:
+                return QuantitySpell().isValid();
+
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_GRAVEYARD:
+            case Mp2Kind.OBJ_DERELICTSHIP:
+            case Mp2Kind.OBJ_WATERWHEEL:
+            case Mp2Kind.OBJ_WINDMILL:
+            case Mp2Kind.OBJ_LEANTO:
+            case Mp2Kind.OBJ_MAGICGARDEN:
+                return quantity2 != 0;
+
+            case Mp2Kind.OBJ_SKELETON:
+                return QuantityArtifact().GetID() != ArtifactKind.UNKNOWN;
+
+            case Mp2Kind.OBJ_WAGON:
+                return QuantityArtifact().GetID() != ArtifactKind.UNKNOWN || (quantity2 != 0);
+
+            case Mp2Kind.OBJ_DAEMONCAVE:
+                return QuantityVariant() != 0;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    private Artifact QuantityArtifact() {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_WAGON:
+                return new Artifact(quantity2 != 0 ? ArtifactKind.UNKNOWN : quantity1);
+
+            case Mp2Kind.OBJ_SKELETON:
+            case Mp2Kind.OBJ_DAEMONCAVE:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_GRAVEYARD:
+                return new Artifact(quantity1);
+
+            case Mp2Kind.OBJ_ARTIFACT: {
+                if (QuantityVariant() == 15) {
+                    Artifact art = new Artifact(ArtifactKind.SPELL_SCROLL);
+                    art.SetSpell(QuantitySpell().GetID());
+                    return art;
+                }
+                return new Artifact(quantity1);
+            }
+
+            default:
+                break;
+        }
+
+        return new Artifact(ArtifactKind.UNKNOWN);
+    }
+
+    private Spell QuantitySpell() {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_ARTIFACT:
+                return new Spell(QuantityVariant() == 15 ? quantity1 : SpellKind.NONE);
+
+            case Mp2Kind.OBJ_SHRINE1:
+            case Mp2Kind.OBJ_SHRINE2:
+            case Mp2Kind.OBJ_SHRINE3:
+            case Mp2Kind.OBJ_PYRAMID:
+                return new Spell(quantity1);
+
+            default:
+                break;
+        }
+
+        return new Spell(SpellKind.NONE);
+    }
+
+    private int QuantityVariant() {
+        return quantity2 >> 4;
+    }
+
+
     public void FixedPreload() {
         var tile = this;
         var it = find_if(addons_level1._items, this::isSkeletonFix);

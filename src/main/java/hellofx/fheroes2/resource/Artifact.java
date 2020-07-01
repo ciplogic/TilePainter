@@ -1,6 +1,8 @@
 package hellofx.fheroes2.resource;
 
 import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.spell.Spell;
+import hellofx.fheroes2.spell.SpellKind;
 import hellofx.fheroes2.system.Settings;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
@@ -212,5 +214,19 @@ public class Artifact {
 
     public boolean IsValid() {
         return id != UNKNOWN;
+    }
+
+    public void SetSpell(int v) {
+        boolean adv = Rand.Get(1) != 0;
+
+        switch (v) {
+            case SpellKind.RANDOM -> ext = Spell.Rand(Rand.Get(1, 5), adv).GetID();
+            case SpellKind.RANDOM1 -> ext = Spell.Rand(1, adv).GetID();
+            case SpellKind.RANDOM2 -> ext = Spell.Rand(2, adv).GetID();
+            case SpellKind.RANDOM3 -> ext = Spell.Rand(3, adv).GetID();
+            case SpellKind.RANDOM4 -> ext = Spell.Rand(4, adv).GetID();
+            case SpellKind.RANDOM5 -> ext = Spell.Rand(5, adv).GetID();
+            default -> ext = v;
+        }
     }
 }

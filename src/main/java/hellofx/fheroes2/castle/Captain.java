@@ -23,6 +23,6 @@ public class Captain extends HeroBase {
     }
 
     public boolean isValid() {
-        return home.isBuild(BuildingKind.BUILD_CAPTAIN);
+        return home.isBuild(building_t.BUILD_CAPTAIN);
     }
 }

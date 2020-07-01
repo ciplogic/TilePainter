@@ -21,7 +21,7 @@ public class Spell {
         return Rand(lvl, false);
     }
 
-    private static Spell Rand(int lvl, boolean adv) {
+    public static Spell Rand(int lvl, boolean adv) {
         List<Spell> v = new ArrayList<>(15);
 
         for (var sp = NONE; sp < STONE; ++sp) {
@@ -181,5 +181,9 @@ public class Spell {
                 break;
         }
         return true;
+    }
+
+    public int GetID() {
+        return id;
     }
 }

@@ -1,5 +1,6 @@
 package hellofx.fheroes2.castle;
 
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.H2Point;
@@ -20,8 +21,8 @@ import hellofx.fheroes2.system.Settings;
 
 import java.util.stream.IntStream;
 
-import static hellofx.fheroes2.castle.BuildingKind.*;
 import static hellofx.fheroes2.castle.CastleFlags.*;
+import static hellofx.fheroes2.castle.building_t.*;
 import static hellofx.fheroes2.game.GameConsts.CASTLEMAXMONSTER;
 
 public class Castle {
@@ -335,11 +336,11 @@ public class Castle {
     }
 
     private int GetLevelMageGuild() {
-        if ((building & BuildingKind.BUILD_MAGEGUILD5) != 0) return 5;
-        if ((building & BuildingKind.BUILD_MAGEGUILD4) != 0) return 4;
-        if ((building & BuildingKind.BUILD_MAGEGUILD3) != 0) return 3;
-        if ((building & BuildingKind.BUILD_MAGEGUILD2) != 0) return 2;
-        if ((building & BuildingKind.BUILD_MAGEGUILD1) != 0) return 1;
+        if ((building & building_t.BUILD_MAGEGUILD5) != 0) return 5;
+        if ((building & building_t.BUILD_MAGEGUILD4) != 0) return 4;
+        if ((building & building_t.BUILD_MAGEGUILD3) != 0) return 3;
+        if ((building & building_t.BUILD_MAGEGUILD2) != 0) return 2;
+        if ((building & building_t.BUILD_MAGEGUILD1) != 0) return 1;
         return 0;
     }
 
@@ -356,7 +357,7 @@ public class Castle {
     }
 
     public boolean isCastle() {
-        return (building & BuildingKind.BUILD_CASTLE) != 0;
+        return (building & building_t.BUILD_CASTLE) != 0;
     }
 
     public void ChangeColor(int cl) {
@@ -367,4 +368,484 @@ public class Castle {
     public boolean isBuild(int buildToCheck) {
         return (building & buildToCheck) != 0;
     }
+
+    public int GetActualDwelling(int build) {
+        switch (build) {
+            case DWELLING_MONSTER1:
+            case DWELLING_UPGRADE2:
+            case DWELLING_UPGRADE3:
+            case DWELLING_UPGRADE4:
+            case DWELLING_UPGRADE5:
+            case DWELLING_UPGRADE7:
+                return build;
+            case DWELLING_MONSTER2:
+                return (building & DWELLING_UPGRADE2) != 0 ? DWELLING_UPGRADE2 : build;
+            case DWELLING_MONSTER3:
+                return (building & DWELLING_UPGRADE3) != 0 ? DWELLING_UPGRADE3 : build;
+            case DWELLING_MONSTER4:
+                return (building & DWELLING_UPGRADE4) != 0 ? DWELLING_UPGRADE4 : build;
+            case DWELLING_MONSTER5:
+                return (building & DWELLING_UPGRADE5) != 0 ? DWELLING_UPGRADE5 : build;
+            case DWELLING_MONSTER6:
+                return (building & DWELLING_UPGRADE7) != 0
+                        ? DWELLING_UPGRADE7
+                        : (building & DWELLING_UPGRADE6) != 0
+                        ? DWELLING_UPGRADE6
+                        : build;
+            case DWELLING_UPGRADE6:
+                return (building & DWELLING_UPGRADE7) != 0 ? DWELLING_UPGRADE7 : build;
+            default:
+                break;
+        }
+
+        return BUILD_NOTHING;
+    }
+
+    public int GetUpgradeBuilding(int build) {
+
+        switch (build) {
+            case BUILD_TENT:
+                return BUILD_CASTLE;
+            case BUILD_MAGEGUILD1:
+                return BUILD_MAGEGUILD2;
+            case BUILD_MAGEGUILD2:
+                return BUILD_MAGEGUILD3;
+            case BUILD_MAGEGUILD3:
+                return BUILD_MAGEGUILD4;
+            case BUILD_MAGEGUILD4:
+                return BUILD_MAGEGUILD5;
+            default:
+                break;
+        }
+
+        if (RaceKind.BARB == race) {
+            switch (build) {
+                case DWELLING_MONSTER2:
+                    return DWELLING_UPGRADE2;
+                case DWELLING_MONSTER4:
+                    return DWELLING_UPGRADE4;
+                case DWELLING_MONSTER5:
+                    return DWELLING_UPGRADE5;
+                default:
+                    break;
+            }
+        } else if (RaceKind.KNGT == race) {
+            switch (build) {
+                case DWELLING_MONSTER2:
+                    return DWELLING_UPGRADE2;
+                case DWELLING_MONSTER3:
+                    return DWELLING_UPGRADE3;
+                case DWELLING_MONSTER4:
+                    return DWELLING_UPGRADE4;
+                case DWELLING_MONSTER5:
+                    return DWELLING_UPGRADE5;
+                case DWELLING_MONSTER6:
+                    return DWELLING_UPGRADE6;
+                default:
+                    break;
+            }
+        } else if (RaceKind.NECR == race) {
+            switch (build) {
+                case DWELLING_MONSTER2:
+                    return DWELLING_UPGRADE2;
+                case DWELLING_MONSTER3:
+                    return DWELLING_UPGRADE3;
+                case DWELLING_MONSTER4:
+                    return DWELLING_UPGRADE4;
+                case DWELLING_MONSTER5:
+                    return DWELLING_UPGRADE5;
+                default:
+                    break;
+            }
+        } else if (RaceKind.SORC == race) {
+            switch (build) {
+                case DWELLING_MONSTER2:
+                    return DWELLING_UPGRADE2;
+                case DWELLING_MONSTER3:
+                    return DWELLING_UPGRADE3;
+                case DWELLING_MONSTER4:
+                    return DWELLING_UPGRADE4;
+                default:
+                    break;
+            }
+        } else if (RaceKind.WRLK == race) {
+            switch (build) {
+                case DWELLING_MONSTER4:
+                    return DWELLING_UPGRADE4;
+                case DWELLING_MONSTER6:
+                    return isBuild(DWELLING_UPGRADE6) ? DWELLING_UPGRADE7 : DWELLING_UPGRADE6;
+                default:
+                    break;
+            }
+        } else if (RaceKind.WZRD == race) {
+            switch (build) {
+                case DWELLING_MONSTER3:
+                    return DWELLING_UPGRADE3;
+                case DWELLING_MONSTER5:
+                    return DWELLING_UPGRADE5;
+                case DWELLING_MONSTER6:
+                    return DWELLING_UPGRADE6;
+                default:
+                    break;
+            }
+        }
+
+        return build;
+    }
+
+    int GetICNBuilding(int build, int race) {
+        if (RaceKind.BARB == race) {
+            switch (build) {
+                case BUILD_CASTLE:
+                    return IcnKind.TWNBCSTL;
+                case BUILD_TENT:
+                    return IcnKind.TWNBTENT;
+                case BUILD_SPEC:
+                    return IcnKind.TWNBSPEC;
+                case BUILD_CAPTAIN:
+                    return IcnKind.TWNBCAPT;
+                case BUILD_WEL2:
+                    return IcnKind.TWNBWEL2;
+                case BUILD_LEFTTURRET:
+                    return IcnKind.TWNBLTUR;
+                case BUILD_RIGHTTURRET:
+                    return IcnKind.TWNBRTUR;
+                case BUILD_MOAT:
+                    return IcnKind.TWNBMOAT;
+                case BUILD_MARKETPLACE:
+                    return IcnKind.TWNBMARK;
+                case BUILD_THIEVESGUILD:
+                    return IcnKind.TWNBTHIE;
+                case BUILD_TAVERN:
+                    return IcnKind.TWNBTVRN;
+                case BUILD_WELL:
+                    return IcnKind.TWNBWELL;
+                case BUILD_STATUE:
+                    return IcnKind.TWNBSTAT;
+                case BUILD_SHIPYARD:
+                    return IcnKind.TWNBDOCK;
+                case BUILD_MAGEGUILD1:
+                case BUILD_MAGEGUILD2:
+                case BUILD_MAGEGUILD3:
+                case BUILD_MAGEGUILD4:
+                case BUILD_MAGEGUILD5:
+                    return IcnKind.TWNBMAGE;
+                case DWELLING_MONSTER1:
+                    return IcnKind.TWNBDW_0;
+                case DWELLING_MONSTER2:
+                    return IcnKind.TWNBDW_1;
+                case DWELLING_UPGRADE2:
+                    return IcnKind.TWNBUP_1;
+                case DWELLING_MONSTER3:
+                    return IcnKind.TWNBDW_2;
+                case DWELLING_MONSTER4:
+                    return IcnKind.TWNBDW_3;
+                case DWELLING_UPGRADE4:
+                    return IcnKind.TWNBUP_3;
+                case DWELLING_MONSTER5:
+                    return IcnKind.TWNBDW_4;
+                case DWELLING_UPGRADE5:
+                    return IcnKind.TWNBUP_4;
+                case DWELLING_MONSTER6:
+                    return IcnKind.TWNBDW_5;
+                default:
+                    break;
+            }
+        } else if (RaceKind.KNGT == race) {
+            switch (build) {
+                case BUILD_CASTLE:
+                    return IcnKind.TWNKCSTL;
+                case BUILD_TENT:
+                    return IcnKind.TWNKTENT;
+                case BUILD_SPEC:
+                    return IcnKind.TWNKSPEC;
+                case BUILD_CAPTAIN:
+                    return IcnKind.TWNKCAPT;
+                case BUILD_WEL2:
+                    return IcnKind.TWNKWEL2;
+                case BUILD_LEFTTURRET:
+                    return IcnKind.TWNKLTUR;
+                case BUILD_RIGHTTURRET:
+                    return IcnKind.TWNKRTUR;
+                case BUILD_MOAT:
+                    return IcnKind.TWNKMOAT;
+                case BUILD_MARKETPLACE:
+                    return IcnKind.TWNKMARK;
+                case BUILD_THIEVESGUILD:
+                    return IcnKind.TWNKTHIE;
+                case BUILD_TAVERN:
+                    return IcnKind.TWNKTVRN;
+                case BUILD_WELL:
+                    return IcnKind.TWNKWELL;
+                case BUILD_STATUE:
+                    return IcnKind.TWNKSTAT;
+                case BUILD_SHIPYARD:
+                    return IcnKind.TWNKDOCK;
+                case BUILD_MAGEGUILD1:
+                case BUILD_MAGEGUILD2:
+                case BUILD_MAGEGUILD3:
+                case BUILD_MAGEGUILD4:
+                case BUILD_MAGEGUILD5:
+                    return IcnKind.TWNKMAGE;
+                case DWELLING_MONSTER1:
+                    return IcnKind.TWNKDW_0;
+                case DWELLING_MONSTER2:
+                    return IcnKind.TWNKDW_1;
+                case DWELLING_UPGRADE2:
+                    return IcnKind.TWNKUP_1;
+                case DWELLING_MONSTER3:
+                    return IcnKind.TWNKDW_2;
+                case DWELLING_UPGRADE3:
+                    return IcnKind.TWNKUP_2;
+                case DWELLING_MONSTER4:
+                    return IcnKind.TWNKDW_3;
+                case DWELLING_UPGRADE4:
+                    return IcnKind.TWNKUP_3;
+                case DWELLING_MONSTER5:
+                    return IcnKind.TWNKDW_4;
+                case DWELLING_UPGRADE5:
+                    return IcnKind.TWNKUP_4;
+                case DWELLING_MONSTER6:
+                    return IcnKind.TWNKDW_5;
+                case DWELLING_UPGRADE6:
+                    return IcnKind.TWNKUP_5;
+                default:
+                    break;
+            }
+        } else if (RaceKind.NECR == race) {
+            switch (build) {
+                case BUILD_CASTLE:
+                    return IcnKind.TWNNCSTL;
+                case BUILD_TENT:
+                    return IcnKind.TWNNTENT;
+                case BUILD_SPEC:
+                    return IcnKind.TWNNSPEC;
+                case BUILD_CAPTAIN:
+                    return IcnKind.TWNNCAPT;
+                case BUILD_WEL2:
+                    return IcnKind.TWNNWEL2;
+                case BUILD_LEFTTURRET:
+                    return IcnKind.TWNNLTUR;
+                case BUILD_RIGHTTURRET:
+                    return IcnKind.TWNNRTUR;
+                case BUILD_MOAT:
+                    return IcnKind.TWNNMOAT;
+                case BUILD_MARKETPLACE:
+                    return IcnKind.TWNNMARK;
+                case BUILD_THIEVESGUILD:
+                    return IcnKind.TWNNTHIE;
+                // shrine
+                case BUILD_SHRINE:
+                    return IcnKind.TWNNTVRN;
+                case BUILD_WELL:
+                    return IcnKind.TWNNWELL;
+                case BUILD_STATUE:
+                    return IcnKind.TWNNSTAT;
+                case BUILD_SHIPYARD:
+                    return IcnKind.TWNNDOCK;
+                case BUILD_MAGEGUILD1:
+                case BUILD_MAGEGUILD2:
+                case BUILD_MAGEGUILD3:
+                case BUILD_MAGEGUILD4:
+                case BUILD_MAGEGUILD5:
+                    return IcnKind.TWNNMAGE;
+                case DWELLING_MONSTER1:
+                    return IcnKind.TWNNDW_0;
+                case DWELLING_MONSTER2:
+                    return IcnKind.TWNNDW_1;
+                case DWELLING_UPGRADE2:
+                    return IcnKind.TWNNUP_1;
+                case DWELLING_MONSTER3:
+                    return IcnKind.TWNNDW_2;
+                case DWELLING_UPGRADE3:
+                    return IcnKind.TWNNUP_2;
+                case DWELLING_MONSTER4:
+                    return IcnKind.TWNNDW_3;
+                case DWELLING_UPGRADE4:
+                    return IcnKind.TWNNUP_3;
+                case DWELLING_MONSTER5:
+                    return IcnKind.TWNNDW_4;
+                case DWELLING_UPGRADE5:
+                    return IcnKind.TWNNUP_4;
+                case DWELLING_MONSTER6:
+                    return IcnKind.TWNNDW_5;
+                default:
+                    break;
+            }
+        } else if (RaceKind.SORC == race) {
+            switch (build) {
+                case BUILD_CASTLE:
+                    return IcnKind.TWNSCSTL;
+                case BUILD_TENT:
+                    return IcnKind.TWNSTENT;
+                case BUILD_SPEC:
+                    return IcnKind.TWNSSPEC;
+                case BUILD_CAPTAIN:
+                    return IcnKind.TWNSCAPT;
+                case BUILD_WEL2:
+                    return IcnKind.TWNSWEL2;
+                case BUILD_LEFTTURRET:
+                    return IcnKind.TWNSLTUR;
+                case BUILD_RIGHTTURRET:
+                    return IcnKind.TWNSRTUR;
+                case BUILD_MOAT:
+                    return IcnKind.TWNSMOAT;
+                case BUILD_MARKETPLACE:
+                    return IcnKind.TWNSMARK;
+                case BUILD_THIEVESGUILD:
+                    return IcnKind.TWNSTHIE;
+                case BUILD_TAVERN:
+                    return IcnKind.TWNSTVRN;
+                case BUILD_WELL:
+                    return IcnKind.TWNSWELL;
+                case BUILD_STATUE:
+                    return IcnKind.TWNSSTAT;
+                case BUILD_SHIPYARD:
+                    return IcnKind.TWNSDOCK;
+                case BUILD_MAGEGUILD1:
+                case BUILD_MAGEGUILD2:
+                case BUILD_MAGEGUILD3:
+                case BUILD_MAGEGUILD4:
+                case BUILD_MAGEGUILD5:
+                    return IcnKind.TWNSMAGE;
+                case DWELLING_MONSTER1:
+                    return IcnKind.TWNSDW_0;
+                case DWELLING_MONSTER2:
+                    return IcnKind.TWNSDW_1;
+                case DWELLING_UPGRADE2:
+                    return IcnKind.TWNSUP_1;
+                case DWELLING_MONSTER3:
+                    return IcnKind.TWNSDW_2;
+                case DWELLING_UPGRADE3:
+                    return IcnKind.TWNSUP_2;
+                case DWELLING_MONSTER4:
+                    return IcnKind.TWNSDW_3;
+                case DWELLING_UPGRADE4:
+                    return IcnKind.TWNSUP_3;
+                case DWELLING_MONSTER5:
+                    return IcnKind.TWNSDW_4;
+                case DWELLING_MONSTER6:
+                    return IcnKind.TWNSDW_5;
+                default:
+                    break;
+            }
+        } else if (RaceKind.WRLK == race) {
+            switch (build) {
+                case BUILD_CASTLE:
+                    return IcnKind.TWNWCSTL;
+                case BUILD_TENT:
+                    return IcnKind.TWNWTENT;
+                case BUILD_SPEC:
+                    return IcnKind.TWNWSPEC;
+                case BUILD_CAPTAIN:
+                    return IcnKind.TWNWCAPT;
+                case BUILD_WEL2:
+                    return IcnKind.TWNWWEL2;
+                case BUILD_LEFTTURRET:
+                    return IcnKind.TWNWLTUR;
+                case BUILD_RIGHTTURRET:
+                    return IcnKind.TWNWRTUR;
+                case BUILD_MOAT:
+                    return IcnKind.TWNWMOAT;
+                case BUILD_MARKETPLACE:
+                    return IcnKind.TWNWMARK;
+                case BUILD_THIEVESGUILD:
+                    return IcnKind.TWNWTHIE;
+                case BUILD_TAVERN:
+                    return IcnKind.TWNWTVRN;
+                case BUILD_WELL:
+                    return IcnKind.TWNWWELL;
+                case BUILD_STATUE:
+                    return IcnKind.TWNWSTAT;
+                case BUILD_SHIPYARD:
+                    return IcnKind.TWNWDOCK;
+                case BUILD_MAGEGUILD1:
+                case BUILD_MAGEGUILD2:
+                case BUILD_MAGEGUILD3:
+                case BUILD_MAGEGUILD4:
+                case BUILD_MAGEGUILD5:
+                    return IcnKind.TWNWMAGE;
+                case DWELLING_MONSTER1:
+                    return IcnKind.TWNWDW_0;
+                case DWELLING_MONSTER2:
+                    return IcnKind.TWNWDW_1;
+                case DWELLING_MONSTER3:
+                    return IcnKind.TWNWDW_2;
+                case DWELLING_MONSTER4:
+                    return IcnKind.TWNWDW_3;
+                case DWELLING_UPGRADE4:
+                    return IcnKind.TWNWUP_3;
+                case DWELLING_MONSTER5:
+                    return IcnKind.TWNWDW_4;
+                case DWELLING_MONSTER6:
+                    return IcnKind.TWNWDW_5;
+                case DWELLING_UPGRADE6:
+                    return IcnKind.TWNWUP_5;
+                case DWELLING_UPGRADE7:
+                    return IcnKind.TWNWUP5B;
+                default:
+                    break;
+            }
+        } else if (RaceKind.WZRD == race) {
+            switch (build) {
+                case BUILD_CASTLE:
+                    return IcnKind.TWNZCSTL;
+                case BUILD_TENT:
+                    return IcnKind.TWNZTENT;
+                case BUILD_SPEC:
+                    return IcnKind.TWNZSPEC;
+                case BUILD_CAPTAIN:
+                    return IcnKind.TWNZCAPT;
+                case BUILD_WEL2:
+                    return IcnKind.TWNZWEL2;
+                case BUILD_LEFTTURRET:
+                    return IcnKind.TWNZLTUR;
+                case BUILD_RIGHTTURRET:
+                    return IcnKind.TWNZRTUR;
+                case BUILD_MOAT:
+                    return IcnKind.TWNZMOAT;
+                case BUILD_MARKETPLACE:
+                    return IcnKind.TWNZMARK;
+                case BUILD_THIEVESGUILD:
+                    return IcnKind.TWNZTHIE;
+                case BUILD_TAVERN:
+                    return IcnKind.TWNZTVRN;
+                case BUILD_WELL:
+                    return IcnKind.TWNZWELL;
+                case BUILD_STATUE:
+                    return IcnKind.TWNZSTAT;
+                case BUILD_SHIPYARD:
+                    return IcnKind.TWNZDOCK;
+                case BUILD_MAGEGUILD1:
+                case BUILD_MAGEGUILD2:
+                case BUILD_MAGEGUILD3:
+                case BUILD_MAGEGUILD4:
+                case BUILD_MAGEGUILD5:
+                    return IcnKind.TWNZMAGE;
+                case DWELLING_MONSTER1:
+                    return IcnKind.TWNZDW_0;
+                case DWELLING_MONSTER2:
+                    return IcnKind.TWNZDW_1;
+                case DWELLING_MONSTER3:
+                    return IcnKind.TWNZDW_2;
+                case DWELLING_UPGRADE3:
+                    return IcnKind.TWNZUP_2;
+                case DWELLING_MONSTER4:
+                    return IcnKind.TWNZDW_3;
+                case DWELLING_MONSTER5:
+                    return IcnKind.TWNZDW_4;
+                case DWELLING_UPGRADE5:
+                    return IcnKind.TWNZUP_4;
+                case DWELLING_MONSTER6:
+                    return IcnKind.TWNZDW_5;
+                case DWELLING_UPGRADE6:
+                    return IcnKind.TWNZUP_5;
+                default:
+                    break;
+            }
+        }
+
+        return IcnKind.UNKNOWN;
+    }
+
 }

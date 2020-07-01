@@ -8,7 +8,7 @@ import hellofx.fheroes2.spell.SpellKind;
 import hellofx.fheroes2.system.Settings;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
-import static hellofx.fheroes2.castle.BuildingKind.*;
+import static hellofx.fheroes2.castle.building_t.*;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
 
