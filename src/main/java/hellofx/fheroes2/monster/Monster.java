@@ -2,7 +2,9 @@ package hellofx.fheroes2.monster;
 
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
+import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.resource.Funds;
 import hellofx.fheroes2.spell.Spell;
 import hellofx.fheroes2.spell.SpellKind;
 import hellofx.fheroes2.system.Settings;
@@ -420,5 +422,53 @@ public class Monster {
             default -> false;
         };
 
+    }
+
+    public Funds GetCost() {
+        return MonsterStats.get(id).cost;
+    }
+
+    public Funds GetUpgradeCost() {
+
+        Monster upgr = GetUpgrade();
+        var pay = id != upgr.id ? upgr.GetCost().substract(GetCost()) : GetCost();
+
+        pay.wood = (short) (pay.wood * GetUpgradeRatio());
+        pay.mercury = (short) (pay.mercury * GetUpgradeRatio());
+        pay.ore = (short) (pay.ore * GetUpgradeRatio());
+        pay.sulfur = (short) (pay.sulfur * GetUpgradeRatio());
+        pay.crystal = (short) (pay.crystal * GetUpgradeRatio());
+        pay.gems = (short) (pay.gems * GetUpgradeRatio());
+        pay.gold = (int) (pay.gold * GetUpgradeRatio());
+
+        return pay;
+    }
+
+    private float GetUpgradeRatio() {
+        return GameStatic.GetMonsterUpgradeRatio();
+    }
+
+    public Monster GetUpgrade() {
+        return MonsterStats.GetUpgrade(id);
+    }
+
+    public int GetRace() {
+        if (MonsterKind.UNKNOWN == id) return RaceKind.NONE;
+        if (MonsterKind.GOBLIN > id) return RaceKind.KNGT;
+        if (MonsterKind.SPRITE > id) return RaceKind.BARB;
+        if (MonsterKind.CENTAUR > id) return RaceKind.SORC;
+        if (MonsterKind.HALFLING > id) return RaceKind.WRLK;
+        if (MonsterKind.SKELETON > id) return RaceKind.WZRD;
+        if (MonsterKind.ROGUE > id) return RaceKind.NECR;
+
+        return RaceKind.NONE;
+    }
+
+    public int GetDwelling() {
+        return MonsterStats.GetDwelling(id);
+    }
+
+    public void Upgrade() {
+        id = GetUpgrade().id;
     }
 }

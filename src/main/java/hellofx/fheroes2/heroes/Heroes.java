@@ -5,6 +5,7 @@ import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.ai.AI;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.army.Troop;
+import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.kingdom.ColorBase;
@@ -364,5 +365,18 @@ public class Heroes extends HeroBase {
     @Override
     public int GetRace() {
         return race;
+    }
+
+    public void SetFreeman(int reason) {
+        //TODO
+    }
+
+    public boolean Recruit(Castle castle) {
+        //TODO
+        return false;
+    }
+
+    public void SetCenterPatrol(H2Point pt) {
+        patrol_center = pt;
     }
 }

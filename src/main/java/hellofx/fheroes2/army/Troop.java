@@ -2,6 +2,7 @@ package hellofx.fheroes2.army;
 
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.monster.MonsterKind;
+import hellofx.fheroes2.resource.Funds;
 
 public class Troop {
     public Monster _monster = new Monster(0);
@@ -35,5 +36,9 @@ public class Troop {
     public void Reset() {
         _monster.id = MonsterKind.UNKNOWN;
         count = 0;
+    }
+
+    public Funds GetUpgradeCost() {
+        return _monster.GetUpgradeCost().multiply(count);
     }
 }

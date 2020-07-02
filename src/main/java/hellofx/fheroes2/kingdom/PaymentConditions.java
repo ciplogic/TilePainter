@@ -1,5 +1,6 @@
 package hellofx.fheroes2.kingdom;
 
+import hellofx.fheroes2.castle.BuildingInfo;
 import hellofx.fheroes2.resource.Funds;
 import hellofx.fheroes2.system.Settings;
 
@@ -53,6 +54,10 @@ public class PaymentConditions {
         }
 
         return result;
+    }
+
+    public static Funds BuyBuilding(int race, int build) {
+        return BuildingInfo.GetCost(build, race);
     }
 
     private void setup() {

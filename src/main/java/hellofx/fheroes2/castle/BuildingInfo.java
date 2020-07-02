@@ -1,6 +1,7 @@
 package hellofx.fheroes2.castle;
 
 import hellofx.fheroes2.common.H2Rect;
+import hellofx.fheroes2.resource.Funds;
 
 public class BuildingInfo {
     Castle castle;
@@ -11,6 +12,13 @@ public class BuildingInfo {
 
     public BuildingInfo(Castle c, /*building_t*/ int b) {
         //TODO
+    }
+
+    public static Funds GetCost(int build, int race) {
+        return Builds._builds.stream()
+                .filter(ptr -> ptr.id2 == build && ((race == 0) || (0 != (race & ptr.race))))
+                .map(row -> row.cost)
+                .findFirst().orElse(Funds.NONE);
     }
 
     public boolean IsDwelling() {

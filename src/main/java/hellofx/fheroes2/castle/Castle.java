@@ -8,9 +8,7 @@ import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.heroes.HeroBase;
 import hellofx.fheroes2.heroes.HeroType;
-import hellofx.fheroes2.kingdom.H2Color;
-import hellofx.fheroes2.kingdom.RaceKind;
-import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.kingdom.*;
 import hellofx.fheroes2.maps.MapPosition;
 import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.monster.Monster;
@@ -22,6 +20,7 @@ import hellofx.fheroes2.system.Settings;
 import java.util.stream.IntStream;
 
 import static hellofx.fheroes2.castle.CastleFlags.*;
+import static hellofx.fheroes2.castle.buildcond_t.*;
 import static hellofx.fheroes2.castle.building_t.*;
 import static hellofx.fheroes2.game.GameConsts.CASTLEMAXMONSTER;
 
@@ -34,7 +33,7 @@ public class Castle {
     public MageGuild mageguild = new MageGuild();
     public int[] dwelling = new int[CASTLEMAXMONSTER];
     public Army army = new Army();    //from MapColor enum
-    public int color;
+    public ColorBase color = new ColorBase();
     public BitModes bitModes = new BitModes();
 
 
@@ -196,7 +195,7 @@ public class Castle {
     }
 
     public int GetColor() {
-        return color;
+        return color.color;
     }
 
     private void PostLoad() {
@@ -345,7 +344,7 @@ public class Castle {
     }
 
     private void SetColor(int col) {
-        this.color = col;
+        this.color.color = col;
     }
 
     public H2Point GetCenter() {
@@ -848,4 +847,343 @@ public class Castle {
         return IcnKind.UNKNOWN;
     }
 
+    /* check allow buy building */
+    public int CheckBuyBuilding(int build) {
+        if ((build & building) != 0) return ALREADY_BUILT;
+
+        switch (build) {
+            // allow build castle
+            case BUILD_CASTLE:
+                if (!bitModes.Modes(ALLOWCASTLE)) return BUILD_DISABLE;
+                break;
+            // buid shipyard only nearly sea
+            case BUILD_SHIPYARD:
+                if (!HaveNearlySea()) return BUILD_DISABLE;
+                break;
+            case BUILD_SHRINE:
+                if (RaceKind.NECR != GetRace() || !Settings.Get().PriceLoyaltyVersion()) return BUILD_DISABLE;
+                break;
+            case BUILD_TAVERN:
+                if (RaceKind.NECR == GetRace()) return BUILD_DISABLE;
+                break;
+
+            default:
+                break;
+        }
+
+        if (!bitModes.Modes(ALLOWBUILD)) return NOT_TODAY;
+
+        if (isCastle()) {
+            if (build == BUILD_TENT) return BUILD_DISABLE;
+        } else {
+            if (build != BUILD_CASTLE) return NEED_CASTLE;
+        }
+
+        switch (build) {
+            // check upgrade dwelling
+            case DWELLING_UPGRADE2:
+                if (0 != ((RaceKind.WRLK | RaceKind.WZRD) & race)) return UNKNOWN_UPGRADE;
+                break;
+            case DWELLING_UPGRADE3:
+                if (0 != ((RaceKind.BARB | RaceKind.WRLK) & race)) return UNKNOWN_UPGRADE;
+                break;
+            case DWELLING_UPGRADE4:
+                if (0 != (RaceKind.WZRD & race)) return UNKNOWN_UPGRADE;
+                break;
+            case DWELLING_UPGRADE5:
+                if (0 != ((RaceKind.SORC | RaceKind.WRLK) & race)) return UNKNOWN_UPGRADE;
+                break;
+            case DWELLING_UPGRADE6:
+                if (0 != ((RaceKind.BARB | RaceKind.SORC | RaceKind.NECR) & race)) return UNKNOWN_UPGRADE;
+                break;
+            case DWELLING_UPGRADE7:
+                if (RaceKind.WRLK != race) return UNKNOWN_UPGRADE;
+                break;
+
+            default:
+                break;
+        }
+
+        // check build requirements
+        int requires = (GetBuildingRequires(build));
+
+        for (int itr = 0x00000001; itr != 0; itr <<= 1)
+            if ((0 != (requires & itr)) && (0 == (building & itr))) return REQUIRES_BUILD;
+
+        // check valid payment
+        if (!GetKingdom().AllowPayment(PaymentConditions.BuyBuilding(race, build))) return LACK_RESOURCES;
+
+        return ALLOW_BUILD;
+    }
+
+    private int GetBuildingRequires(int build) {
+        var requires = 0;
+
+        switch (build) {
+            case BUILD_SPEC:
+                switch (race) {
+                    case RaceKind.WZRD:
+                        requires |= BUILD_MAGEGUILD1;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_MONSTER2:
+                switch (race) {
+                    case RaceKind.KNGT:
+                    case RaceKind.BARB:
+                    case RaceKind.WZRD:
+                    case RaceKind.WRLK:
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER1;
+                        break;
+
+                    case RaceKind.SORC:
+                        requires |= DWELLING_MONSTER1;
+                        requires |= BUILD_TAVERN;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_MONSTER3:
+                switch (race) {
+                    case RaceKind.KNGT:
+                        requires |= DWELLING_MONSTER1;
+                        requires |= BUILD_WELL;
+                        break;
+
+                    case RaceKind.BARB:
+                    case RaceKind.SORC:
+                    case RaceKind.WZRD:
+                    case RaceKind.WRLK:
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER1;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_MONSTER4:
+                switch (race) {
+                    case RaceKind.KNGT:
+                        requires |= DWELLING_MONSTER1;
+                        requires |= BUILD_TAVERN;
+                        break;
+
+                    case RaceKind.BARB:
+                        requires |= DWELLING_MONSTER1;
+                        break;
+
+                    case RaceKind.SORC:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= BUILD_MAGEGUILD1;
+                        break;
+
+                    case RaceKind.WZRD:
+                    case RaceKind.WRLK:
+                        requires |= DWELLING_MONSTER2;
+                        break;
+
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER3;
+                        requires |= BUILD_THIEVESGUILD;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_MONSTER5:
+                switch (race) {
+                    case RaceKind.KNGT:
+                    case RaceKind.BARB:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.SORC:
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.WRLK:
+                        requires |= DWELLING_MONSTER3;
+                        break;
+
+                    case RaceKind.WZRD:
+                        requires |= DWELLING_MONSTER3;
+                        requires |= BUILD_MAGEGUILD1;
+                        break;
+
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= BUILD_MAGEGUILD1;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_MONSTER6:
+                switch (race) {
+                    case RaceKind.KNGT:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.BARB:
+                    case RaceKind.SORC:
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER5;
+                        break;
+
+                    case RaceKind.WRLK:
+                    case RaceKind.WZRD:
+                        requires |= DWELLING_MONSTER4;
+                        requires |= DWELLING_MONSTER5;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_UPGRADE2:
+                switch (race) {
+                    case RaceKind.KNGT:
+                    case RaceKind.BARB:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.SORC:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= BUILD_WELL;
+                        break;
+
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER2;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_UPGRADE3:
+                switch (race) {
+                    case RaceKind.KNGT:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.SORC:
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.WZRD:
+                        requires |= DWELLING_MONSTER3;
+                        requires |= BUILD_WELL;
+                        break;
+
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER3;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_UPGRADE4:
+                switch (race) {
+                    case RaceKind.KNGT:
+                    case RaceKind.BARB:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    case RaceKind.SORC:
+                    case RaceKind.WRLK:
+                    case RaceKind.NECR:
+                        requires |= DWELLING_MONSTER4;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_UPGRADE5:
+                switch (race) {
+                    case RaceKind.KNGT:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        requires |= DWELLING_MONSTER5;
+                        break;
+
+                    case RaceKind.BARB:
+                        requires |= DWELLING_MONSTER5;
+                        break;
+
+                    case RaceKind.WZRD:
+                        requires |= BUILD_SPEC;
+                        requires |= DWELLING_MONSTER5;
+                        break;
+
+                    case RaceKind.NECR:
+                        requires |= BUILD_MAGEGUILD2;
+                        requires |= DWELLING_MONSTER5;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case DWELLING_UPGRADE6:
+                switch (race) {
+                    case RaceKind.KNGT:
+                        requires |= DWELLING_MONSTER2;
+                        requires |= DWELLING_MONSTER3;
+                        requires |= DWELLING_MONSTER4;
+                        requires |= DWELLING_MONSTER6;
+                        break;
+
+                    case RaceKind.WRLK:
+                    case RaceKind.WZRD:
+                        requires |= DWELLING_MONSTER6;
+                        break;
+
+                    default:
+                        break;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return requires;
+    }
+
+    public Kingdom GetKingdom() {
+        return color.GetKingdom();
+    }
 }

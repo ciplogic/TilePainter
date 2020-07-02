@@ -1,5 +1,7 @@
 package hellofx.fheroes2.army;
 
+import hellofx.fheroes2.castle.Castle;
+import hellofx.fheroes2.kingdom.Kingdom;
 import hellofx.fheroes2.monster.Monster;
 
 import java.util.ArrayList;
@@ -35,5 +37,20 @@ public class Troops {
 
     public void JoinTroop(Monster mons1, int count) {
         _items.add(new Troop(mons1, count));
+    }
+
+    public void UpgradeTroops(Castle castle) {
+        for (var _item : _items)
+            if (_item.IsValid()) {
+                var payment = _item.GetUpgradeCost();
+                Kingdom kingdom = castle.GetKingdom();
+
+                if (castle.GetRace() == _item._monster.GetRace() &&
+                        castle.isBuild(_item._monster.GetUpgrade().GetDwelling()) &&
+                        kingdom.AllowPayment(payment)) {
+                    kingdom.OddFundsResource(payment);
+                    _item._monster.Upgrade();
+                }
+            }
     }
 }

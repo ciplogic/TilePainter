@@ -10,4 +10,8 @@ public class ColorBase {
     public int GetColor() {
         return color;
     }
+
+    public Kingdom GetKingdom() {
+        return World.Instance.GetKingdom(color);
+    }
 }

@@ -8,6 +8,8 @@ import hellofx.fheroes2.kingdom.RaceKind;
 import java.util.ArrayList;
 import java.util.List;
 
+import static hellofx.fheroes2.game.GameConsts.monster_upgrade_ratio;
+
 public class GameStatic {
     public static int uniq = 0;
     public static List<stats_t> _stats = new ArrayList<>();
@@ -101,5 +103,9 @@ public class GameStatic {
 
     public static secondary_t GetSkillForWitchHut() {
         return _from_witch_hut;
+    }
+
+    public static float GetMonsterUpgradeRatio() {
+        return monster_upgrade_ratio;
     }
 }

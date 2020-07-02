@@ -27,4 +27,26 @@ public class Funds {
     public Funds copy() {
         return new Funds(gold, wood, mercury, ore, sulfur, crystal, gems);
     }
+
+    public Funds substract(Funds value) {
+        return new Funds(
+                gold - value.gold,
+                wood - value.wood,
+                mercury - value.mercury,
+                ore - value.ore,
+                sulfur - value.sulfur,
+                crystal - value.crystal,
+                gems - value.gems);
+    }
+
+    public Funds multiply(int times) {
+        return new Funds(
+                gold * times,
+                wood * times,
+                mercury * times,
+                ore * times,
+                sulfur * times,
+                crystal * times,
+                gems * times);
+    }
 }

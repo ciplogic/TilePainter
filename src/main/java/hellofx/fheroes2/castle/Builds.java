@@ -112,8 +112,5 @@ public class Builds {
         add(DWELLING_MONSTER5, RaceKind.NECR, new Funds(4000, 10, 0, 0, 10, 0, 0));
         add(DWELLING_UPGRADE5, RaceKind.NECR, new Funds(2500, 0, 0, 5, 5, 0, 0));
         add(DWELLING_MONSTER6, RaceKind.NECR, new Funds(12000, 10, 10, 10, 5, 5, 5));
-
-        // end
-        add(BUILD_NOTHING, RaceKind.NONE, new Funds(0, 0, 0, 0, 0, 0, 0));
     }
 }

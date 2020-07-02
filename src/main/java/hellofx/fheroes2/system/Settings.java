@@ -132,4 +132,9 @@ public class Settings {
         //TODO
         return false;
     }
+
+    public boolean GameStartWithHeroes() {
+        //TODO
+        return false;
+    }
 }

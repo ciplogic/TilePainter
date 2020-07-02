@@ -1,11 +1,13 @@
 package hellofx.fheroes2.monster;
 
+import hellofx.fheroes2.castle.building_t;
 import hellofx.fheroes2.kingdom.SpeedKind;
 import hellofx.fheroes2.resource.Funds;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static hellofx.fheroes2.monster.MonsterKind.*;
 import static hellofx.fheroes2.system.Translate.tr;
 
 public class MonsterStats {
@@ -110,4 +112,146 @@ public class MonsterStats {
         return monsters.get(index);
     }
 
+    public static Monster GetUpgrade(int monsterId) {
+
+        switch (monsterId) {
+            case ARCHER:
+                return new Monster(RANGER);
+            case PIKEMAN:
+                return new Monster(VETERAN_PIKEMAN);
+            case SWORDSMAN:
+                return new Monster(MASTER_SWORDSMAN);
+            case CAVALRY:
+                return new Monster(CHAMPION);
+            case PALADIN:
+                return new Monster(CRUSADER);
+            case ORC:
+                return new Monster(ORC_CHIEF);
+            case OGRE:
+                return new Monster(OGRE_LORD);
+            case TROLL:
+                return new Monster(WAR_TROLL);
+            case DWARF:
+                return new Monster(BATTLE_DWARF);
+            case ELF:
+                return new Monster(GRAND_ELF);
+            case DRUID:
+                return new Monster(GREATER_DRUID);
+            case ZOMBIE:
+                return new Monster(MUTANT_ZOMBIE);
+            case MUMMY:
+                return new Monster(ROYAL_MUMMY);
+            case VAMPIRE:
+                return new Monster(VAMPIRE_LORD);
+            case LICH:
+                return new Monster(POWER_LICH);
+            case MINOTAUR:
+                return new Monster(MINOTAUR_KING);
+            case GREEN_DRAGON:
+                return new Monster(RED_DRAGON);
+            case RED_DRAGON:
+                return new Monster(BLACK_DRAGON);
+            case IRON_GOLEM:
+                return new Monster(STEEL_GOLEM);
+            case MAGE:
+                return new Monster(ARCHMAGE);
+            case GIANT:
+                return new Monster(TITAN);
+
+            default:
+                break;
+        }
+
+        return new Monster(monsterId);
+    }
+
+    public static int GetDwelling(int id) {
+        switch (id) {
+            case PEASANT:
+            case GOBLIN:
+            case SPRITE:
+            case CENTAUR:
+            case HALFLING:
+            case SKELETON:
+                return building_t.DWELLING_MONSTER1;
+
+            case ARCHER:
+            case ORC:
+            case ZOMBIE:
+            case DWARF:
+            case GARGOYLE:
+            case BOAR:
+                return building_t.DWELLING_MONSTER2;
+
+            case RANGER:
+            case ORC_CHIEF:
+            case BATTLE_DWARF:
+            case MUTANT_ZOMBIE:
+                return building_t.DWELLING_UPGRADE2;
+
+            case PIKEMAN:
+            case WOLF:
+            case ELF:
+            case IRON_GOLEM:
+            case MUMMY:
+            case GRIFFIN:
+                return building_t.DWELLING_MONSTER3;
+
+            case VETERAN_PIKEMAN:
+            case GRAND_ELF:
+            case STEEL_GOLEM:
+            case ROYAL_MUMMY:
+                return building_t.DWELLING_UPGRADE3;
+
+            case SWORDSMAN:
+            case OGRE:
+            case DRUID:
+            case MINOTAUR:
+            case ROC:
+            case VAMPIRE:
+                return building_t.DWELLING_MONSTER4;
+
+            case MASTER_SWORDSMAN:
+            case OGRE_LORD:
+            case GREATER_DRUID:
+            case MINOTAUR_KING:
+            case VAMPIRE_LORD:
+                return building_t.DWELLING_UPGRADE4;
+
+            case CAVALRY:
+            case TROLL:
+            case MAGE:
+            case LICH:
+            case UNICORN:
+            case HYDRA:
+                return building_t.DWELLING_MONSTER5;
+
+            case CHAMPION:
+            case WAR_TROLL:
+            case ARCHMAGE:
+            case POWER_LICH:
+                return building_t.DWELLING_UPGRADE5;
+
+            case PALADIN:
+            case CYCLOPS:
+            case PHOENIX:
+            case GREEN_DRAGON:
+            case GIANT:
+            case BONE_DRAGON:
+                return building_t.DWELLING_MONSTER6;
+
+            case CRUSADER:
+            case RED_DRAGON:
+            case TITAN:
+                return building_t.DWELLING_UPGRADE6;
+
+            case BLACK_DRAGON:
+                return building_t.DWELLING_UPGRADE7;
+
+            default:
+                break;
+        }
+
+        return 0;
+    }
 }
