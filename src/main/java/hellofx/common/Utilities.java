@@ -88,6 +88,14 @@ public class Utilities {
         return Arrays.stream(addons).filter(isFound).findFirst().orElse(null);
     }
 
+    public static <T> int count(T[] addons, Predicate<T> isFound) {
+        return (int) Arrays.stream(addons).filter(isFound).count();
+    }
+
+    public static <T> int count(List<T> addons, Predicate<T> isFound) {
+        return (int) addons.stream().filter(isFound).count();
+    }
+
     public static boolean contains(int[] addons, IntPredicate isFound) {
         return Arrays.stream(addons).filter(isFound).findFirst().isPresent();
     }

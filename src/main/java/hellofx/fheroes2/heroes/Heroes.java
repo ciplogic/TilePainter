@@ -10,6 +10,7 @@ import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.kingdom.H2Color;
+import hellofx.fheroes2.kingdom.MoraleKind;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.maps.IndexObject;
 import hellofx.fheroes2.maps.MapPosition;
@@ -219,7 +220,7 @@ public class Heroes extends HeroBase {
         PostLoad();
     }
 
-    private H2Point GetCenter() {
+    public H2Point GetCenter() {
         //TODO
         return new H2Point();
     }
@@ -326,7 +327,7 @@ public class Heroes extends HeroBase {
         return 0;
     }
 
-    private boolean isControlAI() {
+    public boolean isControlAI() {
         //TODO
         return false;
     }
@@ -378,5 +379,53 @@ public class Heroes extends HeroBase {
 
     public void SetCenterPatrol(H2Point pt) {
         patrol_center = pt;
+    }
+
+    public Army GetArmy() {
+        return army;
+    }
+
+    public int GetMorale() {
+        return GetMoraleWithModificators(null);
+    }
+
+    private int GetMoraleWithModificators(String strs) {
+        //TODO
+        /*
+        int result = MoraleKind.NORMAL;
+
+        // bonus artifact
+        result += GetMoraleKindModificator(strs);
+
+        if (army.m_troops.AllTroopsIsRace(Race.NECR)) return MoraleKind.NORMAL;
+
+        // bonus leadership
+        result += Skill.GetLeadershipModifiers(GetLevelSkill(Skill.SkillT.LEADERSHIP), strs);
+
+        // object visited
+    int objs[] = {
+                Mp2Kind.OBJ_BUOY, Mp2Kind.OBJ_OASIS, Mp2Kind.OBJ_WATERINGHOLE, Mp2Kind.OBJ_TEMPLE, Mp2Kind.OBJ_GRAVEYARD,
+                Mp2Kind.OBJ_DERELICTSHIP, Mp2Kind.OBJ_SHIPWRECK
+        };
+        result += ObjectVisitedModifiersResult(MDF_MORALE, objs, objs.length, this, strs);
+
+        // result
+        if (result < MoraleKind.AWFUL) return MoraleKind.TREASON;
+        if (result < MoraleKind.POOR) return MoraleKind.AWFUL;
+        if (result < MoraleKind.NORMAL) return MoraleKind.POOR;
+        if (result < MoraleKind.GOOD) return MoraleKind.NORMAL;
+        if (result < MoraleKind.GREAT) return MoraleKind.GOOD;
+        if (result < MoraleKind.BLOOD) return MoraleKind.GREAT;
+*/
+        return MoraleKind.BLOOD;
+    }
+
+    public boolean HasSecondarySkill(int skill) {
+        //TODO
+        return false;
+    }
+
+    public int GetSecondaryValues(int skill) {
+        return secondary_skills.GetValues(skill);
     }
 }

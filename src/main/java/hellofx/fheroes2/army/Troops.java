@@ -53,4 +53,13 @@ public class Troops {
                 }
             }
     }
+
+    public int GetHitPoints() {
+        int res = 0;
+
+        for (var _item : _items)
+            if (_item.IsValid()) res += _item.GetHitPointsTroop();
+
+        return res;
+    }
 }

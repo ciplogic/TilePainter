@@ -1,9 +1,19 @@
 package hellofx.fheroes2.monster;
 
+import hellofx.fheroes2.army.JoinCount;
+import hellofx.fheroes2.army.JoinKind;
+import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.DifficultyEnum;
 import hellofx.fheroes2.game.GameStatic;
+import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.heroes.SkillT;
+import hellofx.fheroes2.kingdom.MoraleKind;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.maps.Mp2Kind;
+import hellofx.fheroes2.maps.Tiles;
+import hellofx.fheroes2.resource.ArtifactKind;
 import hellofx.fheroes2.resource.Funds;
 import hellofx.fheroes2.spell.Spell;
 import hellofx.fheroes2.spell.SpellKind;
@@ -398,7 +408,7 @@ public class Monster {
         return IsValid() ? GetCountFromHitPoints(id, res) : 0;
     }
 
-    int GetCountFromHitPoints(int monsterId, int hp) {
+    static int GetCountFromHitPoints(int monsterId, int hp) {
         if (hp == 0)
             return 0;
         var hp1 = GetHitPoints(monsterId);
@@ -406,14 +416,14 @@ public class Monster {
         return count * hp1 < hp ? count + 1 : count;
     }
 
-    private int GetHitPoints() {
-
-        return GetHitPoints(this.id);
-    }
-
-    private int GetHitPoints(int id) {
+    private static int GetHitPoints(int id) {
 
         return toUShort(MonsterStats.get(id).hp);
+    }
+
+    public int GetHitPoints() {
+
+        return GetHitPoints(this.id);
     }
 
     public boolean isElemental() {
@@ -470,5 +480,44 @@ public class Monster {
 
     public void Upgrade() {
         id = GetUpgrade().id;
+    }
+
+    public JoinCount GetJoinSolution(Heroes hero, Tiles tile, Troop troop) {
+        var world = World.Instance;
+        var map_troop = world.GetMapObject(tile.GetObjectUID(Mp2Kind.OBJ_MONSTER));
+        var ratios = troop.IsValid() ? hero.GetArmy().m_troops.GetHitPoints() / troop.GetHitPointsTroop() : 0;
+        boolean check_free_stack = true;
+        // (hero.GetArmy().GetCount() < hero.GetArmy().size() || hero.GetArmy().HasMonster(troop)); // set force, see Dialog.ArmyJoinWithCost, http://sourceforge.net/tracker/?func=detail&aid=3567985&group_id=96859&atid=616183
+        boolean check_extra_condition = !hero.HasArtifact(ArtifactKind.HIDEOUS_MASK) &&
+                MoraleKind.NORMAL <= hero.GetMorale();
+
+        boolean join_skip = map_troop != null ? map_troop.JoinConditionSkip() : tile.MonsterJoinConditionSkip();
+        boolean join_free = map_troop != null ? map_troop.JoinConditionFree() : tile.MonsterJoinConditionFree();
+        // force join for campain and others...
+        boolean join_force = map_troop != null ? map_troop.JoinConditionForce() : tile.MonsterJoinConditionForce();
+
+        if (!join_skip &&
+                check_free_stack && ((check_extra_condition && ratios >= 2) || join_force)) {
+            if (join_free || join_force)
+                return new JoinCount(JoinKind.JOIN_FREE, troop.GetCount());
+            if (hero.HasSecondarySkill(SkillT.DIPLOMACY)) {
+                // skill diplomacy
+                var to_join = Monster.GetCountFromHitPoints(troop._monster.id,
+                        troop.GetHitPointsTroop() *
+                                hero.GetSecondaryValues(SkillT.DIPLOMACY)
+                                /
+                                100);
+
+                if (to_join != 0)
+                    return new JoinCount(JoinKind.JOIN_COST, to_join);
+            }
+        } else if (ratios >= 5) {
+            // ... surely flee before us
+            if (!hero.isControlAI() ||
+                    Rand.Get(0, 10) < 5)
+                return new JoinCount(JoinKind.JOIN_FLEE, 0);
+        }
+
+        return new JoinCount(JoinKind.JOIN_NONE, 0);
     }
 }

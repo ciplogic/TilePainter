@@ -49,4 +49,8 @@ public class H2Point {
     public H2Point invert() {
         return new H2Point(-x, -y);
     }
+
+    public boolean isEqual(H2Point other) {
+        return (x == other.x) && (y == other.y);
+    }
 }

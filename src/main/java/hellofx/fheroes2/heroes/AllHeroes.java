@@ -1,10 +1,13 @@
 package hellofx.fheroes2.heroes;
 
+import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.GameConsts;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.system.Settings;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
+
+import static hellofx.common.Utilities.find_if;
 
 public class AllHeroes extends VecHeroes {
 
@@ -136,4 +139,23 @@ public class AllHeroes extends VecHeroes {
         return _items.get(Rand.Get(freeman_heroes));
     }
 
+    static boolean InCastleNotGuardian(Castle castle, Heroes hero) {
+        return castle.GetCenter().isEqual(hero.GetCenter()) && !hero.bitModes.Modes(HeroFlags.GUARDIAN);
+    }
+
+    static boolean InCastleAndGuardian(Castle castle, Heroes hero) {
+        var cpt = castle.GetCenter();
+        var hpt = hero.GetCenter();
+        return cpt.x == hpt.x && cpt.y == hpt.y + 1 && hero.bitModes.Modes(HeroFlags.GUARDIAN);
+    }
+
+    public Heroes GetGuest(Castle castle) {
+        return find_if(_items, hero -> InCastleNotGuardian(castle, hero));
+    }
+
+    public Heroes GetGuard(Castle castle) {
+        return Settings.Get().ExtCastleAllowGuardians()
+                ? find_if(_items, (Heroes hero) -> InCastleAndGuardian(castle, hero))
+                : null;
+    }
 }

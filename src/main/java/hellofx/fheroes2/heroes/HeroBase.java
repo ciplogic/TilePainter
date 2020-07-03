@@ -2,9 +2,11 @@ package hellofx.fheroes2.heroes;
 
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.maps.MapPosition;
+import hellofx.fheroes2.resource.Artifact;
 import hellofx.fheroes2.resource.BagArtifacts;
 import hellofx.fheroes2.spell.SpellBook;
 import hellofx.fheroes2.system.BitModes;
+import hellofx.fheroes2.system.Settings;
 
 import static hellofx.fheroes2.agg.icn.IcnKind.*;
 
@@ -115,4 +117,27 @@ public abstract class HeroBase {
         return GetType() == HeroType.HEROES;
     }
 
+    public boolean HasArtifact(int artId) {
+        var art = new Artifact(artId);
+        boolean unique = true;
+
+        switch (art.Type()) {
+            case 1:
+                unique = Settings.Get().ExtWorldUseUniqueArtifactsML();
+                break; /* morale/luck arts. */
+            case 2:
+                unique = Settings.Get().ExtWorldUseUniqueArtifactsRS();
+                break; /* resource affecting arts. */
+            case 3:
+                unique = Settings.Get().ExtWorldUseUniqueArtifactsPS();
+                break; /* primary/mp/sp arts. */
+            case 4:
+                unique = Settings.Get().ExtWorldUseUniqueArtifactsSS();
+                break; /* sec. skills arts. */
+            default:
+                break;
+        }
+
+        return !unique ? bag_artifacts.Count(art) != 0 : bag_artifacts.isPresentArtifact(art);
+    }
 }

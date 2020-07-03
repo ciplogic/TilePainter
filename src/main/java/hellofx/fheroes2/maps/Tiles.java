@@ -2210,4 +2210,24 @@ public class Tiles {
         addons_level1.Refresh();
         addons_level2.Refresh();
     }
+
+    public int GetObjectUID(int obj) {
+        var addon = FindObjectConst(obj);
+        return addon != null ? addon.uniq : 0;
+    }
+
+    public boolean MonsterJoinConditionSkip() {
+        //TODO
+        return false;
+    }
+
+    public boolean MonsterJoinConditionFree() {
+        //TODO
+        return false;
+    }
+
+    public boolean MonsterJoinConditionForce() {
+        //TODO
+        return false;
+    }
 }

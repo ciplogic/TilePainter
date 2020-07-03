@@ -229,4 +229,8 @@ public class Artifact {
             default -> ext = v;
         }
     }
+
+    public int Type() {
+        return ArtifactStats.artifacts[id].type;
+    }
 }

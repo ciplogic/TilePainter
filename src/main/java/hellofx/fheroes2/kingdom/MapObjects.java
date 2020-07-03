@@ -9,4 +9,10 @@ public class MapObjects {
     public void add(MapObjectSimple obj) {
         _items.put(obj.GetUID(), obj);
     }
+
+    public MapObjectSimple get(int id) {
+        if (_items.containsKey(id))
+            return _items.get(id);
+        return null;
+    }
 }

@@ -20,12 +20,8 @@ public class MainContext {
 
 
     public void notify(String eventName, Object obj) {
-        switch (eventName) {
-            case EventNames.onFrame:
-                break;
-            default:
-                System.out.println("Calling: " + eventName + " with obj: " + obj);
-                break;
+        if (!EventNames.onFrame.equals(eventName)) {
+            System.out.println("Calling: " + eventName + " with obj: " + obj);
         }
 
         router.call(eventName, obj);
@@ -60,16 +56,6 @@ public class MainContext {
         return (T) objRepo.get(objName);
     }
 
-    public <T> T inject(Class<T> objType) {
-        T obj = null;
-        try {
-            obj = objType.newInstance();
-        } catch (IllegalAccessException | InstantiationException e) {
-            throw new RuntimeException(e.toString());
-        }
-        return injectInstance(obj);
-    }
-
     boolean hasMethod(Object obj) {
         var methods = obj.getClass().getMethods();
         for (var m : methods) {
@@ -77,6 +63,10 @@ public class MainContext {
                 return true;
         }
         return false;
+    }
+
+    public <T> T inject(T obj) {
+        return injectInstance(obj);
     }
 
     public <T> T injectInstance(T obj) {

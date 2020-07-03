@@ -11,7 +11,6 @@ import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.kingdom.WorldLoad;
 import hellofx.fheroes2.maps.FileInfo;
-import hellofx.fheroes2.serialize.ResourceDownloader;
 import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
 import hellofx.framework.GamePreferences;
@@ -49,10 +48,10 @@ public class HelloFx extends Application {
         //Music.ExtractAllWav(agg);
         context.injectInstance(agg);
 
-        context.inject(GameCamera.class);
-        context.inject(GameArea.class);
+        context.inject(new GameCamera());
+        context.inject(new GameArea());
 
-        var engine = context.inject(Engine.class);
+        var engine = context.inject(new Engine());
         var conf = Settings.Get();
         Players players = conf.GetPlayers();
         var fileInfo = new FileInfo();
@@ -66,19 +65,19 @@ public class HelloFx extends Application {
         var hero = new Heroes(HeroesKind.ARIEL, RaceKind.SORC);
         //var heroBmp = Heroes.GetPortrait(hero.portrait, 1).doublePicture().doublePictureAa();
         //heroBmp.saveToFile(new File("cursor.png"));
-        var timer = context.inject(PerFrameTimer.class);
-        context.inject(GamePreferences.class);
-        context.inject(ImageRepo.class);
+        var timer = context.inject(new PerFrameTimer());
+        context.inject(new GamePreferences());
+        context.inject(new ImageRepo());
 
         context.injectInstance(new MapView(128, 128));
 
-        var mainBorderPane = context.inject(MainBorderPane.class);
+        var mainBorderPane = context.inject(new MainBorderPane());
 
-        CanvasWrap canvasWrap = context.inject(CanvasWrap.class);
-        MainStackPane mainStackPane = context.inject(MainStackPane.class);
+        CanvasWrap canvasWrap = context.inject(new CanvasWrap());
+        MainStackPane mainStackPane = context.inject(new MainStackPane());
         mainStackPane.push(canvasWrap.canvas);
 
-        context.inject(Gameplay.class);
+        context.inject(new Gameplay());
 
         mainBorderPane.borderPane.setCenter(mainStackPane.stackPane);
 

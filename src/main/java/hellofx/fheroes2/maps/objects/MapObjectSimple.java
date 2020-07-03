@@ -10,4 +10,19 @@ public class MapObjectSimple {
     public int GetUID() {
         return uid;
     }
+
+    public boolean JoinConditionSkip() {
+        //TODO
+        return false;
+    }
+
+    public boolean JoinConditionFree() {
+        //TODO
+        return false;
+    }
+
+    public boolean JoinConditionForce() {
+        //TODO
+        return false;
+    }
 }

@@ -16,6 +16,15 @@ public class Settings {
         return Instance;
     }
 
+    private Settings() {
+        ExtSetModes(SettingsKind.GAME_SHOW_SDL_LOGO);
+        ExtSetModes(SettingsKind.GAME_AUTOSAVE_ON);
+        opt_global.SetModes(GlobalSettingsKind.GLOBAL_SHOWRADAR);
+        opt_global.SetModes(GlobalSettingsKind.GLOBAL_SHOWICONS);
+        opt_global.SetModes(GlobalSettingsKind.GLOBAL_SHOWBUTTONS);
+        opt_global.SetModes(GlobalSettingsKind.GLOBAL_SHOWSTATUS);
+    }
+
     BitModes opt_global = new BitModes();
     BitModes opt_game = new BitModes();
     BitModes opt_battle = new BitModes();
@@ -136,5 +145,83 @@ public class Settings {
     public boolean GameStartWithHeroes() {
         //TODO
         return false;
+    }
+
+    public boolean ExtCastleAllowGuardians() {
+        //TODO
+        return false;
+    }
+
+    public boolean ExtWorldUseUniqueArtifactsML() {
+        return ExtModes(SettingsKind.WORLD_USE_UNIQUE_ARTIFACTS_ML);
+    }
+
+    private boolean ExtModes(int f) {
+        var mask = 0x0FFFFFFF;
+        switch (f >> 28) {
+            case 0x01:
+                return opt_game.Modes(f & mask);
+            case 0x02:
+                return opt_world.Modes(f & mask);
+            case 0x03:
+                return opt_addons.Modes(f & mask);
+            case 0x04:
+                return opt_battle.Modes(f & mask);
+            default:
+                break;
+        }
+        return false;
+    }
+
+    void ExtSetModes(int f) {
+        var mask = 0x0FFFFFFF;
+        switch (f >> 28) {
+            case 0x01:
+                opt_game.SetModes(f & mask);
+                break;
+            case 0x02:
+                opt_world.SetModes(f & mask);
+                break;
+            case 0x03:
+                opt_addons.SetModes(f & mask);
+                break;
+            case 0x04:
+                opt_battle.SetModes(f & mask);
+                break;
+            default:
+                break;
+        }
+    }
+
+    void ExtResetModes(int f) {
+        var mask = 0x0FFFFFFF;
+        switch (f >> 28) {
+            case 0x01:
+                opt_game.ResetModes(f & mask);
+                break;
+            case 0x02:
+                opt_world.ResetModes(f & mask);
+                break;
+            case 0x03:
+                opt_addons.ResetModes(f & mask);
+                break;
+            case 0x04:
+                opt_battle.ResetModes(f & mask);
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean ExtWorldUseUniqueArtifactsRS() {
+        return ExtModes(SettingsKind.WORLD_USE_UNIQUE_ARTIFACTS_RS);
+    }
+
+    public boolean ExtWorldUseUniqueArtifactsPS() {
+        return ExtModes(SettingsKind.WORLD_USE_UNIQUE_ARTIFACTS_PS);
+    }
+
+    public boolean ExtWorldUseUniqueArtifactsSS() {
+        return ExtModes(SettingsKind.WORLD_USE_UNIQUE_ARTIFACTS_SS);
     }
 }

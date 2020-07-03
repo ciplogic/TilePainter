@@ -41,4 +41,21 @@ public class Troop {
     public Funds GetUpgradeCost() {
         return _monster.GetUpgradeCost().multiply(count);
     }
+
+    public int GetHitPointsTroop() {
+        return _monster.GetHitPoints() * count;
+    }
+
+    public int GetDamageMin() {
+        return _monster.GetDamageMin() * count;
+    }
+
+    public int GetDamageMax() {
+        return _monster.GetDamageMax() * count;
+    }
+
+    public int GetCount() {
+        //TODO
+        return 0;
+    }
 }

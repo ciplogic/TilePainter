@@ -14,6 +14,7 @@ import hellofx.fheroes2.maps.MapsIndexes;
 import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.maps.Tiles;
 import hellofx.fheroes2.maps.TilesAddon;
+import hellofx.fheroes2.maps.objects.MapObjectSimple;
 import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.resource.UltimateArtifact;
 import hellofx.fheroes2.system.Players;
@@ -208,7 +209,7 @@ public class World {
         }
 */
         // update tile passable
-        Arrays.stream(vec_tiles). forEach(tile -> {
+        Arrays.stream(vec_tiles).forEach(tile -> {
             tile.UpdatePassable();
         });
 
@@ -216,22 +217,19 @@ public class World {
         vec_kingdoms.ApplyPlayWithStartingHero();
 
         if (Settings.Get().ExtWorldStartHeroLossCond4Humans())
-        vec_kingdoms.AddCondLossHeroes(vec_heroes);
+            vec_kingdoms.AddCondLossHeroes(vec_heroes);
 
         // play with debug hero
-        if (Settings.Get().IS_DEVEL())
-        {
+        if (Settings.Get().IS_DEVEL()) {
             // get first castle position
             var kingdom = GetKingdom(H2Color.GetFirst(Players.HumanColors()));
 
-            if (kingdom.GetCastles()._items.size() != 0)
-            {
-            var castle = kingdom.GetCastles()._items.get(0);
+            if (kingdom.GetCastles()._items.size() != 0) {
+                var castle = kingdom.GetCastles()._items.get(0);
                 var hero = vec_heroes.Get(HeroesKind.SANDYSANDY);
 
-                if (hero!=null)
-                {
-                var cp = castle.GetCenter();
+                if (hero != null) {
+                    var cp = castle.GetCenter();
                     hero.Recruit(castle.GetColor(), new H2Point(cp.x, cp.y + 1));
                 }
             }
@@ -392,6 +390,10 @@ public class World {
 
     public CastleHeroes GetHeroes(Castle castle) {
         //TODO
-        return new CastleHeroes();
+        return new CastleHeroes(vec_heroes.GetGuest(castle), vec_heroes.GetGuard(castle));
+    }
+
+    public MapObjectSimple GetMapObject(int uid) {
+        return uid != 0 ? map_objects.get(uid) : null;
     }
 }

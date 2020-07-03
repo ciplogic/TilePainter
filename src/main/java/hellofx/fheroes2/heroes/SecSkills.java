@@ -17,4 +17,9 @@ public class SecSkills {
         //TODO: look for already existing skill
         _items.add(skill);
     }
+
+    public int GetValues(int skill) {
+        //TODO
+        return 0;
+    }
 }
