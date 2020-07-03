@@ -5,8 +5,20 @@ import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.GameStatic;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
+import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
+
 //
 public class Secondary extends H2IntPair {
+    public Secondary(int skill, byte levelB) {
+        int level = toByte(levelB);
+        SetSkill(skill);
+        SetLevel(level);
+    }
+
+    public Secondary() {
+        //TODO
+    }
+
     public static int RandForWitchHut() {
         var sec = GameStatic.GetSkillForWitchHut();
         IntArrayList v = new IntArrayList();
@@ -43,11 +55,41 @@ public class Secondary extends H2IntPair {
         return Skill() != SkillT.UNKNOWN && Level() != SkillLevel.NONE;
     }
 
-    private int Level() {
+    public int Level() {
         return second;
     }
 
-    private int Skill() {
+    public int Skill() {
         return first;
     }
+
+    public boolean isSkill(int skill) {
+        return skill == first;
+    }
+
+    public boolean isLevel(int level) {
+        return level == second;
+    }
+
+    public void Set(Secondary skill) {
+        first = skill.first;
+        second = skill.second;
+    }
+
+    public void NextLevel() {
+        switch (second) {
+            case SkillLevel.NONE:
+                second = SkillLevel.BASIC;
+                break;
+            case SkillLevel.BASIC:
+                second = SkillLevel.ADVANCED;
+                break;
+            case SkillLevel.ADVANCED:
+                second = SkillLevel.EXPERT;
+                break;
+            default:
+                break;
+        }
+    }
+
 }

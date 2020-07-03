@@ -43,4 +43,143 @@ public class Direction {
         return to == from ? CENTER : UNKNOWN;
 
     }
+
+    public boolean ShortDistanceClockWise(int from, int to) {
+        switch (from) {
+            case TOP:
+                switch (to) {
+                    case TOP_RIGHT:
+                    case RIGHT:
+                    case BOTTOM_RIGHT:
+                    case BOTTOM:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case TOP_RIGHT:
+                switch (to) {
+                    case RIGHT:
+                    case BOTTOM_RIGHT:
+                    case BOTTOM:
+                    case BOTTOM_LEFT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case RIGHT:
+                switch (to) {
+                    case BOTTOM_RIGHT:
+                    case BOTTOM:
+                    case BOTTOM_LEFT:
+                    case LEFT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case BOTTOM_RIGHT:
+                switch (to) {
+                    case BOTTOM:
+                    case BOTTOM_LEFT:
+                    case LEFT:
+                    case TOP_LEFT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case BOTTOM:
+                switch (to) {
+                    case BOTTOM_LEFT:
+                    case LEFT:
+                    case TOP_LEFT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case BOTTOM_LEFT:
+                switch (to) {
+                    case TOP:
+                    case TOP_RIGHT:
+                    case LEFT:
+                    case TOP_LEFT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case LEFT:
+                switch (to) {
+                    case TOP:
+                    case TOP_RIGHT:
+                    case RIGHT:
+                    case TOP_LEFT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            case TOP_LEFT:
+                switch (to) {
+                    case TOP:
+                    case TOP_RIGHT:
+                    case RIGHT:
+                    case BOTTOM_RIGHT:
+                        return true;
+
+                    default:
+                        break;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    public int Reflect(int direct) {
+        switch (direct) {
+            case TOP_LEFT:
+                return BOTTOM_RIGHT;
+            case TOP:
+                return BOTTOM;
+            case TOP_RIGHT:
+                return BOTTOM_LEFT;
+            case RIGHT:
+                return LEFT;
+            case BOTTOM_RIGHT:
+                return TOP_LEFT;
+            case BOTTOM:
+                return TOP;
+            case BOTTOM_LEFT:
+                return TOP_RIGHT;
+            case LEFT:
+                return RIGHT;
+            case CENTER:
+                return CENTER;
+            default:
+                break;
+        }
+
+        return UNKNOWN;
+    }
 }

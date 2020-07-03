@@ -10,4 +10,8 @@ public class Game {
     public static void nextFrame() {
         animationFrame++;
     }
+
+    public static String GetEncodeString(String text) {
+        return text;
+    }
 }

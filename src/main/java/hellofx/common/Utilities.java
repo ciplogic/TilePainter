@@ -80,4 +80,8 @@ public class Utilities {
     public static <T> T find_if(List<T> addons, Predicate<T> isFound) {
         return addons.stream().filter(isFound::test).findFirst().orElse(null);
     }
+
+    public static String StringLower(String text) {
+        return text.toLowerCase();
+    }
 }
