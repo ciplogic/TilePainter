@@ -2,7 +2,6 @@ module JHeroes2X {
     requires javafx.base;
     requires javafx.controls;
     requires javafx.graphics;
-    requires javafx.fxml;
     requires javafx.swing;
     requires it.unimi.dsi.fastutil;
 
