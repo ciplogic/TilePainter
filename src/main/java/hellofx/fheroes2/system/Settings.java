@@ -224,4 +224,9 @@ public class Settings {
     public boolean ExtWorldUseUniqueArtifactsSS() {
         return ExtModes(SettingsKind.WORLD_USE_UNIQUE_ARTIFACTS_SS);
     }
+
+    public int CurrentColor() {
+        //TODO
+        return 0;
+    }
 }

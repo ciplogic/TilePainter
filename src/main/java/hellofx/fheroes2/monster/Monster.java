@@ -426,6 +426,16 @@ public class Monster {
         return GetHitPoints(this.id);
     }
 
+    public String GetName() {
+
+        return MonsterStats.get(id).multiname;
+    }
+
+    public String GetMultiName() {
+
+        return MonsterStats.get(id).multiname;
+    }
+
     public boolean isElemental() {
         return switch (id) {
             case MonsterKind.EARTH_ELEMENT, MonsterKind.AIR_ELEMENT, MonsterKind.FIRE_ELEMENT, MonsterKind.WATER_ELEMENT -> true;

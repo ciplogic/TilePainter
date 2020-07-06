@@ -55,7 +55,6 @@ public class Troop {
     }
 
     public int GetCount() {
-        //TODO
-        return 0;
+        return count;
     }
 }

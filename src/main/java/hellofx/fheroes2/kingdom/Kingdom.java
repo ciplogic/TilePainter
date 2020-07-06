@@ -116,4 +116,9 @@ public class Kingdom {
         //TODO
         return false;
     }
+
+    public int GetCountMarketplace() {
+        //TODO
+        return 0;
+    }
 }
