@@ -17,7 +17,7 @@ public class meta_t {
     meta_t(int c, int q, int d) {
         command = (byte) c;
         quantity = (byte) q;
-        duration = (d);
+        duration = d;
 
     }
 

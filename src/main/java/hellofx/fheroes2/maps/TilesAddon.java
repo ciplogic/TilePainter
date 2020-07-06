@@ -9,15 +9,14 @@ import hellofx.fheroes2.objects.*;
 
 import static hellofx.fheroes2.kingdom.WorldDump.writeField;
 import static hellofx.fheroes2.kingdom.WorldDump.writeFieldBare;
-import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class TilesAddon {
 
     public int uniq;
-    public byte level;
-    public byte object;
-    public byte index;
-    public byte tmp;
+    public short level;
+    public short object;
+    public short index;
+    public short tmp;
 
     public TilesAddon clone() {
         TilesAddon res = new TilesAddon();
@@ -101,15 +100,18 @@ public class TilesAddon {
 
     public TilesAddon(int lv, int gid, int obj, int ii) {
         uniq = gid;
-        level = (byte) lv;
-        object = (byte) obj;
-        index = (byte) ii;
-        tmp = (0);
+        level = (short) lv;
+        object = (short) obj;
+        index = (short) ii;
+        if (index == -87) {
+            System.out.println("Here2");
+        }
+        tmp = 0;
     }
 
     static boolean isWhirlPool(TilesAddon ta) {
         return IcnKind.OBJNWATR == Mp2Kind.GetICNObject(ta.object) &&
-                (ta.getIndex() >= 202 && ta.getIndex() <= 225);
+                ta.getIndex() >= 202 && ta.getIndex() <= 225;
     }
 
     public static boolean ForceLevel1(TilesAddon ta) {
@@ -131,39 +133,39 @@ public class TilesAddon {
     public static int GetLoyaltyObject(TilesAddon addon) {
         switch (Mp2.GetIcnKindObject(addon.object)) {
             case IcnKind.X_LOC1:
-                if (toByte(addon.index) == 3) return Mp2Kind.OBJ_ALCHEMYTOWER;
-                if (toByte(addon.index) < 3) return Mp2Kind.OBJN_ALCHEMYTOWER;
-                if (70 == toByte(addon.index)) return Mp2Kind.OBJ_ARENA;
-                if (3 < toByte(addon.index) && toByte(addon.index) < 72) return Mp2Kind.OBJN_ARENA;
-                if (77 == toByte(addon.index)) return Mp2Kind.OBJ_BARROWMOUNDS;
-                if (71 < toByte(addon.index) && toByte(addon.index) < 78) return Mp2Kind.OBJN_BARROWMOUNDS;
+                if (addon.index == 3) return Mp2Kind.OBJ_ALCHEMYTOWER;
+                if (addon.index < 3) return Mp2Kind.OBJN_ALCHEMYTOWER;
+                if (70 == addon.index) return Mp2Kind.OBJ_ARENA;
+                if (3 < addon.index && addon.index < 72) return Mp2Kind.OBJN_ARENA;
+                if (77 == addon.index) return Mp2Kind.OBJ_BARROWMOUNDS;
+                if (71 < addon.index && addon.index < 78) return Mp2Kind.OBJN_BARROWMOUNDS;
                 if (94 == addon.index) return Mp2Kind.OBJ_EARTHALTAR;
-                if (77 < toByte(addon.index) && toByte(addon.index) < 112) return Mp2Kind.OBJN_EARTHALTAR;
-                if (118 == toByte(addon.index)) return Mp2Kind.OBJ_AIRALTAR;
-                if (111 < toByte(addon.index) && toByte(addon.index) < 120) return Mp2Kind.OBJN_AIRALTAR;
-                if (127 == toByte(addon.index)) return Mp2Kind.OBJ_FIREALTAR;
-                if (119 < toByte(addon.index) && toByte(addon.index) < 129) return Mp2Kind.OBJN_FIREALTAR;
-                if (135 == toByte(addon.index)) return Mp2Kind.OBJ_WATERALTAR;
-                if (128 < toByte(addon.index) && toByte(addon.index) < 137) return Mp2Kind.OBJN_WATERALTAR;
+                if (77 < addon.index && addon.index < 112) return Mp2Kind.OBJN_EARTHALTAR;
+                if (118 == addon.index) return Mp2Kind.OBJ_AIRALTAR;
+                if (111 < addon.index && addon.index < 120) return Mp2Kind.OBJN_AIRALTAR;
+                if (127 == addon.index) return Mp2Kind.OBJ_FIREALTAR;
+                if (119 < addon.index && addon.index < 129) return Mp2Kind.OBJN_FIREALTAR;
+                if (135 == addon.index) return Mp2Kind.OBJ_WATERALTAR;
+                if (128 < addon.index && addon.index < 137) return Mp2Kind.OBJN_WATERALTAR;
                 break;
 
             case IcnKind.X_LOC2:
-                if (toByte(addon.index) == 4) return Mp2Kind.OBJ_STABLES;
-                if (toByte(addon.index) < 4) return Mp2Kind.OBJN_STABLES;
-                if (toByte(addon.index) == 9) return Mp2Kind.OBJ_JAIL;
-                if (4 < toByte(addon.index) && toByte(addon.index) < 10) return Mp2Kind.OBJN_JAIL;
-                if (toByte(addon.index) == 37) return Mp2Kind.OBJ_MERMAID;
-                if (9 < toByte(addon.index) && toByte(addon.index) < 47) return Mp2Kind.OBJN_MERMAID;
-                if (toByte(addon.index) == 101) return Mp2Kind.OBJ_SIRENS;
-                if (46 < toByte(addon.index) && toByte(addon.index) < 111) return Mp2Kind.OBJN_SIRENS;
-                if (110 < toByte(addon.index) && toByte(addon.index) < 136) return Mp2Kind.OBJ_REEFS;
+                if (addon.index == 4) return Mp2Kind.OBJ_STABLES;
+                if (addon.index < 4) return Mp2Kind.OBJN_STABLES;
+                if (addon.index == 9) return Mp2Kind.OBJ_JAIL;
+                if (4 < addon.index && addon.index < 10) return Mp2Kind.OBJN_JAIL;
+                if (addon.index == 37) return Mp2Kind.OBJ_MERMAID;
+                if (9 < addon.index && addon.index < 47) return Mp2Kind.OBJN_MERMAID;
+                if (addon.index == 101) return Mp2Kind.OBJ_SIRENS;
+                if (46 < addon.index && addon.index < 111) return Mp2Kind.OBJN_SIRENS;
+                if (110 < addon.index && addon.index < 136) return Mp2Kind.OBJ_REEFS;
                 break;
 
             case IcnKind.X_LOC3:
-                if (toByte(addon.index) == 30) return Mp2Kind.OBJ_HUTMAGI;
-                if (toByte(addon.index) < 32) return Mp2Kind.OBJN_HUTMAGI;
-                if (toByte(addon.index) == 50) return Mp2Kind.OBJ_EYEMAGI;
-                if (31 < toByte(addon.index) && toByte(addon.index) < 59) return Mp2Kind.OBJN_EYEMAGI;
+                if (addon.index == 30) return Mp2Kind.OBJ_HUTMAGI;
+                if (addon.index < 32) return Mp2Kind.OBJN_HUTMAGI;
+                if (addon.index == 50) return Mp2Kind.OBJ_EYEMAGI;
+                if (31 < addon.index && addon.index < 59) return Mp2Kind.OBJN_EYEMAGI;
                 // fix
                 break;
 
@@ -176,7 +178,7 @@ public class TilesAddon {
 
     static boolean isResource(TilesAddon ta) {
         // OBJNRSRC
-        return ((IcnKind.OBJNRSRC == Mp2Kind.GetICNObject(ta.object)) && (ta.getIndex() % 2 != 0)) ||
+        return IcnKind.OBJNRSRC == Mp2Kind.GetICNObject(ta.object) && ta.getIndex() % 2 != 0 ||
                 // TREASURE
                 IcnKind.TREASURE == Mp2Kind.GetICNObject(ta.object);
     }
@@ -216,13 +218,9 @@ public class TilesAddon {
         return false;
     }
 
-    @Override
-    public String toString() {
-        return "{" +
-                "level:" + toByte(level) +
-                ",object:" + toByte(object) +
-                ",index:" + toByte(index) +
-                '}';
+    static boolean isArtifact(TilesAddon ta) {
+        // OBJNARTI (skip ultimate)
+        return IcnKind.OBJNARTI == Mp2Kind.GetICNObject(ta.object) && ta.index > 0x10 && ta.index % 2 != 0;
     }
 
     static boolean isRandomArtifact1(TilesAddon ta) {
@@ -250,9 +248,13 @@ public class TilesAddon {
         return IcnKind.OBJNRSRC == Mp2Kind.GetICNObject(ta.object) && 17 == ta.index;
     }
 
-    static boolean isArtifact(TilesAddon ta) {
-        // OBJNARTI (skip ultimate)
-        return IcnKind.OBJNARTI == Mp2Kind.GetICNObject(ta.object) && ta.index > 0x10 && (ta.index % 2 != 0);
+    static boolean isCampFire(TilesAddon ta) {
+        // MTNDSRT
+        return IcnKind.OBJNDSRT == Mp2Kind.GetICNObject(ta.object) && 61 == ta.getIndex() ||
+                // OBJNMULT
+                IcnKind.OBJNMULT == Mp2Kind.GetICNObject(ta.object) && 131 == ta.getIndex() ||
+                // OBJNSNOW
+                IcnKind.OBJNSNOW == Mp2Kind.GetICNObject(ta.object) && 4 == ta.getIndex();
     }
 
     static boolean isUltimateArtifact(TilesAddon ta) {
@@ -260,18 +262,15 @@ public class TilesAddon {
         return IcnKind.OBJNARTI == Mp2Kind.GetICNObject(ta.object) && 0xA4 == ta.getIndex();
     }
 
-    static boolean isCampFire(TilesAddon ta) {
-        // MTNDSRT
-        return (IcnKind.OBJNDSRT == Mp2Kind.GetICNObject(ta.object) && 61 == ta.getIndex()) ||
-                // OBJNMULT
-                (IcnKind.OBJNMULT == Mp2Kind.GetICNObject(ta.object) && 131 == ta.getIndex()) ||
-                // OBJNSNOW
-                (IcnKind.OBJNSNOW == Mp2Kind.GetICNObject(ta.object) && 4 == ta.getIndex());
-    }
-
     static boolean isWateringHole(TilesAddon ta) {
         return IcnKind.OBJNCRCK == Mp2Kind.GetICNObject(ta.object) &&
-                (ta.getIndex() >= 217 && ta.getIndex() <= 220);
+                ta.getIndex() >= 217 && ta.getIndex() <= 220;
+    }
+
+    static boolean isRandomMonster(TilesAddon ta) {
+        // MONS32
+        return IcnKind.MONS32 == Mp2Kind.GetICNObject(ta.object) &&
+                0x41 < ta.getIndex() && 0x47 > ta.getIndex();
     }
 
     static boolean isEvent(TilesAddon ta) {
@@ -284,10 +283,9 @@ public class TilesAddon {
         return IcnKind.OBJNTWRD == Mp2Kind.GetICNObject(ta.object) && 32 > ta.getIndex();
     }
 
-    static boolean isRandomMonster(TilesAddon ta) {
-        // MONS32
-        return IcnKind.MONS32 == Mp2Kind.GetICNObject(ta.object) &&
-                (0x41 < ta.getIndex() && 0x47 > ta.getIndex());
+    static boolean isStream(TilesAddon ta) {
+        return IcnKind.STREAM == Mp2Kind.GetICNObject(ta.object) ||
+                IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && ta.getIndex() < 14;
     }
 
     static boolean isMonster(TilesAddon ta) {
@@ -318,9 +316,9 @@ public class TilesAddon {
         return IcnKind.X_LOC2 == Mp2Kind.GetICNObject(ta.object) && 0x09 == ta.index;
     }
 
-    static boolean isStream(TilesAddon ta) {
-        return IcnKind.STREAM == Mp2Kind.GetICNObject(ta.object) ||
-                (IcnKind.OBJNMUL2 == Mp2Kind.GetICNObject(ta.object) && ta.getIndex() < 14);
+    static boolean isRoad(TilesAddon ta) {
+
+        return IcnKind.ROAD == Mp2Kind.GetICNObject(ta.object);
     }
 
     static boolean isMine(TilesAddon ta) {
@@ -421,21 +419,23 @@ public class TilesAddon {
         return Direction.DIRECTION_ALL;
     }
 
-    public int getObject() {
-        return toByte(object);
+    @Override
+    public String toString() {
+        return "{" +
+                "level:" + level +
+                ",object:" + object +
+                ",index:" + index +
+                '}';
     }
 
     public void setObject(int object) {
         this.object = (byte) object;
     }
 
-    public int getIndex() {
-        return toByte(index);
+    public int getObject() {
+        return object;
     }
 
-    static boolean isRoad(TilesAddon ta) {
-        return IcnKind.ROAD == Mp2Kind.GetICNObject(ta.object);
-    }
 
     boolean isSkeletonFix(TilesAddon ta) {
         return IcnKind.OBJNDSRT == Mp2Kind.GetICNObject(ta.object) && ta.index == 83;
@@ -453,15 +453,91 @@ public class TilesAddon {
         this.index = (byte) index;
     }
 
+    public int getIndex() {
+        if (index == -87) {
+            System.out.println("Here");
+        }
+        return index;
+    }
+
     public String toJsonRow() {
         var sb = new StringBuilder();
         sb.append("{");
         writeField(sb, "uniq", uniq);
-        writeField(sb, "level", toByte(level));
-        writeField(sb, "object", toByte(object));
-        writeFieldBare(sb, "index", toByte(index));
+        writeField(sb, "level", level);
+        writeField(sb, "object", object);
+        writeFieldBare(sb, "index", index);
 
         sb.append("}");
         return sb.toString();
     }
+
+    public boolean isRoad(int direct) {
+        switch (Mp2.GetICNObject(object)) {
+            // from sprite road
+            case IcnKind.ROAD:
+                if (0 == index ||
+                        4 == index ||
+                        5 == index ||
+                        13 == index ||
+                        26 == index)
+                    return 0 != (direct & (Direction.TOP | Direction.BOTTOM));
+                if (2 == index ||
+                        21 == index ||
+                        28 == index)
+                    return 0 != (direct & (Direction.LEFT | Direction.RIGHT));
+                if (17 == index ||
+                        29 == index)
+                    return 0 != (direct & (Direction.TOP_LEFT | Direction.BOTTOM_RIGHT));
+                if (18 == index ||
+                        30 == index)
+                    return 0 != (direct & (Direction.TOP_RIGHT | Direction.BOTTOM_LEFT));
+                if (3 == index)
+                    return 0 != (direct & (Direction.TOP | Direction.BOTTOM | Direction.LEFT | Direction.RIGHT));
+                if (6 == index) return 0 != (direct & (Direction.TOP | Direction.BOTTOM | Direction.RIGHT));
+                if (7 == index) return 0 != (direct & (Direction.TOP | Direction.RIGHT));
+                if (9 == index) return 0 != (direct & (Direction.BOTTOM | Direction.RIGHT));
+                if (12 == index) return 0 != (direct & (Direction.BOTTOM | Direction.LEFT));
+                if (14 == index) return 0 != (direct & (Direction.TOP | Direction.BOTTOM | Direction.LEFT));
+                if (16 == index) return 0 != (direct & (Direction.TOP | Direction.LEFT));
+                if (19 == index) return 0 != (direct & (Direction.TOP_LEFT | Direction.BOTTOM_RIGHT));
+                if (20 == index) return 0 != (direct & (Direction.TOP_RIGHT | Direction.BOTTOM_LEFT));
+                break;
+
+            // castle and tower (gate)
+            case IcnKind.OBJNTOWN:
+                if (13 == index ||
+                        29 == index ||
+                        45 == index ||
+                        61 == index ||
+                        77 == index ||
+                        93 == index ||
+                        109 == index ||
+                        125 == index ||
+                        141 == index ||
+                        157 == index ||
+                        173 == index ||
+                        189 == index)
+                    return 0 != (direct & (Direction.TOP | Direction.BOTTOM));
+                break;
+            // castle lands (gate)
+            case IcnKind.OBJNTWBA:
+                if (7 == index ||
+                        17 == index ||
+                        27 == index ||
+                        37 == index ||
+                        47 == index ||
+                        57 == index ||
+                        67 == index ||
+                        77 == index)
+                    return 0 != (direct & (Direction.TOP | Direction.BOTTOM));
+                break;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
 }

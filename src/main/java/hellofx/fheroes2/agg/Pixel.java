@@ -78,11 +78,11 @@ public class Pixel {
     }
 
     public static int getR(int argbColor) {
-        return (argbColor >> 16) & 0xFF;
+        return argbColor >> 16 & 0xFF;
     }
 
     public static int getG(int argbColor) {
-        return (argbColor >> 8) & 0xFF;
+        return argbColor >> 8 & 0xFF;
     }
 
     public static int getB(int argbColor) {
@@ -90,7 +90,7 @@ public class Pixel {
     }
 
     public static int getA(int argbColor) {
-        return (argbColor >> 24) & 0xFF;
+        return argbColor >> 24 & 0xFF;
     }
 
     public static int FromArgb(int r, int g, int b) {
@@ -102,7 +102,7 @@ public class Pixel {
     }
 
     public static int lerpi(int v0, int v1, int t) {
-        return ((255 - t) * v0 + t * v1) >> 8;
+        return (255 - t) * v0 + t * v1 >> 8;
     }
 
     public static int lerpPixels(int pixel0, int pixel1, double t) {

@@ -15,7 +15,7 @@ public class Rand {
         int delta = max - min + 1;
         var randValue = vrand;
 
-        return min + (randValue % delta);
+        return min + randValue % delta;
         /*
         int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
         return randomNum;

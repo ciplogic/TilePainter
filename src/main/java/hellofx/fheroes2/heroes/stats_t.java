@@ -22,6 +22,7 @@ public class stats_t {
                    primary_t mature_primary_over,
                    secondary_t mature_secondary) {
         this.id = id;
+        this.initial_primary = initial_primary;
         this.captain_primary = captain_primary;
         this.initial_book = (byte) initial_book;
         this.initial_spell = (byte) initial_spell;

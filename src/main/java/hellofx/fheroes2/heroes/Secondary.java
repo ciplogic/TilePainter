@@ -92,4 +92,20 @@ public class Secondary extends H2IntPair {
         }
     }
 
+    public int GetValues() {
+        values_t val = GameStatic.GetSkillValues(Skill());
+        if (val != null)
+            switch (Level()) {
+                case SkillLevel.BASIC:
+                    return val.values.basic;
+                case SkillLevel.ADVANCED:
+                    return val.values.advanced;
+                case SkillLevel.EXPERT:
+                    return val.values.expert;
+                default:
+                    break;
+            }
+
+        return 0;
+    }
 }

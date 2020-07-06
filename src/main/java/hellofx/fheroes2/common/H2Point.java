@@ -37,9 +37,19 @@ public class H2Point {
         return "x=" + x + ", y=" + y;
     }
 
-    public void add(int ax, int ay) {
-        x += ax;
-        y += ay;
+    public H2Point add(H2Point other) {
+        return add(other.x, other.y);
+    }
+
+    public H2Point add(int ax, int ay) {
+        var result = pointClone();
+        result.x += ax;
+        result.y += ay;
+        return result;
+    }
+
+    private H2Point pointClone() {
+        return new H2Point(x, y);
     }
 
     public H2Point vectorFrom(H2Point point) {
@@ -51,6 +61,10 @@ public class H2Point {
     }
 
     public boolean isEqual(H2Point other) {
-        return (x == other.x) && (y == other.y);
+        return x == other.x && y == other.y;
+    }
+
+    public H2Point sub(H2Point other) {
+        return add(other.invert());
     }
 }

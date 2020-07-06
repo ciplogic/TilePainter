@@ -50,7 +50,7 @@ public class GameCamera {
     }
 
     public ImageScaler getScaler() {
-        return (bmp) -> {
+        return bmp -> {
             //return bmp.bilinearScale(bmp.Width * scaleBy, bmp.Height * scaleBy).toImage();
             var start = originalTileSize;
             var scaledBmp = bmp;

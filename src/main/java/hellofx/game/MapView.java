@@ -47,15 +47,15 @@ public class MapView {
         var tileWidth = 32;
         var tileHeight = 18;
         var shiftX = shiftWidth - 64;
-        ground.visitRange(left, top, tileWidth, tileHeight, ((x, y, value) -> {
+        ground.visitRange(left, top, tileWidth, tileHeight, (x, y, value) -> {
             painter.drawImage(sandImage, 64 * x + shiftX, 64 * y);
 
-        }));
+        });
 
-        ground.visitRange(left, top, tileWidth, tileHeight, ((x, y, value) -> {
+        ground.visitRange(left, top, tileWidth, tileHeight, (x, y, value) -> {
             if (value > 0)
                 painter.drawImage(image, 64 * x + shiftX, 64 * y);
-        }));
+        });
 
     }
 

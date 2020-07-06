@@ -229,4 +229,20 @@ public class Settings {
         //TODO
         return 0;
     }
+
+    public int ConditionWins() {
+        return current_maps_file.ConditionWins();
+    }
+
+    public H2Point WinsMapsPositionObject() {
+        return current_maps_file.WinsMapsPositionObject();
+    }
+
+    public H2Point LossMapsPositionObject() {
+        return current_maps_file.LossMapsPositionObject();
+    }
+
+    public int ConditionLoss() {
+        return current_maps_file.ConditionLoss();
+    }
 }

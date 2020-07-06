@@ -1,8 +1,6 @@
 package hellofx.fheroes2.game;
 
-import hellofx.fheroes2.heroes.primary_t;
-import hellofx.fheroes2.heroes.secondary_t;
-import hellofx.fheroes2.heroes.stats_t;
+import hellofx.fheroes2.heroes.*;
 import hellofx.fheroes2.kingdom.RaceKind;
 
 import java.util.ArrayList;
@@ -13,9 +11,35 @@ import static hellofx.fheroes2.game.GameConsts.monster_upgrade_ratio;
 public class GameStatic {
     public static int uniq = 0;
     public static List<stats_t> _stats = new ArrayList<>();
+    public static List<values_t> _values = new ArrayList<>();
 
     static {
         setupStats();
+        setupSkills();
+    }
+
+    private static void setupSkills() {
+        addSkill("pathfinding", new level_t(25, 50, 100));
+        addSkill("archery", new level_t(10, 25, 50));
+        addSkill("logistics", new level_t(10, 20, 30));
+        addSkill("scouting", new level_t(1, 3, 5));
+        addSkill("diplomacy", new level_t(25, 50, 100));
+        addSkill("navigation", new level_t(33, 66, 100));
+        addSkill("leadership", new level_t(1, 2, 3));
+        addSkill("wisdom", new level_t(3, 4, 5));
+        addSkill("mysticism", new level_t(2, 3, 4));
+        addSkill("luck", new level_t(1, 2, 3));
+        addSkill("ballistics", new level_t(0, 0, 0));
+        addSkill("eagleeye", new level_t(25, 40, 65));
+        addSkill("necromancy", new level_t(10, 20, 30));
+        addSkill("estates", new level_t(100, 250, 500));
+    }
+
+    private static void addSkill(String skillId, level_t levelT) {
+        values_t item = new values_t();
+        item.id = skillId;
+        item.values = levelT;
+        _values.add(item);
     }
 
     private static void addStat(String id, primary_t captain_primary,
@@ -107,5 +131,41 @@ public class GameStatic {
 
     public static float GetMonsterUpgradeRatio() {
         return monster_upgrade_ratio;
+    }
+
+    public static values_t GetSkillValues(int type) {
+        switch (type) {
+            case SkillT.PATHFINDING:
+                return _values.get(0);
+            case SkillT.ARCHERY:
+                return _values.get(1);
+            case SkillT.LOGISTICS:
+                return _values.get(2);
+            case SkillT.SCOUTING:
+                return _values.get(3);
+            case SkillT.DIPLOMACY:
+                return _values.get(4);
+            case SkillT.NAVIGATION:
+                return _values.get(5);
+            case SkillT.LEADERSHIP:
+                return _values.get(6);
+            case SkillT.WISDOM:
+                return _values.get(7);
+            case SkillT.MYSTICISM:
+                return _values.get(8);
+            case SkillT.LUCK:
+                return _values.get(9);
+            case SkillT.BALLISTICS:
+                return _values.get(10);
+            case SkillT.EAGLEEYE:
+                return _values.get(11);
+            case SkillT.NECROMANCY:
+                return _values.get(12);
+            case SkillT.ESTATES:
+                return _values.get(13);
+            default:
+                break;
+        }
+        return null;
     }
 }

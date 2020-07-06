@@ -3,8 +3,6 @@ package hellofx.fheroes2.maps;
 import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.system.Settings;
 
-import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
-
 public class Mp2Kind {
     public static final int OBJ_ZERO = 0x00;
     public static final int OBJ_UNKNW_02 = 0x02;
@@ -278,8 +276,7 @@ public class Mp2Kind {
     public static final int OBJ_EARTHALTAR = 0xFE;
     public static final int OBJ_WATERALTAR = 0xFF;
 
-    public static int GetICNObject(byte Btype) {
-        var type = toByte(Btype);
+    public static int GetICNObject(int type) {
         switch (type) {
             // reserverd
             case 0:

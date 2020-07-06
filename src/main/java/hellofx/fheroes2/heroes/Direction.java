@@ -15,19 +15,19 @@ public class Direction {
     public static final int CENTER = 0x0100;
 
 
-    public static final int DIRECTION_TOP_ROW = (TOP_LEFT | TOP | TOP_RIGHT);
-    public static final int DIRECTION_BOTTOM_ROW = (BOTTOM_LEFT | BOTTOM | BOTTOM_RIGHT);
-    public static final int DIRECTION_CENTER_ROW = (LEFT | CENTER | RIGHT);
-    public static final int DIRECTION_LEFT_COL = (TOP_LEFT | LEFT | BOTTOM_LEFT);
-    public static final int DIRECTION_CENTER_COL = (TOP | CENTER | BOTTOM);
-    public static final int DIRECTION_RIGHT_COL = (TOP_RIGHT | RIGHT | BOTTOM_RIGHT);
-    public static final int DIRECTION_ALL = (DIRECTION_TOP_ROW | DIRECTION_BOTTOM_ROW | DIRECTION_CENTER_ROW);
-    public static final int DIRECTION_AROUND = (DIRECTION_TOP_ROW | DIRECTION_BOTTOM_ROW | LEFT | RIGHT);
+    public static final int DIRECTION_TOP_ROW = TOP_LEFT | TOP | TOP_RIGHT;
+    public static final int DIRECTION_BOTTOM_ROW = BOTTOM_LEFT | BOTTOM | BOTTOM_RIGHT;
+    public static final int DIRECTION_CENTER_ROW = LEFT | CENTER | RIGHT;
+    public static final int DIRECTION_LEFT_COL = TOP_LEFT | LEFT | BOTTOM_LEFT;
+    public static final int DIRECTION_CENTER_COL = TOP | CENTER | BOTTOM;
+    public static final int DIRECTION_RIGHT_COL = TOP_RIGHT | RIGHT | BOTTOM_RIGHT;
+    public static final int DIRECTION_ALL = DIRECTION_TOP_ROW | DIRECTION_BOTTOM_ROW | DIRECTION_CENTER_ROW;
+    public static final int DIRECTION_AROUND = DIRECTION_TOP_ROW | DIRECTION_BOTTOM_ROW | LEFT | RIGHT;
 
-    public static final int DIRECTION_TOP_RIGHT_CORNER = (TOP | TOP_RIGHT | RIGHT);
-    public static final int DIRECTION_TOP_LEFT_CORNER = (TOP | TOP_LEFT | LEFT);
-    public static final int DIRECTION_BOTTOM_RIGHT_CORNER = (BOTTOM | BOTTOM_RIGHT | RIGHT);
-    public static final int DIRECTION_BOTTOM_LEFT_CORNER = (BOTTOM | BOTTOM_LEFT | LEFT);
+    public static final int DIRECTION_TOP_RIGHT_CORNER = TOP | TOP_RIGHT | RIGHT;
+    public static final int DIRECTION_TOP_LEFT_CORNER = TOP | TOP_LEFT | LEFT;
+    public static final int DIRECTION_BOTTOM_RIGHT_CORNER = BOTTOM | BOTTOM_RIGHT | RIGHT;
+    public static final int DIRECTION_BOTTOM_LEFT_CORNER = BOTTOM | BOTTOM_LEFT | LEFT;
     final static int[] directs = {TOP_LEFT, TOP, TOP_RIGHT, RIGHT, BOTTOM_RIGHT, BOTTOM, BOTTOM_LEFT, LEFT};
 
     public static int[] All() {
@@ -156,7 +156,7 @@ public class Direction {
         return false;
     }
 
-    public int Reflect(int direct) {
+    public static int Reflect(int direct) {
         switch (direct) {
             case TOP_LEFT:
                 return BOTTOM_RIGHT;

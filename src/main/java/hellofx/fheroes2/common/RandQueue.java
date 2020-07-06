@@ -19,7 +19,7 @@ public class RandQueue extends ArrayList<H2IntPair> {
         // set weight (from 100)
 
         for (var it : this) {
-            it.second = (100 * it.second) / max;
+            it.second = 100 * it.second / max;
         }
 
         // get max

@@ -9,7 +9,7 @@ public class UltimateArtifact extends Artifact {
     Bitmap puzzlemap;
     boolean isfound;
 
-    void Set(int pos, Artifact a) {
+    public void Set(int pos, Artifact a) {
         var art = this;
         art.id = a.IsValid() ? a.id : Rand(ART_ULTIMATE);
         index = pos;

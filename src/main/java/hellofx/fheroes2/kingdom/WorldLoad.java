@@ -20,7 +20,6 @@ import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import static hellofx.fheroes2.game.GameConsts.*;
-import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 
 public class WorldLoad {
     public static boolean loadMapMp2(String fileName) {
@@ -85,7 +84,7 @@ public class WorldLoad {
                     // offset first addon
                     var offsetAddonsBlock = mp2tile.loadFromMp2Stream(fs);
 
-                    switch (toByte(mp2tile.generalObject)) {
+                    switch ((mp2tile.generalObject)) {
                         case Mp2Kind.OBJ_RNDTOWN:
                         case Mp2Kind.OBJ_RNDCASTLE:
                         case Mp2Kind.OBJ_CASTLE:
@@ -257,7 +256,7 @@ public class WorldLoad {
                 orders <<= 8;
                 orders |= tile.GetQuantity1();
 
-                if ((orders != 0) && ((orders % 0x08) == 0) && (ii + 1 == orders / 0x08))
+                if (orders != 0 && orders % 0x08 == 0 && ii + 1 == orders / 0x08)
                     findobject = _this.vec_object.getInt(it_index);
             }
 

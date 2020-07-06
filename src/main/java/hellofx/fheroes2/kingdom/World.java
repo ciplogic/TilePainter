@@ -6,8 +6,10 @@ import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.castle.CastleHeroes;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.game.GameOver;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.heroes.AllHeroes;
+import hellofx.fheroes2.heroes.HeroFlags;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.maps.MapsIndexes;
@@ -16,6 +18,8 @@ import hellofx.fheroes2.maps.Tiles;
 import hellofx.fheroes2.maps.TilesAddon;
 import hellofx.fheroes2.maps.objects.MapObjectSimple;
 import hellofx.fheroes2.maps.objects.Maps;
+import hellofx.fheroes2.resource.Artifact;
+import hellofx.fheroes2.resource.ArtifactLevel;
 import hellofx.fheroes2.resource.UltimateArtifact;
 import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
@@ -191,23 +195,20 @@ public class World {
 
         // add castles to kingdoms
         vec_kingdoms.AddCastles(vec_castles);
-/*
+
         // update wins, loss conditions
-        if (GameOver.WINS_HERO & Settings.Get().ConditionWins())
-        {
+        if ((GameOver.WINS_HERO & Settings.Get().ConditionWins()) != 0) {
             Heroes hero = GetHeroes(Settings.Get().WinsMapsPositionObject());
-            heroes_cond_wins = hero!=null ? hero.GetID() : HeroesKind.UNKNOWN;
+            heroes_cond_wins = hero != null ? hero.GetID() : HeroesKind.UNKNOWN;
         }
-        if (GameOver.LOSS_HERO & Settings.Get().ConditionLoss())
-        {
+        if ((GameOver.LOSS_HERO & Settings.Get().ConditionLoss()) != 0) {
             Heroes hero = GetHeroes(Settings.Get().LossMapsPositionObject());
-            if (hero!=null)
-            {
+            if (hero != null) {
                 heroes_cond_loss = hero.GetID();
-                hero.bitModes.SetModes(Heroes.NOTDISMISS | Heroes.NOTDEFAULTS);
+                hero.bitModes.SetModes(HeroFlags.NOTDISMISS | HeroFlags.NOTDEFAULTS);
             }
         }
-*/
+
         // update tile passable
         Arrays.stream(vec_tiles).forEach(tile -> {
             tile.UpdatePassable();
@@ -236,7 +237,7 @@ public class World {
         }
 
         // set ultimate
-        var it = find_if(vec_tiles, (tile) ->
+        var it = find_if(vec_tiles, tile ->
         {
             return tile.isObject(Mp2Kind.OBJ_RNDULTIMATEARTIFACT);
         });
@@ -258,8 +259,7 @@ public class World {
 
             if (pools.values.size() != 0) {
                 int pos = Rand.Get(pools.values);
-                //TODO
-                //ultimate_artifact.Set(pos, Artifact.Rand(ArtifactLevel.ART_ULTIMATE));
+                ultimate_artifact.Set(pos, new Artifact(Artifact.Rand(ArtifactLevel.ART_ULTIMATE)));
                 ultimate_pos = Maps.GetPoint(pos);
             }
         } else {
@@ -268,7 +268,7 @@ public class World {
             // remove ultimate artifact sprite
             if (addon != null) {
                 //TODO
-                //ultimate_artifact.Set(it.GetIndex(), Artifact.FromMP2IndexSprite(addon.index));
+                ultimate_artifact.Set(it.GetIndex(), Artifact.FromMP2IndexSprite(addon.index));
                 it.Remove(addon.uniq);
                 it.SetObject(Mp2Kind.OBJ_ZERO);
                 ultimate_pos = it.GetCenter();
@@ -317,6 +317,10 @@ public class World {
         vec_rumors.add(tr("This game is now in beta development version. ;)"));
     }
 
+    private Heroes GetHeroes(H2Point center) {
+        return vec_heroes.Get(center);
+    }
+
     public void Defaults() {
         // playing kingdom
         vec_kingdoms.Init();
@@ -341,7 +345,7 @@ public class World {
     }
 
     public Tiles GetTiles(int x, int y) {
-        var index = x + (y * w);
+        var index = x + y * w;
         if (x < 0 || y < 0 || x >= w || y >= h)
             return null;
         return vec_tiles[index];

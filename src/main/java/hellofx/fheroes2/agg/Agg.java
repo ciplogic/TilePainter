@@ -24,7 +24,7 @@ public class Agg {
     public MainContext context;
     List<icn_cache_t> icn_cache = new ArrayList<>();
     List<til_cache_t> til_cache = new ArrayList<>();
-    public ImageScaler imageScaler = (bmp) -> bmp.toImage();
+    public ImageScaler imageScaler = bmp -> bmp.toImage();
 
     public static Agg Get() {
         return StaticInstance;
@@ -105,7 +105,7 @@ public class Agg {
             index2 = 0;
         }
         var surface = tilCache.sprites[index2];
-        if (Bitmap.isValid(surface) || (shape == 0)) {
+        if (Bitmap.isValid(surface) || shape == 0) {
             return tilCache.getImage(index2);
         }
         var src = tilCache.sprites[index];

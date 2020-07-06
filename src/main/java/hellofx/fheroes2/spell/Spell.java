@@ -26,7 +26,7 @@ public class Spell {
 
         for (var sp = NONE; sp < STONE; ++sp) {
             Spell spell = new Spell(sp);
-            if (((adv && !spell.isCombat()) || (!adv && spell.isCombat())) &&
+            if ((adv && !spell.isCombat() || !adv && spell.isCombat()) &&
                     lvl == spell.Level() &&
                     (spells[sp].bits & SP_DISABLE) == 0)
                 v.add(spell);

@@ -77,7 +77,12 @@ public class SecSkills {
     }
 
     public int GetValues(int skill) {
-        //TODO
-        return 0;
+        var item = find_if(_items, it -> it.isSkill(skill));
+        return item != null ? item.GetValues() : 0;
+    }
+
+    public int GetLevel(int skill) {
+        var item = find_if(_items, it -> it.isSkill(skill));
+        return item != null ? item.Level() : SkillLevel.NONE;
     }
 }

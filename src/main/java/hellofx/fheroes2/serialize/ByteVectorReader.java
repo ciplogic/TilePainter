@@ -92,7 +92,7 @@ public class ByteVectorReader {
         var hi2 = Get8();
         var lo = (hi1 << 16) + (lo1 << 24);
         var hi = hi2 + (lo2 << 8);
-        return (hi + lo);
+        return hi + lo;
     }
 
     public int size() {

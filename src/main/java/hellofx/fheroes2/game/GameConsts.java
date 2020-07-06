@@ -80,4 +80,6 @@ public class GameConsts {
     public static final int uniq = 0;
     public static int kingdom_max_heroes = 8;
     public static int whirlpool_lost_percent = 50;
+
+    public static final int MAXU16 = 0xFFFF;
 }

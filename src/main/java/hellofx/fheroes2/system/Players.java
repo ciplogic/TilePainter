@@ -64,8 +64,8 @@ public class Players {
 
         for (var it : _items)
             if (control == 0xFF ||
-                    (strong && it.GetControl() == control) ||
-                    (!strong && ((it.GetControl() & control) != 0)))
+                    strong && it.GetControl() == control ||
+                    !strong && (it.GetControl() & control) != 0)
                 res |= it.GetColor();
 
         return res;
@@ -91,7 +91,7 @@ public class Players {
             else if ((vcolor & fi.AllowHumanColors()) != 0)
                 player.SetControl(player.GetControl() | PlayerControl.CONTROL_HUMAN);
 
-            if (first != null && ((player.GetControl() & PlayerControl.CONTROL_HUMAN) != 0))
+            if (first != null && (player.GetControl() & PlayerControl.CONTROL_HUMAN) != 0)
                 first = player;
 
             _items.add(player);

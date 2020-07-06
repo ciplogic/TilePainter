@@ -15,7 +15,7 @@ public class ObjXlc2 {
         if (isShadow(index))
             return DIRECTION_ALL;
         if (isAction(index) ||
-                (110 < index && index < 136))
+                110 < index && index < 136)
             return 0;
 
         return contains(restricted, index)

@@ -13,8 +13,8 @@ public class MidData {
 
     public MidData(XmiTracks t, int p) {
         mthd = new IFFChunkHeader(TAG_MTHD, 6);
-        format = (0);
-        ppqn = (p);
+        format = 0;
+        ppqn = p;
         tracks = new MidTracks(t);
 
     }

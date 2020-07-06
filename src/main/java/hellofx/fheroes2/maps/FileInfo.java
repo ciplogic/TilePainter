@@ -1,6 +1,8 @@
 package hellofx.fheroes2.maps;
 
+import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.game.DifficultyEnum;
+import hellofx.fheroes2.game.GameOver;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.H2Colors;
 import hellofx.fheroes2.kingdom.RaceKind;
@@ -183,11 +185,11 @@ public class FileInfo {
 
         // name
         fs.seek(0x3A);
-        name = (fs.toString(LENGTHNAME));
+        name = fs.toString(LENGTHNAME);
 
         // description
         fs.seek(0x76);
-        description = (fs.toString(LENGTHDESCRIPTION));
+        description = fs.toString(LENGTHDESCRIPTION);
 
         //fill unions
         if (4 == conditions_wins)
@@ -222,5 +224,51 @@ public class FileInfo {
             else
                 unions[ii] = (byte) cl;
         }
+    }
+
+    public int ConditionWins() {
+        switch (conditions_wins) {
+            case 0:
+                return GameOver.WINS_ALL;
+            case 1:
+                return allow_normal_victory ? GameOver.WINS_TOWN | GameOver.WINS_ALL : GameOver.WINS_TOWN;
+            case 2:
+                return allow_normal_victory ? GameOver.WINS_HERO | GameOver.WINS_ALL : GameOver.WINS_HERO;
+            case 3:
+                return allow_normal_victory ? GameOver.WINS_ARTIFACT | GameOver.WINS_ALL : GameOver.WINS_ARTIFACT;
+            case 4:
+                return GameOver.WINS_SIDE;
+            case 5:
+                return allow_normal_victory ? GameOver.WINS_GOLD | GameOver.WINS_ALL : GameOver.WINS_GOLD;
+            default:
+                break;
+        }
+
+        return GameOver.COND_NONE;
+    }
+
+    public H2Point WinsMapsPositionObject() {
+        return new H2Point(wins1, wins2);
+    }
+
+    public H2Point LossMapsPositionObject() {
+        return new H2Point(loss1, loss2);
+    }
+
+    public int ConditionLoss() {
+        switch (conditions_loss) {
+            case 0:
+                return GameOver.LOSS_ALL;
+            case 1:
+                return GameOver.LOSS_TOWN;
+            case 2:
+                return GameOver.LOSS_HERO;
+            case 3:
+                return GameOver.LOSS_TIME;
+            default:
+                break;
+        }
+
+        return GameOver.COND_NONE;
     }
 }

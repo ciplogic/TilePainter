@@ -28,13 +28,13 @@ public class MainContext {
     }
 
     public void listen(String eventName, Runnable action) {
-        router.register(eventName, (i) -> {
+        router.register(eventName, i -> {
             action.run();
         });
     }
 
     public <T> void listen(String eventName, Consumer<T> actionT) {
-        router.register(eventName, (i) -> {
+        router.register(eventName, i -> {
             T tValue = (T) i;
             actionT.accept(tValue);
         });

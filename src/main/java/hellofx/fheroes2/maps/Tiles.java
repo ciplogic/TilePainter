@@ -40,7 +40,6 @@ import static hellofx.fheroes2.heroes.Direction.DIRECTION_BOTTOM_ROW;
 import static hellofx.fheroes2.kingdom.WorldDump.writeField;
 import static hellofx.fheroes2.kingdom.WorldDump.writeFieldBare;
 import static hellofx.fheroes2.maps.objects.Maps.GetDirectionIndex;
-import static hellofx.fheroes2.serialize.ByteVectorReader.toByte;
 import static hellofx.fheroes2.serialize.ByteVectorReader.toUShort;
 
 
@@ -50,78 +49,43 @@ public class Tiles {
     public int maps_index = 0;
     public short pack_sprite_index = 0;
     public short tile_passable = 0;
-    public byte mp2_object = 0;
-    public byte fog_colors = 0;
-    public byte quantity1 = 0;
-    public byte quantity2 = 0;
-    public byte quantity3 = 0;
+    public short mp2_object = 0;
+    public short fog_colors = 0;
+    public short quantity1 = 0;
+    public short quantity2 = 0;
+    public short quantity3 = 0;
     public int maps_x;
     public int maps_y;
 
     private final static int[] monster_animation_cicle = new int[]{0, 1, 2, 1, 0, 3, 4, 5, 4, 3};
 
     static int PredicateSortRules(TilesAddon ta1, TilesAddon ta2) {
-        var level1 = toByte(ta1.level) % 4;
-        var level2 = toByte(ta2.level) % 4;
+        var level1 = ta1.level % 4;
+        var level2 = ta2.level % 4;
         if (level1 == level2)
             return 0;
         return level1 > level2 ? -1 : 1;
+    }
+
+    static boolean isStream(TilesAddon ta) {
+        return IcnKind.STREAM == Mp2.GetICNObject(ta.getObject()) ||
+                IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() < 14;
     }
 
     public String toJsonRow() {
         var sb = new StringBuilder();
         sb.append("{");
         writeField(sb, "maps_index", maps_index);
-        writeField(sb, "quantity1", toByte(quantity1));
-        writeField(sb, "quantity2", toByte(quantity2));
-        writeField(sb, "quantity3", toByte(quantity3));
+        writeField(sb, "quantity1", (quantity1));
+        writeField(sb, "quantity2", (quantity2));
+        writeField(sb, "quantity3", (quantity3));
         writeField(sb, "pack_sprite_index", toUShort(pack_sprite_index));
 
         writeAddons(sb, "addons_level1", addons_level1);
         writeAddons(sb, "addons_level2", addons_level2);
-        writeFieldBare(sb, "mp2_object", toByte(mp2_object));
+        writeFieldBare(sb, "mp2_object", (mp2_object));
         sb.append("}");
         return sb.toString();
-    }
-
-    public boolean QuantityIsValid() {
-        switch (GetObject(false)) {
-            case Mp2Kind.OBJ_ARTIFACT:
-            case Mp2Kind.OBJ_RESOURCE:
-            case Mp2Kind.OBJ_CAMPFIRE:
-            case Mp2Kind.OBJ_FLOTSAM:
-            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
-            case Mp2Kind.OBJ_TREASURECHEST:
-            case Mp2Kind.OBJ_WATERCHEST:
-            case Mp2Kind.OBJ_ABANDONEDMINE:
-                return true;
-
-            case Mp2Kind.OBJ_PYRAMID:
-                return QuantitySpell().isValid();
-
-            case Mp2Kind.OBJ_SHIPWRECK:
-            case Mp2Kind.OBJ_GRAVEYARD:
-            case Mp2Kind.OBJ_DERELICTSHIP:
-            case Mp2Kind.OBJ_WATERWHEEL:
-            case Mp2Kind.OBJ_WINDMILL:
-            case Mp2Kind.OBJ_LEANTO:
-            case Mp2Kind.OBJ_MAGICGARDEN:
-                return quantity2 != 0;
-
-            case Mp2Kind.OBJ_SKELETON:
-                return QuantityArtifact().GetID() != ArtifactKind.UNKNOWN;
-
-            case Mp2Kind.OBJ_WAGON:
-                return QuantityArtifact().GetID() != ArtifactKind.UNKNOWN || (quantity2 != 0);
-
-            case Mp2Kind.OBJ_DAEMONCAVE:
-                return QuantityVariant() != 0;
-
-            default:
-                break;
-        }
-
-        return false;
     }
 
     private Artifact QuantityArtifact() {
@@ -230,9 +194,44 @@ public class Tiles {
         AddonsPushLevel2(mp2);
     }
 
-    private void AddonsPushLevel1(Mp2Tile mp2) {
-        if (mp2.objectName1 != 0 && toByte(mp2.indexName1) < 0xFF)
-            AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber1, mp2.objectName1, mp2.indexName1));
+    public boolean QuantityIsValid() {
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_ARTIFACT:
+            case Mp2Kind.OBJ_RESOURCE:
+            case Mp2Kind.OBJ_CAMPFIRE:
+            case Mp2Kind.OBJ_FLOTSAM:
+            case Mp2Kind.OBJ_SHIPWRECKSURVIROR:
+            case Mp2Kind.OBJ_TREASURECHEST:
+            case Mp2Kind.OBJ_WATERCHEST:
+            case Mp2Kind.OBJ_ABANDONEDMINE:
+                return true;
+
+            case Mp2Kind.OBJ_PYRAMID:
+                return QuantitySpell().isValid();
+
+            case Mp2Kind.OBJ_SHIPWRECK:
+            case Mp2Kind.OBJ_GRAVEYARD:
+            case Mp2Kind.OBJ_DERELICTSHIP:
+            case Mp2Kind.OBJ_WATERWHEEL:
+            case Mp2Kind.OBJ_WINDMILL:
+            case Mp2Kind.OBJ_LEANTO:
+            case Mp2Kind.OBJ_MAGICGARDEN:
+                return quantity2 != 0;
+
+            case Mp2Kind.OBJ_SKELETON:
+                return QuantityArtifact().GetID() != ArtifactKind.UNKNOWN;
+
+            case Mp2Kind.OBJ_WAGON:
+                return QuantityArtifact().GetID() != ArtifactKind.UNKNOWN || quantity2 != 0;
+
+            case Mp2Kind.OBJ_DAEMONCAVE:
+                return QuantityVariant() != 0;
+
+            default:
+                break;
+        }
+
+        return false;
     }
 
     private void writeAddons(StringBuilder sb, String name, Addons addons) {
@@ -244,9 +243,9 @@ public class Tiles {
         writeField(sb, name, builtArray);
     }
 
-    static boolean isStream(TilesAddon ta) {
-        return IcnKind.STREAM == Mp2.GetICNObject(ta.getObject()) ||
-                (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() < 14);
+    private void AddonsPushLevel1(Mp2Tile mp2) {
+        if (mp2.objectName1 != 0 && (mp2.indexName1) < 0xFF)
+            AddonsPushLevel1(new TilesAddon(0, mp2.uniqNumber1, mp2.objectName1, mp2.indexName1));
     }
 
     boolean isLongObject(int direction) {
@@ -260,7 +259,7 @@ public class Tiles {
         for (var it : addons_level1._items) {
             if (!Exclude4LongObject(it) &&
                     (HaveLongObjectUniq(tile.addons_level1, it.uniq) ||
-                            (!TilesAddon.isTrees(it) && HaveLongObjectUniq(tile.addons_level2, it.uniq)))) {
+                            !TilesAddon.isTrees(it) && HaveLongObjectUniq(tile.addons_level2, it.uniq))) {
                 return true;
             }
         }
@@ -305,7 +304,7 @@ public class Tiles {
     }
 
     private void AddonsPushLevel2(Mp2Tile mp2) {
-        if (mp2.objectName2 != 0 && toByte(mp2.indexName2) < 0xFF)
+        if (mp2.objectName2 != 0 && (mp2.indexName2) < 0xFF)
             AddonsPushLevel2(new TilesAddon(0, mp2.uniqNumber2, mp2.objectName2, mp2.indexName2));
     }
 
@@ -315,15 +314,15 @@ public class Tiles {
     }
 
     public int GetQuantity1() {
-        return toByte(quantity1);
+        return (quantity1);
     }
 
     public int GetQuantity2() {
-        return toByte(quantity2);
+        return (quantity2);
     }
 
     public int GetQuantity3() {
-        return toByte(quantity3);
+        return (quantity3);
     }
 
     public int GetObject() {
@@ -335,12 +334,12 @@ public class Tiles {
     }
 
     public int GetObject(boolean skip_hero) {
-        if ((!skip_hero) && (Mp2Kind.OBJ_HEROES == toByte(mp2_object))) {
+        if (!skip_hero && Mp2Kind.OBJ_HEROES == (mp2_object)) {
             var hero = GetHeroes();
             return hero != null ? hero.GetMapsObject() : Mp2Kind.OBJ_ZERO;
         }
 
-        return toByte(mp2_object);
+        return (mp2_object);
     }
 
     public Heroes GetHeroes() {
@@ -353,7 +352,7 @@ public class Tiles {
     }
 
     public void AddonsPushLevel1(Mp2Addon ma) {
-        if (ma.objectNameN1 != 0 && toByte(ma.indexNameN1) < 0xFF)
+        if (ma.objectNameN1 != 0 && (ma.indexNameN1) < 0xFF)
             AddonsPushLevel1(new TilesAddon(ma.quantityN, ma.uniqNumberN1, ma.objectNameN1, ma.indexNameN1));
 
     }
@@ -381,7 +380,7 @@ public class Tiles {
 
     boolean isWhirlPool(TilesAddon ta) {
         return IcnKind.OBJNWATR == Mp2.GetICNObject(ta.getObject()) &&
-                (ta.getIndex() >= 202 && ta.getIndex() <= 225);
+                ta.getIndex() >= 202 && ta.getIndex() <= 225;
     }
 
     boolean isStandingStone(TilesAddon ta) {
@@ -391,7 +390,7 @@ public class Tiles {
 
     boolean isResource(TilesAddon ta) {
         // OBJNRSRC
-        return (IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.getObject()) && ((ta.getIndex() % 2) != 0)) ||
+        return IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() % 2 != 0 ||
                 // TREASURE
                 IcnKind.TREASURE == Mp2.GetICNObject(ta.getObject());
     }
@@ -403,7 +402,7 @@ public class Tiles {
 
     boolean isArtifact(TilesAddon ta) {
         // OBJNARTI (skip ultimate)
-        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() > 0x10 && ((ta.getIndex() % 2) != 0);
+        return IcnKind.OBJNARTI == Mp2.GetICNObject(ta.getObject()) && ta.getIndex() > 0x10 && ta.getIndex() % 2 != 0;
     }
 
     boolean isRandomArtifact(TilesAddon ta) {
@@ -433,11 +432,11 @@ public class Tiles {
 
     boolean isCampFire(TilesAddon ta) {
         // MTNDSRT
-        return (IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.getObject()) && 61 == ta.getIndex()) ||
+        return IcnKind.OBJNDSRT == Mp2.GetICNObject(ta.getObject()) && 61 == ta.getIndex() ||
                 // OBJNMULT
-                (IcnKind.OBJNMULT == Mp2.GetICNObject(ta.getObject()) && 131 == ta.getIndex()) ||
+                IcnKind.OBJNMULT == Mp2.GetICNObject(ta.getObject()) && 131 == ta.getIndex() ||
                 // OBJNSNOW
-                (IcnKind.OBJNSNOW == Mp2.GetICNObject(ta.getObject()) && 4 == ta.getIndex());
+                IcnKind.OBJNSNOW == Mp2.GetICNObject(ta.getObject()) && 4 == ta.getIndex();
     }
 
     boolean isMonster(TilesAddon ta) {
@@ -465,7 +464,7 @@ public class Tiles {
 
     boolean isWateringHole(TilesAddon ta) {
         return IcnKind.OBJNCRCK == Mp2.GetICNObject(ta.getObject()) &&
-                (ta.getIndex() >= 217 && ta.getIndex() <= 220);
+                ta.getIndex() >= 217 && ta.getIndex() <= 220;
     }
 
     boolean isJail(TilesAddon ta) {
@@ -505,7 +504,7 @@ public class Tiles {
     boolean isRandomMonster(TilesAddon ta) {
         // MONS32
         return IcnKind.MONS32 == Mp2.GetICNObject(ta.getObject()) &&
-                (0x41 < ta.getIndex() && 0x47 > ta.getIndex());
+                0x41 < ta.getIndex() && 0x47 > ta.getIndex();
     }
 
     boolean isBarrier(TilesAddon ta) {
@@ -695,7 +694,7 @@ public class Tiles {
             case Mp2Kind.OBJ_MONSTER:
                 RedrawMonster(toPaint);
 
-            //
+                //
             default:
                 break;
         }
@@ -783,8 +782,8 @@ public class Tiles {
 
             if (Mp2Kind.OBJ_HEROES != mp2_object ||
                     // skip bottom, bottom_right, bottom_left with ground objects
-                    (((DIRECTION_BOTTOM_ROW & Direction.Get(GetIndex(), it)) != 0)
-                            && Mp2.isGroundObject(tile.GetObject(false)))
+                    (DIRECTION_BOTTOM_ROW & Direction.Get(GetIndex(), it)) != 0
+                            && Mp2.isGroundObject(tile.GetObject(false))
                     ||
                     // skip ground check
                     tile.isWater() != isWater())
@@ -823,7 +822,7 @@ public class Tiles {
             // draw second sprite
 
             int secondSpriteIndex = sprite_index * 9 + 1 +
-                    monster_animation_cicle[(Game.MapsAnimationFrame()) % monster_animation_cicle.length];
+                    monster_animation_cicle[Game.MapsAnimationFrame() % monster_animation_cicle.length];
             var sprite_next = Agg.GetICN(IcnKind.MINIMON, secondSpriteIndex).clone();
             sprite_next.pos.add(16, 16);
             toPaint.add(sprite_first);
@@ -864,8 +863,8 @@ public class Tiles {
         for (var it : addons_level2._items) {
             if (skip != null && skip == it) continue;
 
-            var object = toByte(it.object);
-            var index = toByte(it.index);
+            var object = it.object;
+            var index = it.index;
             var icn = Mp2.GetICNObject(object);
 
             if (IcnKind.UNKNOWN != icn && IcnKind.MINIHERO != icn && IcnKind.MONS32 != icn) {
@@ -930,10 +929,10 @@ public class Tiles {
                 ", index=" + maps_index +
                 ", sprite_index=" + pack_sprite_index +
                 ", passable=" + tile_passable +
-                ", mp2_object=" + toByte(mp2_object) +
-                ", quantity1=" + toByte(quantity1) +
-                ", quantity2=" + toByte(quantity2) +
-                ", quantity3=" + toByte(quantity3) +
+                ", mp2_object=" + (mp2_object) +
+                ", quantity1=" + (quantity1) +
+                ", quantity2=" + (quantity2) +
+                ", quantity3=" + (quantity3) +
                 '}';
     }
 
@@ -972,7 +971,7 @@ public class Tiles {
     }
 
     public void AddonsPushLevel2(Mp2Addon ma) {
-        if (ma.objectNameN2 != 0 && toByte(ma.indexNameN2) < 0xFF) {
+        if (ma.objectNameN2 != 0 && (ma.indexNameN2) < 0xFF) {
             AddonsPushLevel2(new TilesAddon(ma.quantityN, ma.uniqNumberN2, ma.objectNameN2, ma.indexNameN2));
         }
 
@@ -1050,11 +1049,11 @@ public class Tiles {
     }
 
     private TilesAddon FindAddonLevel1(int uniq) {
-        return find_if(addons_level1._items, (it) -> it.isUniq(uniq));
+        return find_if(addons_level1._items, it -> it.isUniq(uniq));
     }
 
     private TilesAddon FindAddonLevel2(int uniq) {
-        return find_if(addons_level2._items, (it) -> it.isUniq(uniq));
+        return find_if(addons_level2._items, it -> it.isUniq(uniq));
     }
 
     private void UpdateMonsterInfo(Tiles tile) {
@@ -1151,8 +1150,8 @@ public class Tiles {
             // fixed count: for money
             if (tile.MonsterFixedCount() != 0 ||
                     // month of monster
-                    (world.GetWeekType().GetType() == WeekKind.MONSTERS &&
-                            world.GetWeekType().GetMonster() == mons))
+                    world.GetWeekType().GetType() == WeekKind.MONSTERS &&
+                            world.GetWeekType().GetMonster() == mons)
                 tile.MonsterSetJoinCondition(MonsterJoin.JOIN_CONDITION_MONEY);
             else {
                 // 20% chance for join
@@ -1480,7 +1479,7 @@ public class Tiles {
                         if (art == ArtifactKind.SPELL_SCROLL) {
                             QuantitySetVariant(15);
                             // spell from origin mp2
-                            QuantitySetSpell(1 + (toByte(quantity2) * 256 + toByte(quantity1)) / 8);
+                            QuantitySetSpell(1 + ((quantity2) * 256 + (quantity1)) / 8);
                         } else {
                             // 0: 70% none
                             // 1,2,3 - 2000g, 2500g+3res, 3000g+5res,
@@ -1918,7 +1917,7 @@ public class Tiles {
     }
 
     public int MonsterCount() {
-        return toByte(quantity1) << 8 | toByte(quantity2);
+        return (quantity1) << 8 | (quantity2);
     }
 
     public void CaptureFlags32(int obj, int col) {
@@ -2052,11 +2051,11 @@ public class Tiles {
     }
 
     public TilesAddon FindAddonICN1(int icn) {
-        return find_if(addons_level1._items, (ta) -> ta.isICN(icn));
+        return find_if(addons_level1._items, ta -> ta.isICN(icn));
     }
 
     public TilesAddon FindAddonICN2(int icn) {
-        return find_if(addons_level2._items, (ta) -> ta.isICN(icn));
+        return find_if(addons_level2._items, ta -> ta.isICN(icn));
     }
 
     public void UpdatePassable() {
@@ -2074,7 +2073,7 @@ public class Tiles {
 
         var wSize = new H2Size(world.w, world.h);
         // on ground
-        if (Mp2Kind.OBJ_HEROES != toByte(mp2_object) && !isWater()) {
+        if (Mp2Kind.OBJ_HEROES != (mp2_object) && !isWater()) {
             var mounts1 = null != find_if(addons_level1._items, Tiles::isMountsRocs);
             var mounts2 = null != find_if(addons_level2._items, Tiles::isMountsRocs);
             var trees1 = null != find_if(addons_level1._items, Tiles::isForestsTrees);
@@ -2166,15 +2165,15 @@ public class Tiles {
             // left corner
             if (left.tile_passable != 0 &&
                     isLongObject(Direction.TOP) &&
-                    (((Direction.TOP | Direction.TOP_LEFT) & tile_passable) != 0) &&
-                    ((Direction.TOP_RIGHT & left.tile_passable) != 0)) {
+                    ((Direction.TOP | Direction.TOP_LEFT) & tile_passable) != 0 &&
+                    (Direction.TOP_RIGHT & left.tile_passable) != 0) {
                 left.tile_passable &= ~Direction.TOP_RIGHT;
             } else
                 // right corner
                 if (tile_passable != 0 &&
                         left.isLongObject(Direction.TOP) &&
-                        (((Direction.TOP | Direction.TOP_RIGHT) & left.tile_passable) != 0) &&
-                        ((Direction.TOP_LEFT & tile_passable) != 0)) {
+                        ((Direction.TOP | Direction.TOP_RIGHT) & left.tile_passable) != 0 &&
+                        (Direction.TOP_LEFT & tile_passable) != 0) {
                     tile_passable &= ~Direction.TOP_LEFT;
                 }
 
@@ -2228,6 +2227,41 @@ public class Tiles {
 
     public boolean MonsterJoinConditionForce() {
         //TODO
+        return false;
+    }
+
+    public int GetGround() {
+        var index = TileSpriteIndex();
+
+        // list grounds from GROUND32.TIL
+        if (30 > index)
+            return GroundKind.WATER;
+        if (92 > index)
+            return GroundKind.GRASS;
+        if (146 > index)
+            return GroundKind.SNOW;
+        if (208 > index)
+            return GroundKind.SWAMP;
+        if (262 > index)
+            return GroundKind.LAVA;
+        if (321 > index)
+            return GroundKind.DESERT;
+        if (361 > index)
+            return GroundKind.DIRT;
+        if (415 > index)
+            return GroundKind.WASTELAND;
+
+        //else if(432 > pack_sprite_index)
+
+        return GroundKind.BEACH;
+    }
+
+    public boolean isRoad(int direct) {
+
+        for (var addon : addons_level1._items) {
+            if (addon.isRoad(direct))
+                return true;
+        }
         return false;
     }
 }

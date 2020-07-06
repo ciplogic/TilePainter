@@ -153,7 +153,7 @@ public class Castle {
 
             // set count
             for (var troop : troops)
-                troop.count = (st.getLE16());
+                troop.count = st.getLE16();
 
             army.m_troops.assign(troops);
             bitModes.SetModes(CUSTOMARMY);
@@ -176,7 +176,7 @@ public class Castle {
             case 3 -> race = RaceKind.WRLK;
             case 4 -> race = RaceKind.WZRD;
             case 5 -> race = RaceKind.NECR;
-            default -> race = H2Color.NONE != GetColor() && ((RaceKind.ALL & kingdom_race) != 0) ? kingdom_race : RaceKind.Rand();
+            default -> race = H2Color.NONE != GetColor() && (RaceKind.ALL & kingdom_race) != 0 ? kingdom_race : RaceKind.Rand();
         }
 
         // castle
@@ -255,7 +255,7 @@ public class Castle {
         if (!HaveNearlySea()) building &= ~BUILD_SHIPYARD;
 
         // remove tavern from necromancer castle
-        if (RaceKind.NECR == race && ((building & BUILD_TAVERN) != 0)) {
+        if (RaceKind.NECR == race && (building & BUILD_TAVERN) != 0) {
             building &= ~BUILD_TAVERN;
             if (Settings.Get().PriceLoyaltyVersion())
                 building |= BUILD_SHRINE;
@@ -905,10 +905,10 @@ public class Castle {
         }
 
         // check build requirements
-        int requires = (GetBuildingRequires(build));
+        int requires = GetBuildingRequires(build);
 
         for (int itr = 0x00000001; itr != 0; itr <<= 1)
-            if ((0 != (requires & itr)) && (0 == (building & itr))) return REQUIRES_BUILD;
+            if (0 != (requires & itr) && 0 == (building & itr)) return REQUIRES_BUILD;
 
         // check valid payment
         if (!GetKingdom().AllowPayment(PaymentConditions.BuyBuilding(race, build))) return LACK_RESOURCES;

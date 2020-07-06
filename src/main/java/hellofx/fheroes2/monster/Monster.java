@@ -507,7 +507,7 @@ public class Monster {
         boolean join_force = map_troop != null ? map_troop.JoinConditionForce() : tile.MonsterJoinConditionForce();
 
         if (!join_skip &&
-                check_free_stack && ((check_extra_condition && ratios >= 2) || join_force)) {
+                check_free_stack && (check_extra_condition && ratios >= 2 || join_force)) {
             if (join_free || join_force)
                 return new JoinCount(JoinKind.JOIN_FREE, troop.GetCount());
             if (hero.HasSecondarySkill(SkillT.DIPLOMACY)) {

@@ -18,7 +18,7 @@ public class TileWrapper {
 
     public int getField(int shiftBits, int bitsToRead) {
         var mask = (1 << bitsToRead) - 1;
-        var result = (_value >> shiftBits) & mask;
+        var result = _value >> shiftBits & mask;
         return result;
     }
 }

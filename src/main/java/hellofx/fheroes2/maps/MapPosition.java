@@ -21,4 +21,12 @@ public class MapPosition {
     public void SetIndex(int index) {
         center = Maps.isValidAbsIndex(index) ? Maps.GetPoint(index) : new H2Point(-1, -1);
     }
+
+    public int GetIndex() {
+        return center.x < 0 && center.y < 0 ? -1 : Maps.GetIndexFromAbsPoint(center);
+    }
+
+    public boolean isPosition(H2Point pt) {
+        return center.isEqual(pt);
+    }
 }

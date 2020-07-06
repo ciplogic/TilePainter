@@ -84,7 +84,7 @@ public class GameArea {
 
                 if (tile == null)
                     continue;
-                if (tile.GetObject() == Mp2Kind.OBJ_HEROES && ((flag & LEVEL_HEROES) != 0)) {
+                if (tile.GetObject() == Mp2Kind.OBJ_HEROES && (flag & LEVEL_HEROES) != 0) {
                     Heroes hero = tile.GetHeroes();
                     if (hero != null)
                         hero.Redraw(dst, TILEWIDTH * ox, TILEWIDTH * oy, true);

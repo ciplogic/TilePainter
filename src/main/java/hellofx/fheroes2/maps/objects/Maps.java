@@ -9,8 +9,6 @@ import hellofx.fheroes2.maps.MapsIndexes;
 import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.maps.TilesAddon;
 
-import static hellofx.fheroes2.serialize.ByteVectorReader.addToByte;
-
 public class Maps {
 
     public static H2Point GetPoint(int index) {
@@ -79,7 +77,7 @@ public class Maps {
         return -1;
     }
 
-    private static boolean isValidDirection(int from, int vector, H2Size world) {
+    public static boolean isValidDirection(int from, int vector, H2Size world) {
         switch (vector) {
             case Direction.TOP:
                 return from >= world.w;
@@ -88,7 +86,7 @@ public class Maps {
             case Direction.BOTTOM:
                 return from < world.w * (world.h - 1);
             case Direction.LEFT:
-                return (from % world.w) != 0;
+                return from % world.w != 0;
 
             case Direction.TOP_RIGHT:
                 return from >= world.w && from % world.w < world.w - 1;
@@ -97,10 +95,10 @@ public class Maps {
                 return from < world.w * (world.h - 1) && from % world.w < world.w - 1;
 
             case Direction.BOTTOM_LEFT:
-                return (from < (world.w * (world.h - 1))) && (from % world.w) != 0;
+                return from < world.w * (world.h - 1) && from % world.w != 0;
 
             case Direction.TOP_LEFT:
-                return from >= world.w && (from % world.w) != 0;
+                return from >= world.w && from % world.w != 0;
 
             default:
                 break;
@@ -111,7 +109,7 @@ public class Maps {
 
     public static boolean isValidAbsIndex(int index) {
         var world = World.Instance;
-        return index >= 0 && (index < world.vec_tiles.length);
+        return index >= 0 && index < world.vec_tiles.length;
     }
 
     public static void MinimizeAreaForCastle(H2Point center) {
@@ -192,26 +190,26 @@ public class Maps {
             TilesAddon addon = world.GetTiles(it).FindObject(Mp2Kind.OBJ_RNDCASTLE);
             if (addon == null)
                 continue;
-            addon.object = addToByte(addon.object, -12);
+            addon.object = (short) (addon.object - 12);
 
             switch (race) {
                 case RaceKind.KNGT:
-                    addon.index = addToByte(addon.index, 0);
+                    addon.index = addon.index;
                     break;
                 case RaceKind.BARB:
-                    addon.index = addToByte(addon.index, 32);
+                    addon.index = (short) (addon.index + 32);
                     break;
                 case RaceKind.SORC:
-                    addon.index = addToByte(addon.index, 64);
+                    addon.index = (short) (addon.index + 64);
                     break;
                 case RaceKind.WRLK:
-                    addon.index = addToByte(addon.index, 96);
+                    addon.index = (short) (addon.index + 96);
                     break;
                 case RaceKind.WZRD:
-                    addon.index = addToByte(addon.index, 128);
+                    addon.index = (short) (addon.index + 128);
                     break;
                 case RaceKind.NECR:
-                    addon.index = addToByte(addon.index, 160);
+                    addon.index = (short) (addon.index + 160);
                     break;
                 default:
                     break;
@@ -238,5 +236,10 @@ public class Maps {
         }
         indexes.clear();
         indexes.addAll(result);
+    }
+
+    public static int GetApproximateDistance(int index1, int index2) {
+        var sz = GetPoint(index1).sub(GetPoint(index2));
+        return Integer.max(sz.x, sz.y);
     }
 }

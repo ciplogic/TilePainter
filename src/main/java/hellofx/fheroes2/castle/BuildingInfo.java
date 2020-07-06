@@ -16,7 +16,7 @@ public class BuildingInfo {
 
     public static Funds GetCost(int build, int race) {
         return Builds._builds.stream()
-                .filter(ptr -> ptr.id2 == build && ((race == 0) || (0 != (race & ptr.race))))
+                .filter(ptr -> ptr.id2 == build && (race == 0 || 0 != (race & ptr.race)))
                 .map(row -> row.cost)
                 .findFirst().orElse(Funds.NONE);
     }

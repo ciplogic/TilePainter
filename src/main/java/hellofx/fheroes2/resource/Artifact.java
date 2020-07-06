@@ -32,9 +32,9 @@ public class Artifact {
         // if possibly: make unique on map
         for (var art = ArtifactKind.ULTIMATE_BOOK; art < ArtifactKind.UNKNOWN; ++art) {
             Artifact artifact = new Artifact(art);
-            if (((lvl & artifact.Level()) != 0) &&
-                    ((artifacts[art].bits & ART_DISABLED) == 0) &&
-                    ((artifacts[art].bits & ART_RNDUSED) == 0)
+            if ((lvl & artifact.Level()) != 0 &&
+                    (artifacts[art].bits & ART_DISABLED) == 0 &&
+                    (artifacts[art].bits & ART_RNDUSED) == 0
             )
                 v.add(art);
         }
@@ -43,7 +43,7 @@ public class Artifact {
             for (var art = ULTIMATE_BOOK; art < UNKNOWN; ++art) {
                 Artifact artifact = new Artifact(art);
                 if ((lvl & artifact.Level()) != 0 &&
-                        ((artifacts[art].bits & ART_DISABLED) == 0)) {
+                        (artifacts[art].bits & ART_DISABLED) == 0) {
                     v.add(art);
                 }
             }

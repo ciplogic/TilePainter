@@ -96,17 +96,17 @@ public class Heroes extends HeroBase {
         portrait = heroid;
 
         color.color = H2Color.NONE;
-        experience = (0);
-        move_point_scale = (-1);
+        experience = 0;
+        move_point_scale = -1;
         secondary_skills = new SecSkills(rc);
         army = new Army(this);
-        race = (rc);
-        save_maps_object = (Mp2Kind.OBJ_ZERO);
+        race = rc;
+        save_maps_object = Mp2Kind.OBJ_ZERO;
         //TODO
         //path(this);
-        direction = (Direction.RIGHT);
-        sprite_index = (18);
-        patrol_square = (0);
+        direction = Direction.RIGHT;
+        sprite_index = 18;
+        patrol_square = 0;
         name = Heroes.GetName(heroid);
     }
 
@@ -186,7 +186,7 @@ public class Heroes extends HeroBase {
             IntStream.range(0, secs.length).forEach(i -> secs[i] = new Secondary());
 
             for (var sec : secs)
-                sec.SetSkill((st.get() + 1));
+                sec.SetSkill(st.get() + 1);
 
             for (var sec : secs)
                 sec.SetLevel(st.get());
@@ -204,7 +204,7 @@ public class Heroes extends HeroBase {
         // custom name
         if (st.get() != 0) {
             bitModes.SetModes(NOTDEFAULTS);
-            name = (st.toString(13));
+            name = st.toString(13);
         } else
             st.skip(13);
 
@@ -231,7 +231,7 @@ public class Heroes extends HeroBase {
 
     public boolean isFreeman() {
 
-        return isValid() && H2Color.NONE == GetColor() && (!bitModes.Modes(JAIL));
+        return isValid() && H2Color.NONE == GetColor() && !bitModes.Modes(JAIL);
     }
 
     private int GetColor() {
@@ -281,7 +281,7 @@ public class Heroes extends HeroBase {
             LevelUp(bitModes.Modes(CUSTOMSKILLS), true);
         }
 
-        if (((race & (RaceKind.SORC | RaceKind.WRLK | RaceKind.WZRD | RaceKind.NECR)) != 0) &&
+        if ((race & (RaceKind.SORC | RaceKind.WRLK | RaceKind.WZRD | RaceKind.NECR)) != 0 &&
                 !HaveSpellBook()) {
             Spell spell = GetInitialSpell(race);
             if (spell.isValid()) {
@@ -427,5 +427,9 @@ public class Heroes extends HeroBase {
 
     public int GetSecondaryValues(int skill) {
         return secondary_skills.GetValues(skill);
+    }
+
+    public int GetLevelSkill(int skill) {
+        return secondary_skills.GetLevel(skill);
     }
 }

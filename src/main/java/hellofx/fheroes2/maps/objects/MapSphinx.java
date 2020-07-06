@@ -36,7 +36,7 @@ public class MapSphinx extends MapObjectSimple {
         for (var i = 0; i < 8; ++i) {
             var answer = Game.GetEncodeString(st.toString(13));
 
-            if ((count-- > 0) && answer.length() > 0)
+            if (count-- > 0 && answer.length() > 0)
                 answers.add(StringLower(answer));
         }
 

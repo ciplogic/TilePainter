@@ -106,9 +106,9 @@ public class AllHeroes extends VecHeroes {
             default:
                 min = HeroesKind.LORDKILBURN;
                 max = conf.ExtCastleAllowRecruitSpecialHeroes()
-                        ? (conf.PriceLoyaltyVersion()
+                        ? conf.PriceLoyaltyVersion()
                         ? HeroesKind.JARKONAS
-                        : HeroesKind.BAX)
+                        : HeroesKind.BAX
                         : HeroesKind.CELIA;
                 break;
         }
@@ -124,7 +124,7 @@ public class AllHeroes extends VecHeroes {
         if (RaceKind.NONE != race && freeman_heroes.size() == 0) {
             min = HeroesKind.LORDKILBURN;
             max = conf.ExtCastleAllowRecruitSpecialHeroes()
-                    ? (conf.PriceLoyaltyVersion() ? HeroesKind.JARKONAS : HeroesKind.BAX)
+                    ? conf.PriceLoyaltyVersion() ? HeroesKind.JARKONAS : HeroesKind.BAX
                     : HeroesKind.CELIA;
 
             for (int ii = min; ii <= max; ++ii)

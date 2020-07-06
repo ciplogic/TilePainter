@@ -62,7 +62,7 @@ public class MidEvents {
             // command
 
             // end
-            if (0xFF == cur && (0x2F == evnt.get(pos + 1))) {
+            if (0xFF == cur && 0x2F == evnt.get(pos + 1)) {
                 _items.add(new MidEvent(delta, evnt.get(pos), evnt.get(pos + 1), evnt.get(pos + 2)));
                 break;
             }

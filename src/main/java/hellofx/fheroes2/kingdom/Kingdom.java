@@ -36,7 +36,7 @@ public class Kingdom {
 
     public boolean AllowRecruitHero(boolean check_payment, int level) {
         //TODO
-        return (heroes._items.size() < GetMaxHeroes())
+        return heroes._items.size() < GetMaxHeroes()
                 &&
                 (!check_payment || AllowPayment(PaymentConditions.RecruitHero(level)));
     }
