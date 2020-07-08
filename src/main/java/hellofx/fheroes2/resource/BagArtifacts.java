@@ -16,4 +16,14 @@ public class BagArtifacts {
         //TODO
         return false;
     }
+
+    public boolean PushArtifact(Artifact art) {
+        //TODO
+        return false;
+    }
+
+    public boolean MakeBattleGarb() {
+        //TODO
+        return false;
+    }
 }

@@ -7,7 +7,9 @@ import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.army.Troop;
 import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.common.H2Point;
+import hellofx.fheroes2.dialog.Dialogs;
 import hellofx.fheroes2.game.GameStatic;
+import hellofx.fheroes2.gui.H2Font;
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.MoraleKind;
@@ -17,6 +19,7 @@ import hellofx.fheroes2.maps.MapPosition;
 import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.resource.Artifact;
+import hellofx.fheroes2.resource.ArtifactKind;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.spell.Spell;
 import hellofx.framework.controls.Painter;
@@ -221,12 +224,43 @@ public class Heroes extends HeroBase {
     }
 
     public H2Point GetCenter() {
-        //TODO
-        return new H2Point();
+        return mapPosition.GetCenter();
     }
 
-    private void PickupArtifact(Artifact artifact) {
+    private boolean PickupArtifact(Artifact art) {
+        if (!art.IsValid()) return false;
+
+        //const Settings & conf = Settings::Get();
+
+        if (!bag_artifacts.PushArtifact(art)) {
+            if (isControlHuman()) {
+                if (art.GetID() == ArtifactKind.MAGIC_BOOK) {
+                    Dialogs.Message("",
+                            tr(
+                                    "You must purchase a spell book to use the mage guild, but you currently have no room for a spell book. Try giving one of your artifacts to another hero."
+                            ),
+                            H2Font.BIG, Dialogs.OK);
+                } else {
+                    Dialogs.Message(art.GetName(), tr("You have no room to carry another artifact!"), H2Font.BIG, Dialogs.OK);
+                }
+
+            }
+            return false;
+        }
+
+        // check: anduran garb
+        if (bag_artifacts.MakeBattleGarb()) {
+            if (isControlHuman()) {
+                Dialogs.ArtifactInfo("", tr("The three Anduran artifacts magically combine into one."), ArtifactKind.BATTLE_GARB);
+            }
+        }
+
+        return true;
+    }
+
+    private boolean isControlHuman() {
         //TODO
+        return false;
     }
 
     public boolean isFreeman() {
@@ -238,7 +272,7 @@ public class Heroes extends HeroBase {
         return color.GetColor();
     }
 
-    private boolean isValid() {
+    public boolean isValid() {
         return hid != HeroesKind.UNKNOWN;
     }
 

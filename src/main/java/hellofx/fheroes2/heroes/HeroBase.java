@@ -140,4 +140,10 @@ public abstract class HeroBase {
 
         return !unique ? bag_artifacts.Count(art) != 0 : bag_artifacts.isPresentArtifact(art);
     }
+
+    public boolean isCaptain() {
+        return GetType() == HeroType.CAPTAIN;
+    }
+
+    public abstract boolean isValid();
 }

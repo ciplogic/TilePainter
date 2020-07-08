@@ -1,6 +1,5 @@
 package hellofx.fheroes2.army;
 
-import hellofx.fheroes2.castle.Captain;
 import hellofx.fheroes2.castle.building_t;
 import hellofx.fheroes2.common.Rand;
 import hellofx.fheroes2.game.GameConsts;
@@ -9,6 +8,9 @@ import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.monster.Monster;
 
 import java.util.stream.IntStream;
+
+import static hellofx.fheroes2.army.armysize_t.*;
+import static hellofx.fheroes2.system.Translate.tr;
 
 public class Army {
     public Troops m_troops = new Troops();
@@ -62,7 +64,45 @@ public class Army {
         }
     }
 
-    public void SetCommander(Captain captain) {
-        //TODO
+    String[] str_size = {
+            tr("army|Few"), tr("army|Several"), tr("army|Pack"), tr("army|Lots"),
+            tr("army|Horde"), tr("army|Throng"), tr("army|Swarm"), tr("army|Zounds"), tr("army|Legion")
+    };
+
+    public void SetCommander(HeroBase c) {
+        commander = c;
     }
+
+    public HeroBase GetCommander() {
+        if (commander == null)
+            return null;
+        return (commander.isCaptain() && !commander.isValid()) ? null : commander;
+    }
+
+    public String SizeString(int size) {
+
+        switch (ArmyGetSize(size)) {
+            default:
+                break;
+            case ARMY_SEVERAL:
+                return str_size[1];
+            case ARMY_PACK:
+                return str_size[2];
+            case ARMY_LOTS:
+                return str_size[3];
+            case ARMY_HORDE:
+                return str_size[4];
+            case ARMY_THRONG:
+                return str_size[5];
+            case ARMY_SWARM:
+                return str_size[6];
+            case ARMY_ZOUNDS:
+                return str_size[7];
+            case ARMY_LEGION:
+                return str_size[8];
+        }
+
+        return str_size[0];
+    }
+
 }
