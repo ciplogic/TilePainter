@@ -45,7 +45,7 @@ public class Players {
         return colors;
     }
 
-    private Player GetCurrent() {
+    public Player GetCurrent() {
         return Get(current_color);
     }
 

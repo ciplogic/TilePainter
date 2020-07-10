@@ -10,6 +10,7 @@ import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.dialog.Dialogs;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.gui.H2Font;
+import hellofx.fheroes2.heroes.route.Path;
 import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.kingdom.H2Color;
 import hellofx.fheroes2.kingdom.MoraleKind;
@@ -53,7 +54,7 @@ public class Heroes extends HeroBase {
     public int race;
     public int save_maps_object;
 
-    public RoutePath path = new RoutePath();
+    public Path path = new Path();
 
     public int direction;
     public int sprite_index;
@@ -465,5 +466,21 @@ public class Heroes extends HeroBase {
 
     public int GetLevelSkill(int skill) {
         return secondary_skills.GetLevel(skill);
+    }
+
+    public Path GetPath() {
+        return path;
+    }
+
+    public int GetMovePoints() {
+        return move_point;
+    }
+
+    public boolean isEnableMove() {
+        return bitModes.Modes(ENABLEMOVE) && path.isValid() && path.GetFrontPenalty() <= move_point;
+    }
+
+    public int GetSpriteIndex() {
+        return sprite_index;
     }
 }

@@ -1,6 +1,8 @@
 package hellofx.fheroes2.heroes.route;
 
+import hellofx.fheroes2.common.Cursor;
 import hellofx.fheroes2.common.H2Size;
+import hellofx.fheroes2.common.ListCursor;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.SkillT;
@@ -24,6 +26,273 @@ public class Path {
         int cost2 = Ground.GetPenalty(to, Direction.Reflect(direct), pathfinding);
         // penalty: for [tmp] in
         return cost1 + cost2 >> 1;
+    }
+
+    public static int GetIndexSprite(int from, int to, int mod) {
+        // ICN::ROUTE
+        // start index 1, 25, 49, 73, 97, 121 (size arrow path)
+        int index = 1;
+
+        switch (mod) {
+            case 200:
+                index = 121;
+                break;
+            case 175:
+                index = 97;
+                break;
+            case 150:
+                index = 73;
+                break;
+            case 125:
+                index = 49;
+                break;
+            case 100:
+                index = 25;
+                break;
+
+            default:
+                break;
+        }
+
+        switch (from) {
+            case Direction.TOP:
+                switch (to) {
+                    case Direction.TOP:
+                        index += 8;
+                        break;
+                    case Direction.TOP_RIGHT:
+                        index += 17;
+                        break;
+                    case Direction.RIGHT:
+                        index += 18;
+                        break;
+                    case Direction.LEFT:
+                        index += 6;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 7;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 5;
+                        break;
+                    case Direction.BOTTOM_RIGHT:
+                        index += 19;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.TOP_RIGHT:
+                switch (to) {
+                    case Direction.TOP:
+                        index += 0;
+                        break;
+                    case Direction.TOP_RIGHT:
+                        index += 9;
+                        break;
+                    case Direction.RIGHT:
+                        index += 18;
+                        break;
+                    case Direction.BOTTOM_RIGHT:
+                        index += 19;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 7;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 20;
+                        break;
+                    case Direction.LEFT:
+                        index += 6;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.RIGHT:
+                switch (to) {
+                    case Direction.TOP:
+                        index += 0;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 20;
+                        break;
+                    case Direction.BOTTOM_RIGHT:
+                        index += 19;
+                        break;
+                    case Direction.RIGHT:
+                        index += 10;
+                        break;
+                    case Direction.TOP_RIGHT:
+                        index += 1;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 7;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 21;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.BOTTOM_RIGHT:
+                switch (to) {
+                    case Direction.TOP_RIGHT:
+                        index += 1;
+                        break;
+                    case Direction.RIGHT:
+                        index += 2;
+                        break;
+                    case Direction.BOTTOM_RIGHT:
+                        index += 11;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 20;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 21;
+                        break;
+                    case Direction.TOP:
+                        index += 0;
+                        break;
+                    case Direction.LEFT:
+                        index += 22;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.BOTTOM:
+                switch (to) {
+                    case Direction.RIGHT:
+                        index += 2;
+                        break;
+                    case Direction.BOTTOM_RIGHT:
+                        index += 3;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 12;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 21;
+                        break;
+                    case Direction.LEFT:
+                        index += 22;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 16;
+                        break;
+                    case Direction.TOP_RIGHT:
+                        index += 1;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.BOTTOM_LEFT:
+                switch (to) {
+                    case Direction.BOTTOM_RIGHT:
+                        index += 3;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 4;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 13;
+                        break;
+                    case Direction.LEFT:
+                        index += 22;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 23;
+                        break;
+                    case Direction.TOP:
+                        index += 16;
+                        break;
+                    case Direction.RIGHT:
+                        index += 2;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.LEFT:
+                switch (to) {
+                    case Direction.TOP:
+                        index += 16;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 4;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 5;
+                        break;
+                    case Direction.LEFT:
+                        index += 14;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 23;
+                        break;
+                    case Direction.TOP_RIGHT:
+                        index += 17;
+                        break;
+                    case Direction.BOTTOM_RIGHT:
+                        index += 3;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            case Direction.TOP_LEFT:
+                switch (to) {
+                    case Direction.TOP:
+                        index += 16;
+                        break;
+                    case Direction.TOP_RIGHT:
+                        index += 17;
+                        break;
+                    case Direction.BOTTOM_LEFT:
+                        index += 5;
+                        break;
+                    case Direction.LEFT:
+                        index += 6;
+                        break;
+                    case Direction.TOP_LEFT:
+                        index += 15;
+                        break;
+                    case Direction.BOTTOM:
+                        index += 4;
+                        break;
+                    case Direction.RIGHT:
+                        index += 18;
+                        break;
+                    default:
+                        index = 0;
+                        break;
+                }
+                break;
+
+            default:
+                index = 0;
+                break;
+        }
+
+        return index;
     }
 
     public boolean Find(int to, int limit) {
@@ -145,7 +414,7 @@ public class Path {
     }
 
     private boolean empty() {
-        return _items.size() == 0;
+        return size() == 0;
     }
 
     private boolean PassableFromToTile(Heroes hero, int from, int to, int direct, int dst) {
@@ -153,4 +422,45 @@ public class Path {
         return false;
     }
 
+    public boolean isShow() {
+        return !hide;
+    }
+
+    public ListCursor<Step> begin() {
+        return new ListCursor<>(_items);
+    }
+
+    public ListCursor<Step> end() {
+        return Cursor.end(_items);
+    }
+
+    public int GetAllowStep() {
+        var green = 0;
+        var move_point = hero.GetMovePoints();
+
+        for (var it : _items) {
+            if (move_point < it.GetPenalty())
+                break;
+            move_point -= it.GetPenalty();
+            ++green;
+        }
+
+        return green;
+    }
+
+    public int size() {
+        return _items.size();
+    }
+
+    public Step get(int index) {
+        return _items.get(index);
+    }
+
+    public boolean isValid() {
+        return size() != 0;
+    }
+
+    public int GetFrontPenalty() {
+        return empty() ? 0 : get(0).GetPenalty();
+    }
 }

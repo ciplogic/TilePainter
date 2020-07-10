@@ -13,4 +13,12 @@ public class H2Rect {
     public H2Rect() {
 
     }
+
+    public boolean contains(H2Point pt) {
+        return !(pt.x < x || pt.y < y || pt.x >= x + w || pt.y >= y + h);
+    }
+
+    public boolean contains(H2Rect rt) {
+        return !(x > rt.x + rt.w || x + w < rt.x || y > rt.y + rt.h || y + h < rt.y);
+    }
 }

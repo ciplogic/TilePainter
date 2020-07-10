@@ -4,11 +4,17 @@ import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.agg.Sprite;
 import hellofx.fheroes2.agg.TilKind;
+import hellofx.fheroes2.agg.icn.IcnKind;
 import hellofx.fheroes2.common.H2Rect;
+import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.heroes.SkillT;
+import hellofx.fheroes2.heroes.route.Path;
 import hellofx.fheroes2.kingdom.World;
+import hellofx.fheroes2.maps.Ground;
 import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.maps.Tiles;
+import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.system.Players;
 import hellofx.framework.controls.Painter;
 
@@ -91,7 +97,7 @@ public class GameArea {
                 }
             }
 
-        DrawHeroRoute(dst, flag, rt);
+        DrawHeroRoute(dst, flag, rt, agg);
         // redraw fog
         if ((flag & LEVEL_FOG) != 0) {
             int colors = Players.FriendColors();
@@ -110,6 +116,45 @@ public class GameArea {
 
     }
 
-    private void DrawHeroRoute(Painter dst, int flag, H2Rect rt) {
+    private void DrawHeroRoute(Painter dst, int flag, H2Rect rt, Agg agg) {
+
+        // route
+        Heroes hero = 0 != (flag & LEVEL_HEROES) ? Interface.GetFocusHeroes() : null;
+
+        if (hero == null || !hero.GetPath().isShow())
+            return;
+        //int from = hero.GetIndex();
+        int green = hero.GetPath().GetAllowStep();
+
+        boolean skipfirst = hero.isEnableMove() && 45 > hero.GetSpriteIndex() && 2 < hero.GetSpriteIndex() % 9;
+
+        var it1 = hero.GetPath().begin();
+        var it2 = hero.GetPath().end();
+        var it3 = it1;
+
+        for (; it1 != it2; it1.next()) {
+            int from = it1.get().GetIndex();
+            var mp = Maps.GetPoint(from);
+
+            it3.next();
+            --green;
+
+            // is visible
+            if (!(new H2Rect(rectMaps.x + rt.x, rectMaps.y + rt.y, rt.w, rt.h).contains(mp))
+                    || (it1.pos == 0 && skipfirst))
+                continue;
+
+            int index = 0;
+            if (it2 != it3) {
+                int penalty = Ground.GetPenalty(from, Direction.CENTER,
+                        hero.GetLevelSkill(SkillT.PATHFINDING));
+                index = Path.GetIndexSprite(it1.get().GetDirection(), it3.get().GetDirection(), penalty);
+            }
+
+            Sprite sprite = Agg.GetICN(0 > green ? IcnKind.ROUTERED : IcnKind.ROUTE, index);
+            //sprite.SetAlphaMod(180);
+
+            //BlitOnTile(dst, sprite, sprite.x() - 14, sprite.y(), mp);
+        }
     }
 }
