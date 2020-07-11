@@ -12,5 +12,17 @@ public class AllCastles extends VecCastles {
     }
 
     public void Init() {
+        if (_items.size() != 0)
+            clear();
+    }
+
+    private void clear() {
+        _items.clear();
+    }
+
+    public void Scoute(int colors) {
+
+        for (var it : _items)
+            if ((colors & it.GetColor()) != 0) it.Scoute();
     }
 }

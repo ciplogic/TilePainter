@@ -38,4 +38,9 @@ public class Captain extends HeroBase {
     public boolean isValid() {
         return home.isBuild(building_t.BUILD_CAPTAIN);
     }
+
+    @Override
+    protected int GetLevelSkill(int skill) {
+        return 0;
+    }
 }

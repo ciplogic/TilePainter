@@ -1,6 +1,7 @@
 package hellofx.fheroes2.castle;
 
 import hellofx.fheroes2.common.Rand;
+import hellofx.fheroes2.heroes.HeroBase;
 import hellofx.fheroes2.spell.Spell;
 import hellofx.fheroes2.spell.SpellStorage;
 
@@ -52,5 +53,19 @@ public class MageGuild {
         Spell spell = Spell.RandCombat(level);
         while (!spell.isRaceCompatible(race)) spell = Spell.RandCombat(level);
         return spell;
+    }
+
+    public void EducateHero(HeroBase hero, int lvlmage, boolean isLibraryBuild) {
+        if (!hero.HaveSpellBook() || lvlmage == 0)
+            return;
+        SpellStorage spells = new SpellStorage();
+
+        for (var level = 1; level <= 5; ++level) {
+            if (level > lvlmage) continue;
+            spells.Append(general.GetSpells(level));
+            if (isLibraryBuild) spells.Append(library.GetSpells(level));
+        }
+
+        hero.AppendSpellsToBook(spells);
     }
 }

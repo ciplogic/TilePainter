@@ -331,7 +331,11 @@ public class Castle {
     }
 
     private void MageGuildEducateHero(HeroBase hero) {
-        //TODO
+        mageguild.EducateHero(hero, GetLevelMageGuild(), isLibraryBuild());
+    }
+
+    private boolean isLibraryBuild() {
+        return race == RaceKind.WZRD && isBuild(BUILD_SPEC);
     }
 
     private int GetLevelMageGuild() {
@@ -1194,5 +1198,9 @@ public class Castle {
     public int GetMoraleModificator(String strs) {
         //TODO
         return 0;
+    }
+
+    public void Scoute() {
+        //TODO
     }
 }

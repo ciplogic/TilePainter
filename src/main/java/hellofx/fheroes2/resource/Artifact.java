@@ -10,8 +10,8 @@ import static hellofx.fheroes2.resource.ArtifactKind.*;
 import static hellofx.fheroes2.resource.ArtifactLevel.*;
 
 public class Artifact {
-    int id;
-    int ext;
+    public int id;
+    public int ext;
 
     public static final int ART_DISABLED = 0x01;
     public static final int ART_RNDUSED = 0x02;
@@ -232,5 +232,9 @@ public class Artifact {
 
     public int Type() {
         return ArtifactStats.artifacts[id].type;
+    }
+
+    public int GetSpell() {
+        return id == SPELL_SCROLL ? ext : SpellKind.NONE;
     }
 }

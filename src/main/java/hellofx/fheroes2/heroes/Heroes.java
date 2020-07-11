@@ -382,7 +382,7 @@ public class Heroes extends HeroBase {
         return 0;
     }
 
-    private boolean HaveSpellBook() {
+    public boolean HaveSpellBook() {
         //TODO
         return false;
     }

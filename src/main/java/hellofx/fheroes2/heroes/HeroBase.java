@@ -6,8 +6,11 @@ import hellofx.fheroes2.kingdom.ColorBase;
 import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.maps.MapPosition;
 import hellofx.fheroes2.resource.Artifact;
+import hellofx.fheroes2.resource.ArtifactKind;
 import hellofx.fheroes2.resource.BagArtifacts;
+import hellofx.fheroes2.spell.Spell;
 import hellofx.fheroes2.spell.SpellBook;
+import hellofx.fheroes2.spell.SpellStorage;
 import hellofx.fheroes2.system.BitModes;
 import hellofx.fheroes2.system.Settings;
 
@@ -179,4 +182,37 @@ public abstract class HeroBase {
     }
 
     public abstract boolean isValid();
+
+    public boolean HaveSpellBook() {
+        return HasArtifact(ArtifactKind.MAGIC_BOOK);
+    }
+
+    public boolean HaveSpell(Spell spell, boolean skip_bag) {
+        return HaveSpellBook() &&
+                (spell_book.isPresentSpell(spell) || (!skip_bag && bag_artifacts.ContainSpell(spell)));
+    }
+
+    public void AppendSpellsToBook(SpellStorage spells) {
+        AppendSpellsToBook(spells, false);
+    }
+
+    public void AppendSpellsToBook(SpellStorage spells, boolean without_wisdom) {
+        for (var spell : spells._items)
+            AppendSpellToBook(spell, without_wisdom);
+    }
+
+    private void AppendSpellToBook(Spell spell, boolean without_wisdom) {
+        if (without_wisdom || CanLearnSpell(spell))
+            spell_book.Append(spell);
+    }
+
+    private boolean CanLearnSpell(Spell spell) {
+        int wisdom = GetLevelSkill(SkillT.WISDOM);
+
+        return (4 < spell.Level() && SkillLevel.EXPERT == wisdom) ||
+                (4 == spell.Level() && SkillLevel.ADVANCED <= wisdom) ||
+                (3 == spell.Level() && SkillLevel.BASIC <= wisdom) || 3 > spell.Level();
+    }
+
+    protected abstract int GetLevelSkill(int skill);
 }

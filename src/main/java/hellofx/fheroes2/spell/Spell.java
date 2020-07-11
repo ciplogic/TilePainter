@@ -47,7 +47,7 @@ public class Spell {
         return Level() == level;
     }
 
-    private int Level() {
+    public int Level() {
         switch (id) {
             case BLESS:
             case BLOODLUST:
