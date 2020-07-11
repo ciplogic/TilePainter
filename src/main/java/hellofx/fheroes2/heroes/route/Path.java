@@ -1,5 +1,6 @@
 package hellofx.fheroes2.heroes.route;
 
+import hellofx.common.Utilities;
 import hellofx.fheroes2.common.Cursor;
 import hellofx.fheroes2.common.H2Size;
 import hellofx.fheroes2.common.ListCursor;
@@ -8,6 +9,7 @@ import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.SkillT;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.maps.Ground;
+import hellofx.fheroes2.maps.Mp2Kind;
 import hellofx.fheroes2.maps.objects.Maps;
 
 import java.util.ArrayList;
@@ -20,6 +22,16 @@ public class Path {
     public Heroes hero;
     public int dst;
     public boolean hide;
+
+    public Path(Heroes h) {
+        hero = h;
+        dst = h.GetIndex();
+        hide = true;
+    }
+
+    public Path() {
+
+    }
 
     static int GetPenaltyFromTo(int from, int to, int direct, int pathfinding) {
         int cost1 = Ground.GetPenalty(from, direct, pathfinding); // penalty: for [cur] out
@@ -295,6 +307,21 @@ public class Path {
         return index;
     }
 
+    public boolean Calculate(int dst_index, int limit /* -1 */) {
+        dst = dst_index;
+        var world = World.Instance;
+
+        if (Find(dst, limit)) {
+            // check monster dst
+            if (Maps.isValidAbsIndex(dst) &&
+                    Mp2Kind.OBJ_MONSTER == world.GetTiles(dst).GetObject()) {
+                Utilities.removeLast(_items);
+            }
+        }
+
+        return !empty();
+    }
+
     public boolean Find(int to, int limit) {
         int pathfinding = hero.GetLevelSkill(SkillT.PATHFINDING);
         int from = hero.mapPosition.GetIndex();
@@ -462,5 +489,14 @@ public class Path {
 
     public int GetFrontPenalty() {
         return empty() ? 0 : get(0).GetPenalty();
+    }
+
+    public int GetTotalPenalty() {
+        var result = 0;
+
+        for (var it : _items) {
+            result += it.GetPenalty();
+        }
+        return result;
     }
 }

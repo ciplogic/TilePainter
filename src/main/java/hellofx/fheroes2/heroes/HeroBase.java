@@ -1,6 +1,9 @@
 package hellofx.fheroes2.heroes;
 
+import hellofx.fheroes2.army.Army;
+import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.kingdom.ColorBase;
+import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.maps.MapPosition;
 import hellofx.fheroes2.resource.Artifact;
 import hellofx.fheroes2.resource.BagArtifacts;
@@ -29,6 +32,36 @@ public abstract class HeroBase {
     }
 
     public void LoadDefaults(int type, int race) {
+    }
+
+    public int GetMoraleKindModificator(String strs) {
+
+        int result = ArtifactsModifiersMorale(this, strs);
+
+        // check castle modificator
+        Castle castle = inCastle();
+
+        if (castle != null)
+            result += castle.GetMoraleModificator(strs);
+
+        // army modificator
+        if (GetArmy().m_troops.AllTroopsIsRace(RaceKind.NECR)) {
+            if (strs != null) strs = "";
+            result = 0;
+        }
+
+        result += GetArmy().GetMoraleModificator(strs);
+
+        return result;
+    }
+
+    protected abstract Army GetArmy();
+
+    protected abstract Castle inCastle();
+
+    private int ArtifactsModifiersMorale(HeroBase heroBase, String strs) {
+        //TODO
+        return 0;
     }
 
     public static int PORTxxxx(int heroId) {

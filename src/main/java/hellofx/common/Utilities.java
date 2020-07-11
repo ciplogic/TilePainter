@@ -15,16 +15,6 @@ import java.util.stream.IntStream;
 
 public class Utilities {
 
-    public static <T> T newInstanceOf(Class<?> clazz) {
-        try {
-            return (T) clazz.getConstructor().newInstance();
-
-        } catch (Exception ex) {
-            return null;
-        }
-
-    }
-
     public static void setBackground(Region root, Color color) {
         root.setBackground(new Background(new BackgroundFill(color, null, null)));
     }
@@ -83,5 +73,9 @@ public class Utilities {
 
     public static String StringLower(String text) {
         return text.toLowerCase();
+    }
+
+    public static <T> void removeLast(List<T> items) {
+        items.remove(items.size() - 1);
     }
 }

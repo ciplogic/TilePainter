@@ -62,4 +62,13 @@ public class Troops {
 
         return res;
     }
+
+    public boolean AllTroopsIsRace(int race) {
+        for (var it : _items) {
+            if (it.IsValid() && it._monster.GetRace() != race) {
+                return false;
+            }
+        }
+        return true;
+    }
 }

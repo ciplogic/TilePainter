@@ -1186,4 +1186,13 @@ public class Castle {
     public Kingdom GetKingdom() {
         return color.GetKingdom();
     }
+
+    public CastleHeroes GetHeroes() {
+        return World.Instance.GetHeroes(this);
+    }
+
+    public int GetMoraleModificator(String strs) {
+        //TODO
+        return 0;
+    }
 }

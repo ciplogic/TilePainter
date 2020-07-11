@@ -105,4 +105,8 @@ public class Army {
         return str_size[0];
     }
 
+    public int GetMoraleModificator(String strs) {
+        //TODO
+        return 0;
+    }
 }

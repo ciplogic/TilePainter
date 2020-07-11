@@ -27,4 +27,8 @@ public class CastleHeroes extends H2Pair<Heroes, Heroes> {
     public Heroes GuestFirst() {
         return first != null ? first : second;
     }
+
+    public boolean isEqual(Heroes hero) {
+        return first == hero || second == hero;
+    }
 }

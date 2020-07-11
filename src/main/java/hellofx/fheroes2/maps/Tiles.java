@@ -938,7 +938,7 @@ public class Tiles {
 
     void QuantitySetSkill(int skill) {
         if (GetObject(false) == Mp2Kind.OBJ_WITCHSHUT) {
-            quantity1 = (byte) skill;
+            quantity1 = (short) skill;
         }
     }
 

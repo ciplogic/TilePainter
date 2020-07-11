@@ -11,13 +11,12 @@ import hellofx.fheroes2.dialog.Dialogs;
 import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.gui.H2Font;
 import hellofx.fheroes2.heroes.route.Path;
-import hellofx.fheroes2.kingdom.ColorBase;
-import hellofx.fheroes2.kingdom.H2Color;
-import hellofx.fheroes2.kingdom.MoraleKind;
-import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.kingdom.*;
 import hellofx.fheroes2.maps.IndexObject;
 import hellofx.fheroes2.maps.MapPosition;
+import hellofx.fheroes2.maps.Mp2;
 import hellofx.fheroes2.maps.Mp2Kind;
+import hellofx.fheroes2.maps.objects.Maps;
 import hellofx.fheroes2.monster.Monster;
 import hellofx.fheroes2.resource.Artifact;
 import hellofx.fheroes2.resource.ArtifactKind;
@@ -112,6 +111,13 @@ public class Heroes extends HeroBase {
         sprite_index = 18;
         patrol_square = 0;
         name = Heroes.GetName(heroid);
+    }
+
+    @Override
+    protected Castle inCastle() {
+        var world = World.Instance;
+        Castle castle = H2Color.NONE != GetColor() ? world.GetCastle(GetCenter()) : null;
+        return castle != null && castle.GetHeroes().isEqual(this) ? castle : null;
     }
 
     private static String GetName(int heroid) {
@@ -426,23 +432,23 @@ public class Heroes extends HeroBase {
 
     private int GetMoraleWithModificators(String strs) {
         //TODO
-        /*
+
         int result = MoraleKind.NORMAL;
 
         // bonus artifact
         result += GetMoraleKindModificator(strs);
 
-        if (army.m_troops.AllTroopsIsRace(Race.NECR)) return MoraleKind.NORMAL;
+        if (army.m_troops.AllTroopsIsRace(RaceKind.NECR)) return MoraleKind.NORMAL;
 
         // bonus leadership
-        result += Skill.GetLeadershipModifiers(GetLevelSkill(Skill.SkillT.LEADERSHIP), strs);
+        result += Skill.GetLeadershipModifiers(GetLevelSkill(SkillT.LEADERSHIP), strs);
 
         // object visited
-    int objs[] = {
+        int[] objs = {
                 Mp2Kind.OBJ_BUOY, Mp2Kind.OBJ_OASIS, Mp2Kind.OBJ_WATERINGHOLE, Mp2Kind.OBJ_TEMPLE, Mp2Kind.OBJ_GRAVEYARD,
                 Mp2Kind.OBJ_DERELICTSHIP, Mp2Kind.OBJ_SHIPWRECK
         };
-        result += ObjectVisitedModifiersResult(MDF_MORALE, objs, objs.length, this, strs);
+        result += ObjectVisitedModifiersResult(ModifierKind.MDF_MORALE, objs, objs.length, this, strs);
 
         // result
         if (result < MoraleKind.AWFUL) return MoraleKind.TREASON;
@@ -451,8 +457,64 @@ public class Heroes extends HeroBase {
         if (result < MoraleKind.GOOD) return MoraleKind.NORMAL;
         if (result < MoraleKind.GREAT) return MoraleKind.GOOD;
         if (result < MoraleKind.BLOOD) return MoraleKind.GREAT;
-*/
+
         return MoraleKind.BLOOD;
+    }
+
+    private int ObjectVisitedModifiersResult(int mdfMorale, int[] objs, int size, Heroes hero, String strs) {
+        int result = 0;
+
+        for (var ii = 0; ii < size; ++ii) {
+            if (hero.isVisited(objs[ii])) {
+                result += GameStatic.ObjectVisitedModifiers(objs[ii]);
+
+                if (strs != null) {
+                    strs += Mp2.StringObject(objs[ii]);
+                    strs = Skill.StringAppendModifiers(strs, GameStatic.ObjectVisitedModifiers(objs[ii]));
+                    strs += "\n";
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private boolean isVisited(int obj) {
+        //TODO
+        return false;
+    }
+
+
+    /* return route range in days */
+    int GetRangeRouteDays(int dst) {
+        var max = GetMaxMovePoints();
+        var limit = max * 5 / 100; // limit ~5 day
+
+        // approximate distance, this restriction calculation
+        if (4 * max / 100 < Maps.GetApproximateDistance(GetIndex(), dst)) {
+            return 0;
+        }
+
+        Path test = new Path(this);
+        // approximate limit, this restriction path finding algorithm
+        if (test.Calculate(dst, limit)) {
+            var total = test.GetTotalPenalty();
+            if (move_point >= total) return 1;
+
+            total -= move_point;
+            if (max >= total) return 2;
+
+            total -= move_point;
+            if (max >= total) return 3;
+
+            return 4;
+        }
+
+        return 0;
+    }
+
+    public int GetIndex() {
+        return mapPosition.GetIndex();
     }
 
     public boolean HasSecondarySkill(int skill) {

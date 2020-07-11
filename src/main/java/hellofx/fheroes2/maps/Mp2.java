@@ -895,4 +895,9 @@ public class Mp2 {
 
 
     }
+
+    public static String StringObject(int obj) {
+        //TODO
+        return null;
+    }
 }

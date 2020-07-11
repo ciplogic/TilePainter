@@ -168,4 +168,9 @@ public class GameStatic {
         }
         return null;
     }
+
+    public static int ObjectVisitedModifiers(int obj) {
+        //TODO
+        return 0;
+    }
 }

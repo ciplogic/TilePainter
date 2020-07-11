@@ -29,4 +29,11 @@ public class ListCursor<T> {
         return null;
     }
 
+    public boolean isEqual(ListCursor<T> it3) {
+        return pos == it3.pos;
+    }
+
+    public ListCursor<T> copy() {
+        return new ListCursor<>(list, pos);
+    }
 }

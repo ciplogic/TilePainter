@@ -1,5 +1,6 @@
 package hellofx.fheroes2.castle;
 
+import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.heroes.HeroBase;
 import hellofx.fheroes2.heroes.HeroType;
 
@@ -11,6 +12,18 @@ public class Captain extends HeroBase {
         home = castle;
     }
 
+
+    @Override
+    protected Army GetArmy() {
+        //TODO
+        return null;
+    }
+
+    @Override
+    protected Castle inCastle() {
+        //TODO
+        return null;
+    }
 
     @Override
     public int GetType() {

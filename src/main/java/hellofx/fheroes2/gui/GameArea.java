@@ -97,7 +97,10 @@ public class GameArea {
                 }
             }
 
-        DrawHeroRoute(dst, flag, rt, agg);
+        var routeTiles = DrawHeroRoute(dst, flag, rt);
+        routeTiles.forEach(sprite -> {
+            camera.drawSpriteOnTile(dst, sprite, sprite.pos.x, sprite.pos.y);
+        });
         // redraw fog
         if ((flag & LEVEL_FOG) != 0) {
             int colors = Players.FriendColors();
@@ -116,23 +119,23 @@ public class GameArea {
 
     }
 
-    private void DrawHeroRoute(Painter dst, int flag, H2Rect rt, Agg agg) {
+    private ArrayList<Sprite> DrawHeroRoute(Painter dst, int flag, H2Rect rt) {
 
         // route
         Heroes hero = 0 != (flag & LEVEL_HEROES) ? Interface.GetFocusHeroes() : null;
 
+        var sprites = new ArrayList<Sprite>();
         if (hero == null || !hero.GetPath().isShow())
-            return;
-        //int from = hero.GetIndex();
+            return sprites;
         int green = hero.GetPath().GetAllowStep();
 
         boolean skipfirst = hero.isEnableMove() && 45 > hero.GetSpriteIndex() && 2 < hero.GetSpriteIndex() % 9;
 
         var it1 = hero.GetPath().begin();
         var it2 = hero.GetPath().end();
-        var it3 = it1;
+        var it3 = it1.copy();
 
-        for (; it1 != it2; it1.next()) {
+        for (; !it1.isEqual(it2); it1.next()) {
             int from = it1.get().GetIndex();
             var mp = Maps.GetPoint(from);
 
@@ -145,16 +148,16 @@ public class GameArea {
                 continue;
 
             int index = 0;
-            if (it2 != it3) {
+            if (!it2.isEqual(it3)) {
                 int penalty = Ground.GetPenalty(from, Direction.CENTER,
                         hero.GetLevelSkill(SkillT.PATHFINDING));
                 index = Path.GetIndexSprite(it1.get().GetDirection(), it3.get().GetDirection(), penalty);
             }
 
-            Sprite sprite = Agg.GetICN(0 > green ? IcnKind.ROUTERED : IcnKind.ROUTE, index);
-            //sprite.SetAlphaMod(180);
-
-            //BlitOnTile(dst, sprite, sprite.x() - 14, sprite.y(), mp);
+            Sprite sprite = Agg.GetICN(0 > green ? IcnKind.ROUTERED : IcnKind.ROUTE, index).clone();
+            sprite.pos.x -= 14;
+            sprites.add(sprite);
         }
+        return sprites;
     }
 }
