@@ -121,4 +121,14 @@ public class Kingdom {
         //TODO
         return 0;
     }
+
+    public void SetLastLostHero(Heroes hero) {
+        lost_hero.first = hero.GetID();
+        var world = World.Instance;
+        lost_hero.second = world.CountDay();
+    }
+
+    public void RemoveHeroes(Heroes hero) {
+        //TODO
+    }
 }

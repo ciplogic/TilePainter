@@ -245,4 +245,9 @@ public class Settings {
     public int ConditionLoss() {
         return current_maps_file.ConditionLoss();
     }
+
+    public boolean ExtHeroRememberPointsForRetreating() {
+        //TODO
+        return false;
+    }
 }

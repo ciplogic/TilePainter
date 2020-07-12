@@ -5,6 +5,7 @@ import hellofx.fheroes2.agg.Bitmap;
 import hellofx.fheroes2.ai.AI;
 import hellofx.fheroes2.army.Army;
 import hellofx.fheroes2.army.Troop;
+import hellofx.fheroes2.battle.BattleResult;
 import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.dialog.Dialogs;
@@ -22,6 +23,8 @@ import hellofx.fheroes2.resource.Artifact;
 import hellofx.fheroes2.resource.ArtifactKind;
 import hellofx.fheroes2.serialize.ByteVectorReader;
 import hellofx.fheroes2.spell.Spell;
+import hellofx.fheroes2.spell.SpellStorage;
+import hellofx.fheroes2.system.Settings;
 import hellofx.framework.controls.Painter;
 
 import java.util.ArrayList;
@@ -105,8 +108,8 @@ public class Heroes extends HeroBase {
         army = new Army(this);
         race = rc;
         save_maps_object = Mp2Kind.OBJ_ZERO;
-        //TODO
-        //path(this);
+
+        path = new Path(this);
         direction = Direction.RIGHT;
         sprite_index = 18;
         patrol_square = 0;
@@ -345,8 +348,14 @@ public class Heroes extends HeroBase {
     }
 
 
-    private void AppendSpellToBook(Spell spell, boolean b) {
-        //TODO
+    private void AppendSpellToBook(Spell spell, boolean without_wisdom) {
+        if (without_wisdom || CanLearnSpell(spell))
+            spell_book.Append(spell);
+    }
+
+    public void AppendSpellsToBook(SpellStorage spells, boolean without_wisdom) {
+        for (var spell : spells._items)
+            AppendSpellToBook(spell, without_wisdom);
     }
 
     private void LevelUp(boolean modes, boolean b) {
@@ -357,6 +366,47 @@ public class Heroes extends HeroBase {
         stats_t ptr = GameStatic.GetSkillStats(race);
         var resultId = ptr != null ? ptr.initial_spell : 0;
         return new Spell(resultId);
+    }
+
+    /* set enable move */
+    void SetMove(boolean f) {
+        if (f) {
+            SetModes(ENABLEMOVE);
+        } else {
+            ResetModes(ENABLEMOVE);
+
+            // reset sprite position
+            switch (direction) {
+                case Direction.TOP:
+                    sprite_index = 0;
+                    break;
+                case Direction.BOTTOM:
+                    sprite_index = 36;
+                    break;
+                case Direction.TOP_RIGHT:
+                case Direction.TOP_LEFT:
+                    sprite_index = 9;
+                    break;
+                case Direction.BOTTOM_RIGHT:
+                case Direction.BOTTOM_LEFT:
+                    sprite_index = 27;
+                    break;
+                case Direction.RIGHT:
+                case Direction.LEFT:
+                    sprite_index = 18;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void ResetModes(int flags) {
+        bitModes.ResetModes(flags);
+    }
+
+    private void SetModes(int flags) {
+        bitModes.SetModes(flags);
     }
 
     private int GetMaxMovePoints() {
@@ -407,6 +457,39 @@ public class Heroes extends HeroBase {
 
     public void SetFreeman(int reason) {
         //TODO
+        if (isFreeman()) return;
+        var savepoints = false;
+        var world = World.Instance;
+        Kingdom kingdom = GetKingdom();
+
+        if (0 != ((BattleResult.RESULT_RETREAT | BattleResult.RESULT_SURRENDER) & reason)) {
+            if (Settings.Get().ExtHeroRememberPointsForRetreating()) savepoints = true;
+            kingdom.SetLastLostHero(this);
+        }
+
+        if (!army.m_troops.IsValid() || (0 != (BattleResult.RESULT_RETREAT & reason))) army.Reset(false);
+        else if ((BattleResult.RESULT_LOSS & reason) != 0 && ((BattleResult.RESULT_SURRENDER & reason) == 0))
+            army.Reset(true);
+
+        if (GetColor() != H2Color.NONE) kingdom.RemoveHeroes(this);
+
+        color.SetColor(H2Color.NONE);
+        world.GetTiles(GetIndex()).SetHeroes(null);
+        bitModes.modes = 0;
+        SetIndex(-1);
+        move_point_scale = -1;
+        path.Reset();
+        SetMove(false);
+        SetModes(ACTION);
+        if (savepoints) SetModes(SAVEPOINTS);
+    }
+
+    private void SetIndex(int i) {
+        mapPosition.SetIndex(i);
+    }
+
+    private Kingdom GetKingdom() {
+        return color.GetKingdom();
     }
 
     public boolean Recruit(Castle castle) {
@@ -540,5 +623,9 @@ public class Heroes extends HeroBase {
 
     public int GetSpriteIndex() {
         return sprite_index;
+    }
+
+    public void SetMapsObject(int obj) {
+        save_maps_object = obj != Mp2Kind.OBJ_HEROES ? obj : Mp2Kind.OBJ_ZERO;
     }
 }

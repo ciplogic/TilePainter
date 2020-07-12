@@ -2264,4 +2264,22 @@ public class Tiles {
         }
         return false;
     }
+
+    public void SetHeroes(Heroes hero) {
+        if (hero != null) {
+            hero.SetMapsObject(mp2_object);
+            SetQuantity3(hero.GetID() + 1);
+            SetObject(Mp2Kind.OBJ_HEROES);
+        } else {
+            hero = GetHeroes();
+
+            if (hero != null) {
+                SetObject(hero.GetMapsObject());
+                hero.SetMapsObject(Mp2Kind.OBJ_ZERO);
+            } else
+                SetObject(Mp2Kind.OBJ_ZERO);
+
+            SetQuantity3(0);
+        }
+    }
 }

@@ -240,7 +240,7 @@ public abstract class HeroBase {
             spell_book.Append(spell);
     }
 
-    private boolean CanLearnSpell(Spell spell) {
+    public boolean CanLearnSpell(Spell spell) {
         int wisdom = GetLevelSkill(SkillT.WISDOM);
 
         return (4 < spell.Level() && SkillLevel.EXPERT == wisdom) ||

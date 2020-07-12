@@ -499,4 +499,8 @@ public class Path {
         }
         return result;
     }
+
+    public void Reset() {
+        //TODO
+    }
 }
