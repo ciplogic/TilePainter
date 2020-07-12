@@ -35,6 +35,40 @@ public abstract class HeroBase {
     }
 
     public void LoadDefaults(int type, int race) {
+        if ((RaceKind.ALL & race) != 0) {
+            // fixed default primary skills
+            primary.LoadDefaults(type, race);
+
+            // fixed default spell
+            switch (type) {
+                case HeroType.CAPTAIN: {
+                    // force add spell book
+                    SpellBookActivate();
+
+                    Spell spell = primary.GetInitialSpell(race);
+                    if (spell.isValid())
+                        AppendSpellToBook(spell, true);
+                }
+                break;
+
+                case HeroType.HEROES: {
+                    Spell spell = primary.GetInitialSpell(race);
+                    if (spell.isValid()) {
+                        SpellBookActivate();
+                        AppendSpellToBook(spell, true);
+                    }
+                }
+                break;
+
+                default:
+                    break;
+            }
+        }
+    }
+
+    public boolean SpellBookActivate() {
+        return !HaveSpellBook() &&
+                bag_artifacts.PushArtifact(new Artifact(ArtifactKind.MAGIC_BOOK));
     }
 
     public int GetMoraleKindModificator(String strs) {

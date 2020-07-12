@@ -199,7 +199,6 @@ public class Castle {
     }
 
     private void PostLoad() {
-        //TODO
         // dwelling pack
         if ((building & DWELLING_MONSTER1) != 0) dwelling[0] = new Monster(race, DWELLING_MONSTER1).GetGrown();
         if ((building & DWELLING_MONSTER2) != 0) dwelling[1] = new Monster(race, DWELLING_MONSTER2).GetGrown();
@@ -496,7 +495,7 @@ public class Castle {
         return build;
     }
 
-    int GetICNBuilding(int build, int race) {
+    static int GetICNBuilding(int build, int race) {
         if (RaceKind.BARB == race) {
             switch (build) {
                 case BUILD_CASTLE:

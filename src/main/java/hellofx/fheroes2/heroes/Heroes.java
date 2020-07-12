@@ -341,15 +341,11 @@ public class Heroes extends HeroBase {
     }
 
     private int GetLevel() {
-        //TODO
-        return 0;
+        return HeroesUtils.GetLevelFromExperience(experience);
     }
+
 
     private void AppendSpellToBook(Spell spell, boolean b) {
-        //TODO
-    }
-
-    private void SpellBookActivate() {
         //TODO
     }
 
