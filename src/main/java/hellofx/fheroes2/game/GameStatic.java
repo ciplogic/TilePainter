@@ -2,6 +2,7 @@ package hellofx.fheroes2.game;
 
 import hellofx.fheroes2.heroes.*;
 import hellofx.fheroes2.kingdom.RaceKind;
+import hellofx.fheroes2.resource.Funds;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -172,5 +173,32 @@ public class GameStatic {
     public static int ObjectVisitedModifiers(int obj) {
         //TODO
         return 0;
+    }
+
+    private final static Funds[] kingdom_starting_resource = {
+            new Funds(10000, 30, 10, 30, 10, 10, 10),
+            new Funds(7500, 20, 5, 20, 5, 5, 5),
+            new Funds(5000, 10, 2, 10, 2, 2, 2),
+            new Funds(2500, 5, 0, 5, 0, 0, 0),
+            new Funds(0, 0, 0, 0, 0, 0, 0),
+            // ai resource
+            new Funds(10000, 30, 10, 30, 10, 10, 10)
+    };
+
+    public static Funds GetKingdomStartingResource(int df) {
+        switch (df) {
+            case DifficultyEnum.EASY:
+                return kingdom_starting_resource[0];
+            case DifficultyEnum.NORMAL:
+                return kingdom_starting_resource[1];
+            case DifficultyEnum.HARD:
+                return kingdom_starting_resource[2];
+            case DifficultyEnum.EXPERT:
+                return kingdom_starting_resource[3];
+            case DifficultyEnum.IMPOSSIBLE:
+                return kingdom_starting_resource[4];
+        }
+
+        return kingdom_starting_resource[5];
     }
 }

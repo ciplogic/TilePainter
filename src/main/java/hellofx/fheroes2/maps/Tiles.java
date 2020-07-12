@@ -343,8 +343,8 @@ public class Tiles {
     }
 
     public Heroes GetHeroes() {
-        //TODO
-        return null;
+        var world = World.Instance;
+        return Mp2Kind.OBJ_HEROES == mp2_object && GetQuantity3() != 0 ? world.GetHeroes(GetQuantity3() - 1) : null;
     }
 
     public int GetIndex() {

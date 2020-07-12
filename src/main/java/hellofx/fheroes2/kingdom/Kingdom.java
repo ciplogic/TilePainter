@@ -3,17 +3,21 @@ package hellofx.fheroes2.kingdom;
 import hellofx.fheroes2.castle.Castle;
 import hellofx.fheroes2.common.H2Point;
 import hellofx.fheroes2.game.GameConsts;
+import hellofx.fheroes2.game.GameStatic;
 import hellofx.fheroes2.heroes.HeroFlags;
 import hellofx.fheroes2.heroes.Heroes;
+import hellofx.fheroes2.heroes.HeroesKind;
 import hellofx.fheroes2.maps.IndexObject;
 import hellofx.fheroes2.resource.Funds;
 import hellofx.fheroes2.system.BitModes;
+import hellofx.fheroes2.system.H2Control;
+import hellofx.fheroes2.system.Players;
 import hellofx.fheroes2.system.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Kingdom {
+public class Kingdom extends H2Control {
     public BitModes bitModes = new BitModes();
 
     int color;
@@ -68,8 +72,23 @@ public class Kingdom {
         //TODO
     }
 
-    public void Init(int color) {
-        //TODO
+    public void Init(int clr) {
+        clear();
+        color = clr;
+
+        if (0 != (H2Color.ALL & color)) {
+            UpdateStartingResource();
+        }
+    }
+
+    private void UpdateStartingResource() {
+        resource = GameStatic.GetKingdomStartingResource(isControlAI() ? 5 : Settings.Get().GameDifficulty());
+
+    }
+
+    @Override
+    public int GetControl() {
+        return Players.GetPlayerControl(color);
     }
 
     public void OddFundsResource(Funds payment) {
@@ -112,7 +131,7 @@ public class Kingdom {
         return color;
     }
 
-    private boolean isPlay() {
+    public boolean isPlay() {
         //TODO
         return false;
     }
@@ -126,6 +145,21 @@ public class Kingdom {
         lost_hero.first = hero.GetID();
         var world = World.Instance;
         lost_hero.second = world.CountDay();
+    }
+
+    public Recruits GetRecruits() {
+        var world = World.Instance;
+        // update hero1
+        if (HeroesKind.UNKNOWN == recruits.GetID1() || (recruits.GetHero1() != null && !recruits.GetHero1().isFreeman()))
+            recruits.SetHero1(world.GetFreemanHeroes(GetRace()));
+
+        // update hero2
+        if (HeroesKind.UNKNOWN == recruits.GetID2() || (recruits.GetHero2() != null && !recruits.GetHero2().isFreeman()))
+            recruits.SetHero2(world.GetFreemanHeroes());
+
+        if (recruits.GetID1() == recruits.GetID2()) world.UpdateRecruits(recruits);
+
+        return recruits;
     }
 
     public void RemoveHeroes(Heroes hero) {

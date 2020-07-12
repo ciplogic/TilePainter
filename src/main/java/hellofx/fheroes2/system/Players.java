@@ -45,6 +45,11 @@ public class Players {
         return colors;
     }
 
+    public static int GetPlayerControl(int color) {
+        var player = Get(color);
+        return player != null ? player.GetControl() : PlayerControl.CONTROL_NONE;
+    }
+
     public Player GetCurrent() {
         return Get(current_color);
     }

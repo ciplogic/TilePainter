@@ -47,6 +47,12 @@ public class Kingdoms {
             GetKingdom(color).Init(color);
     }
 
+
+    public void ApplyPlayWithStartingHero() {
+        for (var ii = 0; ii < size(); ++ii)
+            if (kingdoms[ii].isPlay()) kingdoms[ii].ApplyPlayWithStartingHero();
+    }
+
     private void clear() {
         for (var ii = 0; ii < size(); ++ii)
             kingdoms[ii].clear();
@@ -64,9 +70,6 @@ public class Kingdoms {
         //TODO
     }
 
-    public void ApplyPlayWithStartingHero() {
-        //TODO
-    }
 
     public void AddCondLossHeroes(AllHeroes vec_heroes) {
         //TODO

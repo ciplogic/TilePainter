@@ -7,6 +7,7 @@ import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.system.Settings;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
+import static hellofx.common.Utilities.count;
 import static hellofx.common.Utilities.find_if;
 
 public class AllHeroes extends VecHeroes {
@@ -157,5 +158,9 @@ public class AllHeroes extends VecHeroes {
         return Settings.Get().ExtCastleAllowGuardians()
                 ? find_if(_items, (Heroes hero) -> InCastleAndGuardian(castle, hero))
                 : null;
+    }
+
+    public boolean HaveTwoFreemans() {
+        return 2 <= count(_items, Heroes::isFreeman);
     }
 }

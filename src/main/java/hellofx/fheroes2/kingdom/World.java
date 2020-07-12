@@ -336,10 +336,6 @@ public class World {
     }
 
 
-    public Heroes GetFreemanHeroes(int race) {
-        return vec_heroes.GetFreeman(race);
-    }
-
     public Castle GetCastle(H2Point center) {
         return vec_castles.Get(center);
     }
@@ -397,7 +393,27 @@ public class World {
         return new CastleHeroes(vec_heroes.GetGuest(castle), vec_heroes.GetGuard(castle));
     }
 
+    public Heroes GetHeroes(int id) {
+        return vec_heroes.Get(id);
+    }
+
+    public Heroes GetFreemanHeroes(int race) {
+        return vec_heroes.GetFreeman(race);
+    }
+
+    public Heroes GetFreemanHeroes() {
+        return GetFreemanHeroes(0);
+    }
+
     public MapObjectSimple GetMapObject(int uid) {
         return uid != 0 ? map_objects.get(uid) : null;
+    }
+
+    public void UpdateRecruits(Recruits recruits) {
+
+        if (vec_heroes.HaveTwoFreemans())
+            while (recruits.GetID1() == recruits.GetID2()) recruits.SetHero2(GetFreemanHeroes());
+        else
+            recruits.SetHero2(null);
     }
 }
