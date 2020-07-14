@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static hellofx.common.Utilities.minValueInCollection;
+
 public class Troops {
     public List<Troop> _items = new ArrayList<>();
 
@@ -70,5 +72,9 @@ public class Troops {
             }
         }
         return true;
+    }
+
+    public Troop GetSlowestTroop() {
+        return minValueInCollection(_items, Troop::GetSpeed);
     }
 }

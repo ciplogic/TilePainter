@@ -71,6 +71,26 @@ public class Utilities {
         return addons.stream().filter(isFound::test).findFirst().orElse(null);
     }
 
+    public static <T> T minValueInCollection(List<T> _items, FuncToInt<T> mapValue) {
+        if (_items.size() == 0)
+            return null;
+        var first = _items.get(0);
+        var minVal = mapValue.mapping(first);
+        for (var i = 1; i < _items.size(); i++) {
+            var item = _items.get(i);
+            var itemSpeed = mapValue.mapping(item);
+            if (itemSpeed < minVal) {
+                first = item;
+                minVal = itemSpeed;
+            }
+        }
+        return first;
+    }
+
+    public interface FuncToInt<T> {
+        int mapping(T value);
+    }
+
     public static String StringLower(String text) {
         return text.toLowerCase();
     }

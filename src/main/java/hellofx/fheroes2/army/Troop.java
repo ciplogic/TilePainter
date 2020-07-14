@@ -57,4 +57,8 @@ public class Troop {
     public int GetCount() {
         return count;
     }
+
+    public int GetSpeed() {
+        return _monster.GetSpeed();
+    }
 }

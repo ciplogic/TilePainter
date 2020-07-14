@@ -405,13 +405,80 @@ public class Heroes extends HeroBase {
         bitModes.ResetModes(flags);
     }
 
-    private void SetModes(int flags) {
+    public void SetModes(int flags) {
         bitModes.SetModes(flags);
     }
 
     private int GetMaxMovePoints() {
+        int point = 0;
+        boolean acount = false;
+
+        // start point
+        if (isShipMaster()) {
+            point = 1500;
+
+            // skill navigation
+            point += point * GetSecondaryValues(SkillT.NAVIGATION) / 100;
+
+            // artifact bonus
+            acount = HasArtifact(ArtifactKind.SAILORS_ASTROLABE_MOBILITY);
+            if (acount) point += 1000;
+
+            // visited object
+            if (isVisited(Mp2Kind.OBJ_LIGHTHOUSE)) point += 500;
+        } else {
+            Troop troop = army.m_troops.GetSlowestTroop();
+
+            if (troop != null)
+                switch (troop.GetSpeed()) {
+                    default:
+                        break;
+                    case SpeedKind.CRAWLING:
+                    case SpeedKind.VERYSLOW:
+                        point = 1000;
+                        break;
+                    case SpeedKind.SLOW:
+                        point = 1100;
+                        break;
+                    case SpeedKind.AVERAGE:
+                        point = 1200;
+                        break;
+                    case SpeedKind.FAST:
+                        point = 1300;
+                        break;
+                    case SpeedKind.VERYFAST:
+                        point = 1400;
+                        break;
+                    case SpeedKind.ULTRAFAST:
+                    case SpeedKind.BLAZING:
+                    case SpeedKind.INSTANT:
+                        point = 1500;
+                        break;
+                }
+
+            // skill logistics
+            point += point * GetSecondaryValues(SkillT.LOGISTICS) / 100;
+
+            // artifact bonus
+            acount = HasArtifact(ArtifactKind.NOMAD_BOOTS_MOBILITY);
+            if (acount) point += 600;
+
+            acount = HasArtifact(ArtifactKind.TRAVELER_BOOTS_MOBILITY);
+            if (acount) point += 300;
+
+            // visited object
+            if (isVisited(Mp2Kind.OBJ_STABLES)) point += 500;
+        }
+
+        acount = HasArtifact(ArtifactKind.TRUE_COMPASS_MOBILITY);
+        if (acount) point += 500;
+
+        return point;
+    }
+
+    private boolean isShipMaster() {
         //TODO
-        return 0;
+        return false;
     }
 
     public boolean isControlAI() {

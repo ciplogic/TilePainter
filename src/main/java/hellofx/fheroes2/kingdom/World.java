@@ -92,7 +92,9 @@ public class World {
     void PostLoad() {
 
         // modify other objects
+        var ii = -1;
         for (Tiles tile : vec_tiles) {
+            ++ii;
             tile.Refresh();
 
             tile.FixedPreload();
@@ -180,7 +182,7 @@ public class World {
                     if (addon != null) tile.Remove(addon.uniq);
 
                     //TODO: fix heroes
-                    // tile.SetHeroes(GetHeroes(Maps.GetPoint(ii)));
+                    tile.SetHeroes(GetHeroes(Maps.GetPoint(ii)));
                 }
                 break;
 
