@@ -64,7 +64,7 @@ public class Army {
         }
     }
 
-    String[] str_size = {
+    static final String[] str_size = {
             tr("army|Few"), tr("army|Several"), tr("army|Pack"), tr("army|Lots"),
             tr("army|Horde"), tr("army|Throng"), tr("army|Swarm"), tr("army|Zounds"), tr("army|Legion")
     };
@@ -79,7 +79,7 @@ public class Army {
         return (commander.isCaptain() && !commander.isValid()) ? null : commander;
     }
 
-    public String SizeString(int size) {
+    public static String SizeString(int size) {
 
         switch (ArmyGetSize(size)) {
             default:
