@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static hellofx.common.Utilities.find_if;
+import static hellofx.fheroes2.game.GameConsts.DAYOFWEEK;
 import static hellofx.fheroes2.system.Translate.StringReplace;
 import static hellofx.fheroes2.system.Translate.tr;
 
@@ -373,13 +374,15 @@ public class World {
     }
 
     public int CountDay() {
-        //TODO
-        return 0;
+        return day;
     }
 
     public int CountWeek() {
-        //TODO
-        return 0;
+        return week;
+    }
+
+    public boolean BeginWeek() {
+        return 1 == day % DAYOFWEEK;
     }
 
     public int GetUniq() {

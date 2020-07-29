@@ -33,6 +33,7 @@ public class Army {
     public Army() {
     }
 
+
     public void SetColor(int col) {
         color = col;
     }

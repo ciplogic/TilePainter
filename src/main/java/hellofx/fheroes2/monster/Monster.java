@@ -67,6 +67,11 @@ public class Monster {
         }
     }
 
+    @Override
+    public String toString() {
+        return GetName();
+    }
+
     public static int Rand(int level) {
 
         switch (level) {

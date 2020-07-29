@@ -330,7 +330,7 @@ public class Tiles {
     }
 
     public void SetObject(int mp2Kind) {
-        mp2_object = (byte) mp2Kind;
+        mp2_object = (short) mp2Kind;
     }
 
     public int GetObject(boolean skip_hero) {

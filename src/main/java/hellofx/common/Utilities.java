@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Utilities {
@@ -69,6 +70,10 @@ public class Utilities {
 
     public static <T> T find_if(List<T> addons, Predicate<T> isFound) {
         return addons.stream().filter(isFound::test).findFirst().orElse(null);
+    }
+
+    public static <T> T minValueInCollection(List<T> _items, Predicate<T> doFilter, FuncToInt<T> mapValue) {
+        return minValueInCollection(_items.stream().filter(doFilter).collect(Collectors.toList()), mapValue);
     }
 
     public static <T> T minValueInCollection(List<T> _items, FuncToInt<T> mapValue) {

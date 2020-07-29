@@ -75,6 +75,6 @@ public class Troops {
     }
 
     public Troop GetSlowestTroop() {
-        return minValueInCollection(_items, Troop::GetSpeed);
+        return minValueInCollection(_items, it -> it.IsValid(), Troop::GetSpeed);
     }
 }

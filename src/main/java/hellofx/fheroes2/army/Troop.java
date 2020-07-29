@@ -58,6 +58,11 @@ public class Troop {
         return count;
     }
 
+    @Override
+    public String toString() {
+        return _monster + ": " + count;
+    }
+
     public int GetSpeed() {
         return _monster.GetSpeed();
     }

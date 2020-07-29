@@ -267,8 +267,9 @@ public class WorldLoad {
                 }
                 var tile = _this.vec_tiles[findobject];
                 TilesAddon addon;
+                var tileObj = tile.GetObject();
 
-                switch (tile.GetObject()) {
+                switch (tileObj) {
                     case Mp2Kind.OBJ_CASTLE: {
                         // add castle
                         if (SIZEOFMP2CASTLE != pblock.length) {
