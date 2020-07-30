@@ -19,7 +19,7 @@ public class ObjTree {
         return Mp2Kind.OBJ_ZERO != GetActionObject(index);
     }
 
-    static boolean isShadow(int index) {
+    public static boolean isShadow(int index) {
 
         return contains(shadows, index);
     }

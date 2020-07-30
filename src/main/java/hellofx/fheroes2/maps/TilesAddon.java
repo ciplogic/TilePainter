@@ -18,14 +18,15 @@ public class TilesAddon {
     public short index;
     public short tmp;
 
-    public TilesAddon clone() {
-        TilesAddon res = new TilesAddon();
-        res.uniq = uniq;
-        res.level = level;
-        res.object = object;
-        res.index = index;
-        res.tmp = tmp;
-        return res;
+    public TilesAddon(int lv, int gid, int obj, int ii) {
+        uniq = gid;
+        level = (short) lv;
+        object = (short) obj;
+        index = (short) ii;
+        if (index < 0) {
+            System.out.println("Here2");
+        }
+        tmp = 0;
     }
 
     public static H2IntPair ColorRaceFromHeroSprite(TilesAddon ta) {
@@ -98,15 +99,12 @@ public class TilesAddon {
     public TilesAddon() {
     }
 
-    public TilesAddon(int lv, int gid, int obj, int ii) {
-        uniq = gid;
-        level = (short) lv;
-        object = (short) obj;
-        index = (short) ii;
-        if (index == -87) {
-            System.out.println("Here2");
-        }
-        tmp = 0;
+    public static int ColorFromTravellerTentSprite(TilesAddon ta) {
+        // 110, 114, 118, 122, 126, 130, 134, 138
+        return IcnKind.X_LOC3 == Mp2.GetICNObject(ta.object) &&
+                110 <= ta.index && 138 >= ta.index
+                ? (ta.index - 110) / 4 + 1
+                : 0;
     }
 
     static boolean isWhirlPool(TilesAddon ta) {
@@ -183,9 +181,60 @@ public class TilesAddon {
                 IcnKind.TREASURE == Mp2Kind.GetICNObject(ta.object);
     }
 
-    public static int ColorFromTravellerTentSprite(TilesAddon ta) {
-        //TODO
-        return 0;
+    public static boolean isRocs(TilesAddon ta) {
+        switch (Mp2.GetICNObject(ta.object)) {
+            // roc objects
+            case IcnKind.OBJNSNOW:
+                if ((ta.index > 21 && ta.index < 25) || (ta.index > 25 && ta.index < 29) ||
+                        ta.index == 30 || ta.index == 32 || ta.index == 34 || ta.index == 35 ||
+                        (ta.index > 36 && ta.index < 40))
+                    return true;
+                break;
+
+            case IcnKind.OBJNSWMP:
+                if (ta.index == 201 || ta.index == 205 ||
+                        (ta.index > 207 && ta.index < 211))
+                    return true;
+                break;
+
+            case IcnKind.OBJNGRAS:
+                if ((ta.index > 32 && ta.index < 36) || ta.index == 37 || ta.index == 38 ||
+                        ta.index == 40 || ta.index == 41 || ta.index == 43 || ta.index == 45)
+                    return true;
+                break;
+
+            case IcnKind.OBJNDIRT:
+                if (ta.index == 92 || ta.index == 93 || ta.index == 95 || ta.index == 98 ||
+                        ta.index == 99 || ta.index == 101 || ta.index == 102 || ta.index == 104 || ta.index == 105)
+                    return true;
+                break;
+
+            case IcnKind.OBJNCRCK:
+                if (ta.index == 10 || ta.index == 11 ||
+                        ta.index == 18 || ta.index == 19 || ta.index == 21 || ta.index == 22 ||
+                        (ta.index > 23 && ta.index < 28) || (ta.index > 28 && ta.index < 33) ||
+                        ta.index == 34 || ta.index == 35 || ta.index == 37 || ta.index == 38 ||
+                        (ta.index > 39 && ta.index < 45) || ta.index == 46 || ta.index == 47 ||
+                        ta.index == 49 || ta.index == 50 || ta.index == 52 || ta.index == 53 || ta.index == 55)
+                    return true;
+                break;
+
+            case IcnKind.OBJNWAT2:
+                if (ta.index == 0 || ta.index == 2)
+                    return true;
+                break;
+
+            case IcnKind.OBJNWATR:
+                if (ta.index == 182 || ta.index == 183 ||
+                        (ta.index > 184 && ta.index < 188))
+                    return true;
+                break;
+
+            default:
+                break;
+        }
+
+        return false;
     }
 
     static boolean isRandomArtifact(TilesAddon ta) {
@@ -193,24 +242,187 @@ public class TilesAddon {
         return IcnKind.OBJNARTI == Mp2Kind.GetICNObject(ta.object) && 0xA3 == ta.getIndex();
     }
 
-    public static boolean isRocs(TilesAddon ta) {
-        //TODO
-        return false;
-    }
-
     public static boolean isForests(TilesAddon ta) {
-        //TODO
+        switch (Mp2.GetICNObject(ta.object)) {
+            case IcnKind.TREJNGL:
+            case IcnKind.TREEVIL:
+            case IcnKind.TRESNOW:
+            case IcnKind.TREFIR:
+            case IcnKind.TREFALL:
+            case IcnKind.TREDECI:
+                return !ObjTree.isShadow(ta.index);
+
+            default:
+                break;
+        }
+
         return false;
     }
 
-    public static boolean isTrees(TilesAddon ta) {
-        //TODO
+    static boolean isCactus(TilesAddon ta) {
+        switch (Mp2.GetICNObject(ta.object)) {
+            case IcnKind.OBJNDSRT:
+                if (ta.index == 24 || ta.index == 26 || ta.index == 28 ||
+                        (ta.index > 29 && ta.index < 33) ||
+                        ta.index == 34 || ta.index == 36 || ta.index == 37 || ta.index == 39 ||
+                        ta.index == 40 || ta.index == 42 || ta.index == 43 ||
+                        ta.index == 45 || ta.index == 48 || ta.index == 49 ||
+                        ta.index == 51 || ta.index == 53)
+                    return true;
+                break;
+
+            case IcnKind.OBJNCRCK:
+                if (ta.index == 14 || ta.index == 16)
+                    return true;
+                break;
+
+            default:
+                break;
+        }
+
         return false;
     }
 
-    public static boolean isCactus(TilesAddon ta) {
-        //TODO
+    static boolean isTrees(TilesAddon ta) {
+        switch (Mp2.GetICNObject(ta.object)) {
+            // tree objects
+            case IcnKind.OBJNDSRT:
+                if (ta.index == 3 || ta.index == 4 || ta.index == 6 ||
+                        ta.index == 7 || ta.index == 9 || ta.index == 10 ||
+                        ta.index == 12 || ta.index == 74 || ta.index == 76)
+                    return true;
+                break;
+
+            case IcnKind.OBJNDIRT:
+                if (ta.index == 115 || ta.index == 118 || ta.index == 120 ||
+                        ta.index == 123 || ta.index == 125 || ta.index == 127)
+                    return true;
+                break;
+
+            case IcnKind.OBJNGRAS:
+                if (ta.index == 80 || (ta.index > 82 && ta.index < 86) ||
+                        ta.index == 87 || (ta.index > 88 && ta.index < 92))
+                    return true;
+                break;
+
+            default:
+                break;
+        }
+
         return false;
+    }
+
+    public static int GetPassable(TilesAddon ta) {
+        var icn = Mp2.GetICNObject(ta.object);
+
+        switch (icn) {
+            case IcnKind.MTNSNOW:
+            case IcnKind.MTNSWMP:
+            case IcnKind.MTNLAVA:
+            case IcnKind.MTNDSRT:
+            case IcnKind.MTNMULT:
+            case IcnKind.MTNGRAS:
+                return ObjMnts1.GetPassable(icn, ta.getIndex());
+
+            case IcnKind.MTNCRCK:
+            case IcnKind.MTNDIRT:
+                return ObjMnts2.GetPassable(icn, ta.getIndex());
+
+            case IcnKind.TREJNGL:
+            case IcnKind.TREEVIL:
+            case IcnKind.TRESNOW:
+            case IcnKind.TREFIR:
+            case IcnKind.TREFALL:
+            case IcnKind.TREDECI:
+                return ObjTree.GetPassable(ta.getIndex());
+            case IcnKind.OBJNSNOW:
+                return ObjSnow.GetPassable(ta.getIndex());
+            case IcnKind.OBJNSWMP:
+                return ObjSwmp.GetPassable(ta.getIndex());
+            case IcnKind.OBJNGRAS:
+                return ObjGras.GetPassable(ta.getIndex());
+            case IcnKind.OBJNGRA2:
+                return ObjGra2.GetPassable(ta.getIndex());
+            case IcnKind.OBJNCRCK:
+                return ObjCrck.GetPassable(ta.getIndex());
+            case IcnKind.OBJNDIRT:
+                return ObjDirt.GetPassable(ta.getIndex());
+            case IcnKind.OBJNDSRT:
+                return ObjDsrt.GetPassable(ta.getIndex());
+            case IcnKind.OBJNMUL2:
+                return ObjMul2.GetPassable(ta.getIndex());
+            case IcnKind.OBJNMULT:
+                return ObjMult.GetPassable(ta.getIndex());
+            case IcnKind.OBJNLAVA:
+                return ObjLava.GetPassable(ta.getIndex());
+            case IcnKind.OBJNLAV3:
+                return ObjLav3.GetPassable(ta.getIndex());
+            case IcnKind.OBJNLAV2:
+                return ObjLav2.GetPassable(ta.getIndex());
+            case IcnKind.OBJNWAT2:
+                return ObjWat2.GetPassable(ta.getIndex());
+            case IcnKind.OBJNWATR:
+                return ObjWatr.GetPassable(ta.getIndex());
+
+            case IcnKind.OBJNTWBA:
+                return ObjTwba.GetPassable(ta.getIndex());
+            case IcnKind.OBJNTOWN:
+                return ObjTown.GetPassable(ta.getIndex());
+
+            case IcnKind.X_LOC1:
+                return ObjXlc1.GetPassable(ta.getIndex());
+            case IcnKind.X_LOC2:
+                return ObjXlc2.GetPassable(ta.getIndex());
+            case IcnKind.X_LOC3:
+                return ObjXlc3.GetPassable(ta.getIndex());
+
+            // MANUAL.ICN
+            case IcnKind.TELEPORT1:
+            case IcnKind.TELEPORT2:
+            case IcnKind.TELEPORT3:
+            case IcnKind.FOUNTAIN:
+                return 0;
+
+            default:
+                break;
+        }
+
+        return Direction.DIRECTION_ALL;
+
+    }
+
+    static int UpdateStoneLightsSprite(TilesAddon ta) {
+        if (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object))
+            switch (ta.index) {
+                case 116:
+                    ta.object = 0x11;
+                    ta.index = 0;
+                    return 1;
+                case 119:
+                    ta.object = 0x12;
+                    ta.index = 0;
+                    return 2;
+                case 122:
+                    ta.object = 0x13;
+                    ta.index = 0;
+                    return 3;
+                default:
+                    break;
+            }
+        return 0;
+    }
+
+    public TilesAddon clone() {
+        TilesAddon res = new TilesAddon();
+        res.uniq = uniq;
+        res.level = level;
+        res.object = object;
+        if (index < 0) {
+            System.out.println("Care!");
+        }
+        res.index = index;
+        res.tmp = tmp;
+        return res;
     }
 
     public static boolean isShadow(TilesAddon ta) {
@@ -341,83 +553,79 @@ public class TilesAddon {
         return IcnKind.OBJNTOWN == Mp2Kind.GetICNObject(ta.object);
     }
 
-    public static int GetPassable(TilesAddon ta) {
-        var icn = Mp2.GetICNObject(ta.object);
-
-        switch (icn) {
-            case IcnKind.MTNSNOW:
-            case IcnKind.MTNSWMP:
-            case IcnKind.MTNLAVA:
-            case IcnKind.MTNDSRT:
-            case IcnKind.MTNMULT:
-            case IcnKind.MTNGRAS:
-                return ObjMnts1.GetPassable(icn, ta.getIndex());
-
-            case IcnKind.MTNCRCK:
-            case IcnKind.MTNDIRT:
-                return ObjMnts2.GetPassable(icn, ta.getIndex());
-
-            case IcnKind.TREJNGL:
-            case IcnKind.TREEVIL:
-            case IcnKind.TRESNOW:
-            case IcnKind.TREFIR:
-            case IcnKind.TREFALL:
-            case IcnKind.TREDECI:
-                return ObjTree.GetPassable(ta.getIndex());
+    boolean isStump(TilesAddon ta) {
+        switch (Mp2.GetICNObject(ta.object)) {
             case IcnKind.OBJNSNOW:
-                return ObjSnow.GetPassable(ta.getIndex());
-            case IcnKind.OBJNSWMP:
-                return ObjSwmp.GetPassable(ta.getIndex());
-            case IcnKind.OBJNGRAS:
-                return ObjGras.GetPassable(ta.getIndex());
-            case IcnKind.OBJNGRA2:
-                return ObjGra2.GetPassable(ta.getIndex());
-            case IcnKind.OBJNCRCK:
-                return ObjCrck.GetPassable(ta.getIndex());
-            case IcnKind.OBJNDIRT:
-                return ObjDirt.GetPassable(ta.getIndex());
-            case IcnKind.OBJNDSRT:
-                return ObjDsrt.GetPassable(ta.getIndex());
-            case IcnKind.OBJNMUL2:
-                return ObjMul2.GetPassable(ta.getIndex());
-            case IcnKind.OBJNMULT:
-                return ObjMult.GetPassable(ta.getIndex());
-            case IcnKind.OBJNLAVA:
-                return ObjLava.GetPassable(ta.getIndex());
-            case IcnKind.OBJNLAV3:
-                return ObjLav3.GetPassable(ta.getIndex());
-            case IcnKind.OBJNLAV2:
-                return ObjLav2.GetPassable(ta.getIndex());
-            case IcnKind.OBJNWAT2:
-                return ObjWat2.GetPassable(ta.getIndex());
-            case IcnKind.OBJNWATR:
-                return ObjWatr.GetPassable(ta.getIndex());
-
-            case IcnKind.OBJNTWBA:
-                return ObjTwba.GetPassable(ta.getIndex());
-            case IcnKind.OBJNTOWN:
-                return ObjTown.GetPassable(ta.getIndex());
-
-            case IcnKind.X_LOC1:
-                return ObjXlc1.GetPassable(ta.getIndex());
-            case IcnKind.X_LOC2:
-                return ObjXlc2.GetPassable(ta.getIndex());
-            case IcnKind.X_LOC3:
-                return ObjXlc3.GetPassable(ta.getIndex());
-
-            // MANUAL.ICN
-            case IcnKind.TELEPORT1:
-            case IcnKind.TELEPORT2:
-            case IcnKind.TELEPORT3:
-            case IcnKind.FOUNTAIN:
-                return 0;
+                if (ta.index == 41 || ta.index == 42)
+                    return true;
+                break;
 
             default:
                 break;
         }
 
-        return Direction.DIRECTION_ALL;
+        return false;
     }
+
+    boolean isDeadTrees(TilesAddon ta) {
+        switch (Mp2.GetICNObject(ta.object)) {
+            case IcnKind.OBJNMUL2:
+                if (ta.index == 16 || ta.index == 18 || ta.index == 19)
+                    return true;
+                break;
+
+            case IcnKind.OBJNMULT:
+                if (ta.index == 0 || ta.index == 2 || ta.index == 4)
+                    return true;
+                break;
+
+            case IcnKind.OBJNSNOW:
+                if ((ta.index > 50 && ta.index < 53) || (ta.index > 54 && ta.index < 59) ||
+                        (ta.index > 59 && ta.index < 63) || (ta.index > 63 && ta.index < 67) ||
+                        ta.index == 68 || ta.index == 69 || ta.index == 71 || ta.index == 72 ||
+                        ta.index == 74 || ta.index == 75 || ta.index == 77)
+                    return true;
+                break;
+
+            case IcnKind.OBJNSWMP:
+                if (ta.index == 161 || ta.index == 162 ||
+                        (ta.index > 163 && ta.index < 170) ||
+                        (ta.index > 170 && ta.index < 175) ||
+                        ta.index == 176 || ta.index == 177)
+                    return true;
+                break;
+
+            default:
+                break;
+        }
+
+        return false;
+    }
+
+    void UpdateAbandoneMineRightSprite(TilesAddon ta) {
+        if (IcnKind.OBJNDIRT == Mp2.GetICNObject(ta.object) && ta.index == 9) {
+            ta.object = 104;
+            ta.index = 113;
+        } else if (IcnKind.OBJNGRAS == Mp2.GetICNObject(ta.object) && ta.index == 7) {
+            ta.object = 128;
+            ta.index = 83;
+        }
+    }
+
+    void UpdateFountainSprite(TilesAddon ta) {
+        if (IcnKind.OBJNMUL2 == Mp2.GetICNObject(ta.object) && 15 == ta.index) {
+            ta.object = 0x14;
+            ta.index = 0;
+        }
+    }
+
+    void UpdateTreasureChestSprite(TilesAddon ta) {
+        if (IcnKind.OBJNRSRC == Mp2.GetICNObject(ta.object) && 19 == ta.index) {
+            ta.object = 0x15;
+            ta.index = 0;
+        }
+    }
+
 
     @Override
     public String toString() {
@@ -437,10 +645,6 @@ public class TilesAddon {
     }
 
 
-    boolean isSkeletonFix(TilesAddon ta) {
-        return IcnKind.OBJNDSRT == Mp2Kind.GetICNObject(ta.object) && ta.index == 83;
-    }
-
     boolean isUniq(int id) {
         return uniq == id;
     }
@@ -450,7 +654,7 @@ public class TilesAddon {
     }
 
     public void setIndex(int index) {
-        this.index = (byte) index;
+        this.index = (short) index;
     }
 
     public int getIndex() {

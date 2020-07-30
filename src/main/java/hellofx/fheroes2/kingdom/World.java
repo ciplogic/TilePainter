@@ -421,4 +421,8 @@ public class World {
         else
             recruits.SetHero2(null);
     }
+
+    public int ColorCapturedObject(int index) {
+        return map_captureobj.GetColor(index);
+    }
 }

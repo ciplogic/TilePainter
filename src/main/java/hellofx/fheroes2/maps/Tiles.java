@@ -888,8 +888,8 @@ public class Tiles {
     }
 
     public boolean isFog(int colors) {
-        //TODO
-        return false;
+        // colors may be the union friends
+        return (fog_colors & colors) == colors;
     }
 
     public void RedrawFogs(Painter dst, int colors) {
@@ -966,7 +966,7 @@ public class Tiles {
         var shadow = left_tile.FindAddonLevel1(addon.uniq);
 
         if (shadow != null) {
-            shadow.setIndex((byte) (addon.getIndex() - 1));
+            shadow.setIndex(addon.getIndex() - 1);
         }
     }
 
@@ -982,12 +982,29 @@ public class Tiles {
         quantity2 = (byte) (0x00FF & count);
     }
 
-    private void UpdateStoneLightsSprite(Tiles tiles) {
-        //TODO
+    private void UpdateStoneLightsSprite(Tiles tile) {
+        for (var it : tile.addons_level1._items)
+            tile.QuantitySetTeleportType(TilesAddon.UpdateStoneLightsSprite(it));
     }
 
-    private void UpdateMonsterPopulation(Tiles tiles) {
-        //TODO
+    private void QuantitySetTeleportType(int type) {
+        quantity1 = (short) type;
+    }
+
+    private void UpdateMonsterPopulation(Tiles tile) {
+        Troop troop = tile.QuantityTroop();
+
+        if (0 == troop.GetCount())
+            tile.MonsterSetCount(troop._monster.GetRNDSize(false));
+        else if (tile.MonsterFixedCount() == 0)
+            tile.MonsterSetCount(troop.GetCount() * 8 / 7);
+    }
+
+    private Troop QuantityTroop() {
+        var world = World.Instance;
+        return Mp2.isCaptureObject(GetObject(false))
+                ? world.GetCapturedObject(GetIndex()).GetTroop()
+                : new Troop(QuantityMonster(), MonsterCount());
     }
 
     private void UpdateFountainSprite(Tiles tiles) {
@@ -1045,7 +1062,9 @@ public class Tiles {
         var left_tile = world.GetTiles(GetDirectionIndex(tile.GetIndex(), Direction.LEFT));
         TilesAddon shadow = left_tile.FindAddonLevel1(addon.uniq);
 
-        if (shadow != null) shadow.setIndex((byte) (index - 1));
+        if (shadow != null) {
+            shadow.setIndex(index - 1);
+        }
     }
 
     private TilesAddon FindAddonLevel1(int uniq) {
@@ -1090,8 +1109,9 @@ public class Tiles {
             // fixed random sprite
             tile.SetObject(Mp2Kind.OBJ_MONSTER);
 
-            if (addon != null)
-                addon.setIndex((byte) (mons - 1)); // ICN.MONS32 start from PEASANT
+            if (addon != null) {
+                addon.setIndex(mons - 1); // ICN.MONS32 start from PEASANT
+            }
         }
 
         var count = 0;
@@ -1201,8 +1221,82 @@ public class Tiles {
         quantity2 |= 0x0f & ext;
     }
 
-    private void UpdateDwellingPopulation(Tiles tiles) {
-        //TODO
+    private void UpdateDwellingPopulation(Tiles tile) {
+        var count = 0;
+        var obj = tile.GetObject(false);
+        var troop = tile.QuantityTroop();
+        var world = World.Instance;
+        switch (obj) {
+            // join monsters
+            case Mp2Kind.OBJ_HALFLINGHOLE:
+            case Mp2Kind.OBJ_PEASANTHUT:
+            case Mp2Kind.OBJ_THATCHEDHUT:
+            case Mp2Kind.OBJ_EXCAVATION:
+            case Mp2Kind.OBJ_CAVE:
+            case Mp2Kind.OBJ_TREEHOUSE:
+            case Mp2Kind.OBJ_GOBLINHUT:
+                count = troop._monster.GetRNDSize(true) * 3 / 2;
+                break;
+
+            case Mp2Kind.OBJ_TREECITY:
+                count = troop._monster.GetRNDSize(true) * 2;
+                break;
+
+            case Mp2Kind.OBJ_WATCHTOWER:
+            case Mp2Kind.OBJ_ARCHERHOUSE:
+            case Mp2Kind.OBJ_DWARFCOTT:
+                //
+            case Mp2Kind.OBJ_RUINS:
+            case Mp2Kind.OBJ_WAGONCAMP:
+            case Mp2Kind.OBJ_DESERTTENT:
+            case Mp2Kind.OBJ_WATERALTAR:
+            case Mp2Kind.OBJ_AIRALTAR:
+            case Mp2Kind.OBJ_FIREALTAR:
+            case Mp2Kind.OBJ_EARTHALTAR:
+            case Mp2Kind.OBJ_BARROWMOUNDS:
+                count = troop._monster.GetRNDSize(true);
+                // increase small if dwelling not open
+                if (!Settings.Get().ExtWorldDwellingsAccumulateUnits() && count <= troop.GetCount())
+                    count = troop.GetCount() + Rand.Get(1, 3);
+                break;
+
+            case Mp2Kind.OBJ_TROLLBRIDGE:
+            case Mp2Kind.OBJ_CITYDEAD:
+                count = 1 < world.CountWeek() &&
+                        H2Color.NONE == tile.QuantityColor()
+                        ? 0
+                        : troop._monster.GetRNDSize(true);
+                break;
+
+            case Mp2Kind.OBJ_DRAGONCITY:
+                count = 1 < world.CountWeek() &&
+                        H2Color.NONE == tile.QuantityColor()
+                        ? 0
+                        : 1;
+                break;
+
+            default:
+                break;
+        }
+
+        if (count != 0) {
+            if (Settings.Get().ExtWorldDwellingsAccumulateUnits())
+                tile.MonsterSetCount(troop.GetCount() + count);
+            else
+                tile.MonsterSetCount(count);
+        }
+    }
+
+    private int QuantityColor() {
+        var world = World.Instance;
+        switch (GetObject(false)) {
+            case Mp2Kind.OBJ_BARRIER:
+            case Mp2Kind.OBJ_TRAVELLERTENT:
+                return quantity1;
+
+            default:
+                return world.ColorCapturedObject(GetIndex());
+        }
     }
 
     private void QuantitySetVariant(int value) {

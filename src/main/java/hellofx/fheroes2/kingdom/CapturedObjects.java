@@ -27,4 +27,8 @@ public class CapturedObjects {
         return res;
     }
 
+    public int GetColor(int index) {
+        var it = _items.get(index);
+        return it != null ? it.GetColor() : H2Color.NONE;
+    }
 }

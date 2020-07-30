@@ -1,6 +1,5 @@
 package hellofx;
 
-import hellofx.dialogs.DownloadDialog;
 import hellofx.fheroes2.agg.Agg;
 import hellofx.fheroes2.common.Engine;
 import hellofx.fheroes2.gui.GameArea;
@@ -37,8 +36,8 @@ public class HelloFx extends Application {
     @Override
     public void start(Stage stage) {
 
-        var downloadDialog = new DownloadDialog();
-        downloadDialog.BuildView();
+//        var downloadDialog = new DownloadDialog();
+//        downloadDialog.BuildView();
         //ResourceDownloader.downloadAllPacks(".");
         var context = new MainContext();
 

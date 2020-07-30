@@ -250,4 +250,8 @@ public class Settings {
         //TODO
         return false;
     }
+
+    public boolean ExtWorldDwellingsAccumulateUnits() {
+        return ExtModes(SettingsKind.WORLD_DWELLING_ACCUMULATE_UNITS);
+    }
 }
