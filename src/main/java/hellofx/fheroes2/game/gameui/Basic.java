@@ -5,13 +5,13 @@ import hellofx.fheroes2.gui.*;
 
 public class Basic {
     GameArea gameArea = new GameArea();
-    Radar radar;
-    IconsPanel iconsPanel;
-    ButtonsArea buttonsArea;
-    StatusWindow statusWindow;
-    ControlPanel controlPanel;
+    Radar radar = new Radar();
+    IconsPanel iconsPanel = new IconsPanel();
+    ButtonsArea buttonsArea = new ButtonsArea();
+    StatusWindow statusWindow = new StatusWindow();
+    ControlPanel controlPanel = new ControlPanel();
 
-    HeroesBar heroesBar;
+    HeroesBar heroesBar = new HeroesBar();
 
     int redraw;
 

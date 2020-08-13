@@ -7,7 +7,11 @@ import hellofx.fheroes2.kingdom.RaceKind;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.maps.MapsIndexes;
 import hellofx.fheroes2.maps.Mp2Kind;
+import hellofx.fheroes2.maps.Tiles;
 import hellofx.fheroes2.maps.TilesAddon;
+import it.unimi.dsi.fastutil.ints.IntArrayList;
+
+import static hellofx.fheroes2.heroes.Direction.DIRECTION_ALL;
 
 public class Maps {
 
@@ -242,4 +246,69 @@ public class Maps {
         var sz = GetPoint(index1).sub(GetPoint(index2));
         return Integer.max(sz.x, sz.y);
     }
+
+
+    static boolean MapsTileIsUnderProtection(int from, int index) /* from: center, index: monster */ {
+        boolean result = false;
+        var world = World.Instance;
+        var tile1 = world.GetTiles(from);
+        var tile2 = world.GetTiles(index);
+
+        if (tile1.isWater() != tile2.isWater()) {
+            return result;
+        }
+        /* if monster can attack to */
+        result = (0 != (tile2.GetPassable() & Direction.Get(index, from))) &&
+                (0 != (tile1.GetPassable() & Direction.Get(from, index)));
+
+        if (!result) {
+            /* h2 specific monster attack: BOTTOM_LEFT impassable! */
+            if ((Direction.BOTTOM_LEFT == Direction.Get(index, from)) &&
+                    (0 != (Direction.LEFT & tile2.GetPassable())) && (0 != (Direction.TOP & tile1.GetPassable())))
+                result = true;
+            else
+                /* h2 specific monster attack: BOTTOM_RIGHT impassable! */
+                if (Direction.BOTTOM_RIGHT == Direction.Get(index, from) &&
+                        (0 != (Direction.RIGHT & tile2.GetPassable())) && (0 != (Direction.TOP & tile1.GetPassable())))
+                    result = true;
+        }
+
+        return result;
+    }
+
+    static MapsIndexes GetTilesUnderProtection(int center) {
+        MapsIndexes tilesIndexesUnderProtection = new MapsIndexes();
+        Tiles.ScanAroundObject(center, Mp2Kind.OBJ_MONSTER, tilesIndexesUnderProtection);
+
+        var world = World.Instance;
+
+        if (tilesIndexesUnderProtection.size() > 0) {
+            var toRemove = new IntArrayList();
+            for (var index = 0; index < tilesIndexesUnderProtection.size(); index++) {
+                var it = tilesIndexesUnderProtection.getInt(index);
+                if (!MapsTileIsUnderProtection(it, center)) {
+                    toRemove.add(index);
+                }
+            }
+            for (var index = tilesIndexesUnderProtection.size() - 1; index >= 0; index--) {
+                var toRemoveIndex = toRemove.getInt(index);
+                tilesIndexesUnderProtection.removeInt(toRemoveIndex);
+            }
+        }
+
+        if (Mp2Kind.OBJ_MONSTER == world.GetTiles(center).GetObject())
+            tilesIndexesUnderProtection.add(center);
+
+        return tilesIndexesUnderProtection;
+    }
+
+    boolean IsNearTiles(int index1, int index2) {
+        return (0 != (DIRECTION_ALL & Direction.Get(index1, index2)));
+    }
+
+    boolean TileIsUnderProtection(int center) {
+        var world = World.Instance;
+        return Mp2Kind.OBJ_MONSTER == world.GetTiles(center).GetObject() || (GetTilesUnderProtection(center).size() > 0);
+    }
 }
+

@@ -9,7 +9,7 @@ import hellofx.fheroes2.common.H2Rect;
 import hellofx.fheroes2.heroes.Direction;
 import hellofx.fheroes2.heroes.Heroes;
 import hellofx.fheroes2.heroes.SkillT;
-import hellofx.fheroes2.heroes.route.Path;
+import hellofx.fheroes2.heroes.route.PathSprite;
 import hellofx.fheroes2.kingdom.World;
 import hellofx.fheroes2.maps.Ground;
 import hellofx.fheroes2.maps.Mp2Kind;
@@ -27,6 +27,10 @@ public class GameArea {
     public H2Rect rectMaps = new H2Rect(0, 0, 30, 20);
 
     public GameCamera camera;
+
+    public void onEventProcess(int mouseX, int mouseY) {
+
+    }
 
     public void Repaint(Painter dst, int flag, H2Rect rt, Agg agg) {
         var world = World.Instance;
@@ -151,7 +155,7 @@ public class GameArea {
             if (!it2.isEqual(it3)) {
                 int penalty = Ground.GetPenalty(from, Direction.CENTER,
                         hero.GetLevelSkill(SkillT.PATHFINDING));
-                index = Path.GetIndexSprite(it1.get().GetDirection(), it3.get().GetDirection(), penalty);
+                index = PathSprite.GetIndexSprite(it1.get().GetDirection(), it3.get().GetDirection(), penalty);
             }
 
             Sprite sprite = Agg.GetICN(0 > green ? IcnKind.ROUTERED : IcnKind.ROUTE, index).clone();

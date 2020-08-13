@@ -56,7 +56,7 @@ public class Heroes extends HeroBase {
     public int race;
     public int save_maps_object;
 
-    public Path path = new Path();
+    public Path path;
 
     public int direction;
     public int sprite_index;

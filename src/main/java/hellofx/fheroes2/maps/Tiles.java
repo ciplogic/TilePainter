@@ -834,7 +834,7 @@ public class Tiles {
         return 30 > TileSpriteIndex();
     }
 
-    private void ScanAroundObject(int center, int obj, MapsIndexes resultsScan) {
+    public static void ScanAroundObject(int center, int obj, MapsIndexes resultsScan) {
         Maps.GetAroundIndexes(center, resultsScan);
         Maps.MapsIndexesFilteredObject(resultsScan, obj);
     }
@@ -2375,5 +2375,9 @@ public class Tiles {
 
             SetQuantity3(0);
         }
+    }
+
+    public int GetPassable() {
+        return tile_passable;
     }
 }
