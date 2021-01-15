@@ -24,41 +24,52 @@ public class AggPaint {
     public static IcnSprite RenderICNSprite(Agg agg, int icn, int index) {
         var body = agg.ReadICNChunk(icn);
         if (body.length == 0) return new IcnSprite();
-        var res = new IcnSprite();
+        var iconSprite = new IcnSprite();
 
         var st = new ByteVectorReader(body);
 
         var count = st.getLE16();
-        if (index >= count) return res;
+        if (index >= count) return iconSprite;
 
         var blockSize = st.getLE32();
 
         if (index != 0) st.skip(index * 13);
 
-        var header1 = IcnHeader.ReadData(st);
+        var iconHeader = IcnHeader.ReadData(st);
 
         int sizeData = 0;
         if (index + 1 != count) {
             var header2 = IcnHeader.ReadData(st);
-            sizeData = header2.offsetData - header1.offsetData;
+            sizeData = header2.offsetData - iconHeader.offsetData;
         } else {
-            sizeData = blockSize - header1.offsetData;
+            sizeData = blockSize - iconHeader.offsetData;
         }
 
-        Render(res, header1, body, sizeData);
+        Render(iconSprite, iconHeader, body, sizeData);
 
-        return res;
+        return iconSprite;
     }
 
-    private static void Render(IcnSprite res, IcnHeader header1, byte[] body, int sizeData) {
+    /**
+     * Decodes the information from the body, and populates the icon sprite information.
+     * The IcnSprite is divided in a `first` icon, that's the actual image, and
+     * `second`, that's the shadow. It also includes an offset that points to
+     * the place where the image should be rendered.
+     * @param iconSprite The icon sprite that will get its first, second and offset
+     *                  data populated/
+     * @param iconHeader
+     * @param body
+     * @param sizeData
+     */
+    private static void Render(IcnSprite iconSprite, IcnHeader iconHeader, byte[] body, int sizeData) {
         // start render
-        var sz = new H2Size(header1.width, header1.height);
+        var sz = new H2Size(iconHeader.width, iconHeader.height);
 
-        int bufPos = 6 + header1.offsetData;
+        int bufPos = 6 + iconHeader.offsetData;
         var max = bufPos + sizeData;
 
-        res.offset = new H2Point(header1.offsetX, header1.offsetY);
-        res.SetSize(true, sz.w, sz.h, false);
+        iconSprite.offset = new H2Point(iconHeader.offsetX, iconHeader.offsetY);
+        iconSprite.SetSize(true, sz.w, sz.h, false);
 
         var shadowCol = H2RgbaColor.FromArgb(0, 0, 0, 0x40);
 
@@ -66,77 +77,64 @@ public class AggPaint {
 
         while (true) {
             var cur = toByte(body[bufPos]);
-            // 0x00 - end line
-            if (0 == cur) {
+            int c;
+
+            if (0 == cur) { // 0x00 - end line
                 ++pt.y;
                 pt.x = 0;
                 bufPos++;
-            } else
-            // 0x7F - count data
-            {
-                int c;
-                if (0x80 > cur) {
-                    c = body[bufPos];
+            } else if (0x80 > cur) { // 0x7F - count data
+                c = body[bufPos];
+                ++bufPos;
+                while (c-- != 0 && bufPos < max) {
+                    iconSprite.first.DrawPointPalette(pt.x, pt.y, body[bufPos]);
+                    ++pt.x;
                     ++bufPos;
-                    while (c-- != 0 && bufPos < max) {
-                        res.first.DrawPointPalette(pt.x, pt.y, body[bufPos]);
-                        ++pt.x;
-                        ++bufPos;
-                    }
-                } else
-                    // 0x80 - end data
-                    if (0x80 == cur) {
-                        break;
-                    } else
-                        // 0xBF - skip data
-                        if (0xC0 > cur) {
-                            pt.x += cur - 0x80;
-                            ++bufPos;
-                        } else
-                            // 0xC0 - shadow
-                            if (0xC0 == cur) {
-                                ++bufPos;
-                                if (toByte(body[bufPos]) % 4 != 0) {
-                                    c = toByte(body[bufPos]) % 4;
-                                } else {
-                                    ++bufPos;
-                                    c = toByte(body[bufPos]);
-                                }
+                }
+            } else if (0x80 == cur) { // 0x80 - end data
+                break;
+            } else if (0xC0 > cur) { // 0xBF - skip data
+                pt.x += cur - 0x80;
+                ++bufPos;
+            } else if (0xC0 == cur) { // 0xC0 - shadow
+                ++bufPos;
+                if (toByte(body[bufPos]) % 4 != 0) {
+                    c = toByte(body[bufPos]) % 4;
+                } else {
+                    ++bufPos;
+                    c = toByte(body[bufPos]);
+                }
 
-                                if (res.second == null) res.SetSize(false, sz.w, sz.h, true);
+                if (iconSprite.second == null) iconSprite.SetSize(false, sz.w, sz.h, true);
 
-                                while (c-- != 0) {
-                                    res.second.SetPixel(pt.x, pt.y, shadowCol);
-                                    ++pt.x;
-                                }
+                while (c-- != 0) {
+                    iconSprite.second.SetPixel(pt.x, pt.y, shadowCol);
+                    ++pt.x;
+                }
 
-                                ++bufPos;
-                            } else
-                                // 0xC1
-                                if (0xC1 == cur) {
-                                    ++bufPos;
-                                    c = toByte(body[bufPos]);
-                                    ++bufPos;
-                                    while (c-- != 0) {
-                                        res.first.DrawPointPalette(pt.x, pt.y, body[bufPos]);
-                                        ++pt.x;
-                                    }
+                ++bufPos;
+            } else if (0xC1 == cur) {
+                ++bufPos;
+                c = toByte(body[bufPos]);
+                ++bufPos;
+                while (c-- != 0) {
+                    iconSprite.first.DrawPointPalette(pt.x, pt.y, body[bufPos]);
+                    ++pt.x;
+                }
 
-                                    ++bufPos;
-                                } else {
-                                    c = cur - 0xC0;
-                                    ++bufPos;
-                                    while (c-- != 0) {
-                                        res.first.DrawPointPalette(pt.x, pt.y, body[bufPos]);
-                                        ++pt.x;
-                                    }
+                ++bufPos;
+            } else {
+                c = cur - 0xC0;
+                ++bufPos;
+                while (c-- != 0) {
+                    iconSprite.first.DrawPointPalette(pt.x, pt.y, body[bufPos]);
+                    ++pt.x;
+                }
 
-                                    ++bufPos;
-                                }
+                ++bufPos;
             }
 
             if (bufPos >= max) break;
         }
     }
-
 }
