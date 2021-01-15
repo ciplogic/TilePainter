@@ -42,12 +42,15 @@ public class Gameplay {
     private Image heroesImg;
     private Image heroesImgSmooth;
     private H2Point startPressPosition;
+    private long lastRender;
+
+    static long MILLIS_DELAY = 100L * 1000L * 1000L;
 
     public void setup() {
         setupRandomLevel();
         playerList = new PlayerList(2);
         ctx.listen(EventNames.onFrame, (Long l) -> {
-            onFrameUpdate();
+            onFrameUpdate(l);
         });
         ctx.listen(EventNames.onMouse, (MouseEvent mEvent) -> {
 
@@ -89,8 +92,13 @@ public class Gameplay {
         }
     }
 
-    void onFrameUpdate() {
-        Game.nextFrame();
+    void onFrameUpdate(Long l) {
+
+        if (l - lastRender > MILLIS_DELAY) { // 10 FPS
+            lastRender = l;
+            Game.nextFrame();
+        }
+
         idx += 1;
         //gameArea.camera.left = (int) idx / 5;
         //gameArea.camera.top = (int) (idx / 1.3);
@@ -104,6 +112,5 @@ public class Gameplay {
         var rect = new H2Rect(0, 0, 3440 / gameArea.camera.tileSize + 2, 1440 / gameArea.camera.tileSize + 2);
 
         gameArea.Repaint(painter, LevelKind.LEVEL_ALL, rect, agg);
-
     }
 }
