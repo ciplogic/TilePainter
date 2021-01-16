@@ -44,7 +44,8 @@ public class Gameplay {
     private H2Point startPressPosition;
     private long lastRender;
 
-    static long MILLIS_DELAY = 100L * 1000L * 1000L;
+    static long FPS = 5;
+    static long FPS_NANOS_DELAY = 1000L * 1000L * 1000L / FPS;
 
     public void setup() {
         setupRandomLevel();
@@ -93,8 +94,9 @@ public class Gameplay {
     }
 
     void onFrameUpdate(Long l) {
-
-        if (l - lastRender > MILLIS_DELAY) { // 10 FPS
+        // FIXME: computation is actually broken, and some several
+        // frames should be sometimes skipped.
+        if (l - lastRender > FPS_NANOS_DELAY) {
             lastRender = l;
             Game.nextFrame();
         }
